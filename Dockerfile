@@ -1,11 +1,17 @@
-FROM jccwebservicesregistry.azurecr.io/source/drupal-nginx-fpm:1.2
+FROM devopswebcourtsnp.azurecr.io/drupal-nginx-fpm:1.4
 
-ENV WEBSITES_CONTAINER_START_TIME_LIMIT "1800"
-ENV WEBSITES_ENABLE_APP_SERVICE_STORAGE "true"
+ARG GIT_REPO="https://github.com/judicialcouncilcalifornia/trialcourt.git"
+ENV GIT_REPO=$GIT_REPO
+ARG GIT_BRANCH="master"
+ENV GIT_BRANCH=$GIT_BRANCH
 
 RUN rm -rf ${DRUPAL_BUILD}
 RUN mkdir -p ${DRUPAL_BUILD}
-COPY ./. ${DRUPAL_BUILD}/
+
+RUN git clone ${GIT_REPO} --branch ${GIT_BRANCH} repobuild
+RUN rm -rf repobuild/.git
+RUN cp -R repobuild/* ${DRUPAL_BUILD}/
+RUN rm -rf repobuild
 
 WORKDIR ${DRUPAL_BUILD}
 RUN composer install
