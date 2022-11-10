@@ -22,7 +22,7 @@ resources:
 
 variables:
   webAppName: 'trialcourt'
-  dockerRegistryServiceConnection: '0ebbc684-736e-4657-a1bb-6644fda66a81'
+  dockerRegistryServiceConnection: '3f015a0b-e8e0-41a5-887c-d04efab1abd1'
   imageRepository: 'build/$(webAppName)'
   containerRegistry: 'devopswebcourtsnp.azurecr.io'
   dockerfilePath: '$(Build.SourcesDirectory)/Dockerfile'
