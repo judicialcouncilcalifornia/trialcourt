@@ -21,13 +21,13 @@ resources:
   - repo: self
 
 variables:
-  webAppName: 'jcc-trialcourt-prod'
-  dockerRegistryServiceConnection: '04632e1a-759c-4263-b8b4-61cc1ded4d4e'
+  webAppName: 'trialcourt'
+  dockerRegistryServiceConnection: '0ebbc684-736e-4657-a1bb-6644fda66a81'
   imageRepository: 'build/$(webAppName)'
-  containerRegistry: 'jccwebservicesregistry.azurecr.io'
+  containerRegistry: 'devopswebcourtsnp.azurecr.io'
   dockerfilePath: '$(Build.SourcesDirectory)/Dockerfile'
   tag: '$(Build.SourceBranchName)-$(Build.SourceVersion)-build_$(Build.BuildId)'
-  phpVersion: 7.3.15
+  phpVersion: 7.4
 
   # Agent VM image name
   vmImageName: 'ubuntu-latest'
