@@ -94,7 +94,7 @@ stages:
   - stage: Deploy
     displayName: Deploy
     dependsOn: Build
-    condition: succeeded('Test')
+    condition: succeeded('Build')
     jobs:
       - job: Deploy
         displayName: Deploy to App Service
