@@ -101,18 +101,6 @@ stages:
         pool:
           vmImage: $(vmImageName)
         steps:
-          # - task: AzureRmWebAppDeployment@4
-          #   inputs:
-          #     ConnectionType: 'AzureRM'
-          #     azureSubscription: 'DevOps Web Service Non-Prod'
-          #     appType: 'webAppContainer'
-          #     WebAppName: 'SUP-DEV01'
-          #     deployToSlotOrASE: true
-          #     ResourceGroupName: 'jcc-webcourts-np-rg-apps'
-          #     SlotName: 'stage'
-          #     DockerNamespace: '$(containerRegistry)'
-          #     DockerRepository: '$(imageRepository)'
-          #     DockerImageTag: '$(tag)'
           - task: AzureWebAppContainer@1
             inputs:
               azureSubscription: 'DevOps Web Service Non-Prod'
@@ -120,4 +108,5 @@ stages:
               deployToSlotOrASE: true
               resourceGroupName: 'jcc-webcourts-np-rg-apps'
               slotName: 'stage'
-              containers: '$(imageRepository)/$(tag)'
+              containers: '$(containerRegistry)/$(imageRepository)/$(tag)'
+          
