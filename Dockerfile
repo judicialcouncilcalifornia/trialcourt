@@ -15,6 +15,8 @@ RUN rm -rf repobuild
 
 WORKDIR ${DRUPAL_BUILD}
 RUN composer install
+RUN scripts/theme.sh -i jcc_base
+RUN scripts/theme.sh -b jcc_base
 RUN scripts/theme.sh -i jcc_deprep
 RUN scripts/theme.sh -b jcc_deprep
 RUN scripts/theme.sh -i jcc_newsroom
