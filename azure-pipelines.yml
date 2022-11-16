@@ -51,9 +51,17 @@ stages:
             displayName: 'Use PHP version $(phpVersion)'
           - script: composer install --no-interaction --prefer-dist
             displayName: 'Composer install'
+      - job: BuildBaseTheme
+        displayName: Build base theme
+        dependsOn: Compile
+        steps:
+          - script: |
+              scripts/theme.sh -i jcc_base
+              scripts/theme.sh -b jcc_base
+            displayName: 'Build subtheme'
       - job: BuildNewsroomTheme
         displayName: Build newsroom theme
-        dependsOn: Compile
+        dependsOn: BuildBaseTheme
         steps:
           - script: |
               scripts/theme.sh -i jcc_newsroom
@@ -61,7 +69,7 @@ stages:
             displayName: 'Build subtheme'
       - job: BuildJCartTheme
         displayName: Build jcart theme
-        dependsOn: Compile
+        dependsOn: BuildBaseTheme
         steps:
           - script: |
               scripts/theme.sh -i jcc_deprep
