@@ -97,3 +97,25 @@ stages:
               repository: $(imageRepository)
               tags: |
                 $(tag)
+  - stage: Deploy
+    displayName: Deploy to App Services
+    dependsOn: Build
+    condition: succeeded('Test')
+    jobs:
+      - job: Deploy
+        displayName: Deploy to App Service
+        pool:
+          vmImage: $(vmImageName)
+        steps:
+          - task: AzureRmWebAppDeployment@4
+            inputs:
+              ConnectionType: 'AzureRM'
+              azureSubscription: 'DevOps Web Service Non-Prod'
+              appType: 'webAppContainer'
+              WebAppName: 'SUP-DEV01'
+              deployToSlotOrASE: true
+              ResourceGroupName: 'jcc-webcourts-np-rg-apps'
+              SlotName: 'stage'
+              DockerNamespace: '$(containerRegistry)'
+              DockerRepository: '$(imageRepository)'
+              DockerImageTag: '$(tag)'
