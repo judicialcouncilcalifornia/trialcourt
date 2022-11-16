@@ -51,8 +51,14 @@ stages:
             displayName: 'Use PHP version $(phpVersion)'
           - script: composer install --no-interaction --prefer-dist
             displayName: 'Composer install'
-          - script: scripts/theme.sh -a
-            displayName: 'Build subtheme'
+          - script: |
+              scripts/theme.sh -i jcc_base
+              scripts/theme.sh -b jcc_base
+              scripts/theme.sh -i jcc_newsroom
+              scripts/theme.sh -b jcc_newsroom
+              scripts/theme.sh -i jcc_deprep
+              scripts/theme.sh -b jcc_deprep
+            displayName: 'Build all subthemes'
       - job: Analyze
         displayName: Analyze code
         pool:
