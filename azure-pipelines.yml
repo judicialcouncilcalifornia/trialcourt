@@ -26,7 +26,7 @@ variables:
   imageRepository: 'build/$(webAppName)'
   containerRegistry: 'devopswebcourtsnp.azurecr.io'
   dockerfilePath: '$(Build.SourcesDirectory)/Dockerfile'
-  tag: '$(Build.SourceBranchName)-$(Build.SourceVersion)-build_$(Build.BuildId)'
+  tag: 'build_$(Build.BuildId)-$(Build.SourceBranchName)-$(Build.SourceVersion)'
   phpVersion: 7.4
 
   # Agent VM image name
@@ -108,5 +108,5 @@ stages:
               deployToSlotOrASE: true
               resourceGroupName: 'jcc-webcourts-np-rg-apps'
               slotName: 'stage'
-              containers: '$(containerRegistry)/$(imageRepository)/$(tag)'
+              containers: '$(containerRegistry)/$(imageRepository):$(tag)'
           
