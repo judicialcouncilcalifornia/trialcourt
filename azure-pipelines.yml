@@ -51,6 +51,8 @@ stages:
             displayName: 'Use PHP version $(phpVersion)'
           - script: composer install --no-interaction --prefer-dist
             displayName: 'Composer install'
+          - script: scripts/theme.sh -a
+            displayName: 'Build subtheme'
       - job: Analyze
         displayName: Analyze code
         pool:
@@ -62,22 +64,6 @@ stages:
             displayName: 'Check coding standards'
           - script: composer -n unit-test
             displayName: 'Run unit tests'
-      - job: BuildNewsroomTheme
-        displayName: Build newsroom theme
-        dependsOn: Compile
-        steps:
-          - script: |
-              scripts/theme.sh -i newsroom
-              scripts/theme.sh -b newsroom
-            displayName: 'Build subtheme'
-      - job: BuildJCartTheme
-        displayName: Build jcart theme
-        dependsOn: Compile
-        steps:
-          - script: |
-              scripts/theme.sh -i deprep
-              scripts/theme.sh -b deprep
-            displayName: 'Build subtheme'
 
   - stage: Build
     displayName: Build
