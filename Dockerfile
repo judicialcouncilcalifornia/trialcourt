@@ -1,4 +1,4 @@
-FROM devopswebcourtsnp.azurecr.io/drupal-nginx-fpm:1.4
+FROM devopswebcourtsnp.azurecr.io/drupal-nginx-fpm:1.5
 
 ARG GIT_REPO="https://github.com/judicialcouncilcalifornia/trialcourt.git"
 ENV GIT_REPO=$GIT_REPO
