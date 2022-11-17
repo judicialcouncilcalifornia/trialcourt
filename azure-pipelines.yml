@@ -18,10 +18,10 @@ resources:
 variables:
   webAppName: 'trialcourt'
   dockerRegistryServiceConnection: '3f015a0b-e8e0-41a5-887c-d04efab1abd1'
-  imageRepository: 'build/$(webAppName)'
+  imageRepository: 'build/$(webAppName)/$(Build.SourceBranchName)'
   containerRegistry: 'devopswebcourtsnp.azurecr.io'
   dockerfilePath: '$(Build.SourcesDirectory)/Dockerfile'
-  tag: 'build_$(Build.BuildId)-$(Build.SourceBranchName)-$(Build.SourceVersion)'
+  tag: 'build_$(Build.BuildId)-$(Build.SourceVersion)'
   phpVersion: 7.4
   ${{ if eq(variables['Build.SourceBranchName'], 'master') }}:
     deploymentSlot: 'stage'
