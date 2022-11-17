@@ -28,6 +28,11 @@ variables:
   dockerfilePath: '$(Build.SourcesDirectory)/Dockerfile'
   tag: 'build_$(Build.BuildId)-$(Build.SourceBranchName)-$(Build.SourceVersion)'
   phpVersion: 7.4
+  ${{ if eq(variables['Build.SourceBranchName'], 'master') }}:
+    deploymentSlot: 'stage'
+  ${{ else }}:
+    deploymentSlot: '$(Build.SourceBranchName)'
+   
 
   # Agent VM image name
   vmImageName: 'ubuntu-latest'
@@ -82,7 +87,7 @@ stages:
               dockerfile: $(dockerfilePath)
               tags: |
                 $(tag)
-              arguments: --label buildtype=nightly
+              arguments: --label buildtype=nightly --build-arg GIT_REPO=$(Build.SourceBranchName)
           - task: Docker@2
             displayName: Push to registry
             inputs:
@@ -107,6 +112,6 @@ stages:
               appName: 'SUP-DEV01'
               deployToSlotOrASE: true
               resourceGroupName: 'jcc-webcourts-np-rg-apps'
-              slotName: 'stage'
+              slotName: $(deploymentSlot)
               containers: '$(containerRegistry)/$(imageRepository):$(tag)'
           
