@@ -12,11 +12,6 @@ trigger:
   - stage
   - master
 
-pr:
-  - develop
-  - stage
-  - master
-
 resources:
   - repo: self
 
