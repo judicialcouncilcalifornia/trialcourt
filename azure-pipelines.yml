@@ -20,7 +20,7 @@ variables:
   dockerRegistryServiceConnection: '3f015a0b-e8e0-41a5-887c-d04efab1abd1'
   imageRepository: 'build/$(webAppName)/$(Build.SourceBranchName)'
   containerRegistry: 'devopswebcourtsnp.azurecr.io'
-  dockerfilePath: '$(Build.SourcesDirectory)/Dockerfile'
+  dockerfilePath: '$(Build.SourcesDirectory)/.devops/drupal-nginx-fpm/Dockerfile'
   tag: 'build_$(Build.BuildId)-$(Build.SourceVersion)'
   phpVersion: 7.4
   ${{ if eq(variables['Build.SourceBranchName'], 'master') }}:
