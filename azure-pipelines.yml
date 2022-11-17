@@ -81,6 +81,7 @@ stages:
               repository: $(imageRepository)
               dockerfile: $(dockerfilePath)
               tags: |
+                latest
                 $(tag)
               arguments: --label buildtype=nightly --build-arg GIT_BRANCH=$(Build.SourceBranchName)
           - task: Docker@2
@@ -90,6 +91,7 @@ stages:
               containerRegistry: $(dockerRegistryServiceConnection)
               repository: $(imageRepository)
               tags: |
+                latest
                 $(tag)
   - stage: Deploy
     displayName: Deploy
