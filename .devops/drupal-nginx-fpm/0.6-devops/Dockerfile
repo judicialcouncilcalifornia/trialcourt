@@ -42,16 +42,16 @@ RUN set -ex \
 # ----------
 	&& apk upgrade \
 	&& rm -rf /var/cache/apk/* \
-	&& rm -rf /etc/nginx/conf.d/default.conf \
+	&& rm -rf /etc/nginx/conf.d/default.conf
 
 # =========
 # Build source
 # =========
-  && echo ${GIT_BRANCH} \
+RUN set -ex \
   && git clone ${GIT_REPO} --branch ${GIT_BRANCH} ${DRUPAL_BUILD} \
   && rm -rf ${DRUPAL_BUILD}/.git \
   && cd ${DRUPAL_BUILD} \
-  && composer install --no-interaction --prefer-dist \
+  && composer install --no-dev --no-interaction --optimize-autoloader \
   && scripts/theme.sh -i jcc_base && scripts/theme.sh -b jcc_base \
   && scripts/theme.sh -i jcc_deprep && scripts/theme.sh -b jcc_deprep \
   && scripts/theme.sh -i jcc_newsroom && scripts/theme.sh -b jcc_newsroom

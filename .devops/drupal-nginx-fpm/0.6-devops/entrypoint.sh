@@ -8,18 +8,18 @@ php -v
 setup_drupal(){
   while test -d "$DRUPAL_PRJ"
   do
-    echo "INFO: $DRUPAL_PRJ is exist, clean it ..."
+    echo "INFO: $DRUPAL_PRJ exists, clean it ..."
     # mv is faster than rm.
     mv $DRUPAL_PRJ /tmp/drupal_prj_bak$(date +%s)
   done
 
-  test ! -d "$DRUPAL_PRJ" && echo "INFO: $DRUPAL_PRJ not found. creating..." && mkdir -p "$DRUPAL_PRJ"
+  test ! -d "$DRUPAL_PRJ" && echo "INFO: $DRUPAL_PRJ not found. Creating..." && mkdir -p "$DRUPAL_PRJ"
 	cd $DRUPAL_PRJ
 
-  if [ -d "$DRUPAL_BUILD" ]
+  if [ "$(ls -A $DRUPAL_BUILD)" ]
   then
     echo "Copying files from $DRUPAL_BUILD to $DRUPAL_PRJ"
-    mv $DRUPAL_BUILD/* $DRUPAL_PRJ/
+    cp -R $DRUPAL_BUILD/* $DRUPAL_PRJ/
   else
     	echo "INFO: ++++++++++++++++++++++++++++++++++++++++++++++++++:"
     	echo "REPO: "$GIT_REPO
@@ -30,7 +30,7 @@ setup_drupal(){
       git clone ${GIT_REPO} --branch ${GIT_BRANCH} $DRUPAL_PRJ	&& cd $DRUPAL_PRJ
       rm -rf $DRUPAL_PRJ/.git
 
-      composer install
+      composer install --no-interaction --prefer-dist
       scripts/theme.sh -i jcc_base && scripts/theme.sh -b jcc_base
       scripts/theme.sh -i jcc_deprep && scripts/theme.sh -b jcc_deprep
       scripts/theme.sh -i jcc_newsroom && scripts/theme.sh -b jcc_newsroom
@@ -53,7 +53,7 @@ setup_drupal(){
 
   while test -d "$DRUPAL_HOME"
   do
-      echo "INFO: $DRUPAL_HOME is exist, clean it ..."
+      echo "INFO: $DRUPAL_HOME exists. Clean it ..."
       chmod 777 -R $DRUPAL_HOME
       rm -Rf $DRUPAL_HOME
   done
@@ -65,7 +65,7 @@ setup_drupal(){
     test ! -d "$DRUPAL_STORAGE/files" && mkdir -p "$DRUPAL_STORAGE/files"
     ln -s $DRUPAL_STORAGE/files $DRUPAL_PRJ/web/sites/default/files
   else
-      echo "Error: Directory $DRUPAL_STORAGE is not mounted."
+      echo "ERROR: Directory $DRUPAL_STORAGE is not mounted."
   fi
 }
 
@@ -73,9 +73,9 @@ echo "Setup openrc ..." && openrc && touch /run/openrc/softlevel
 
 # setup Drupal
 if [ -e "$DRUPAL_HOME/web/sites/default/settings.php" ] || [ "$RESET_INSTANCE" == "true" ];then
-# Site is exist.
+# Site exists.
     if [ -d "$DRUPAL_PRJ" ]; then
-        echo "INFO: $DRUPAL_PRJ is exist..."
+        echo "INFO: $DRUPAL_PRJ exists..."
         echo "INFO: Site is Ready..."
     else
         echo "Installing Drupal ..."

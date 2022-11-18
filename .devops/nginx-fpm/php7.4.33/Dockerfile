@@ -26,7 +26,7 @@ ENV SUPERVISOR_LOG_DIR "/home/LogFiles/supervisor"
 # --------
 RUN set -ex \
     && apk update \
-    && apk add --no-cache openssl git net-tools tcpdump tcptraceroute vim curl wget bash\
+    && apk add --no-cache openssl git net-tools tcpdump tcptraceroute vim curl wget bash patch\
 	&& cd /usr/bin \
 	&& wget http://www.vdberg.org/~richard/tcpping \
 	&& chmod 777 tcpping \

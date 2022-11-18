@@ -26,6 +26,7 @@ ENV PHP_CONF_FILE "/usr/local/etc/php/php.ini"
 # Composer
 # Updation: https://getcomposer.org/download/
 ENV COMPOSER_DOWNLOAD_URL "https://getcomposer.org/installer"
+ENV COMPOSER_VERSION "2.4.2"
 # ====================
 # Download and Install
 # ~. essentials
@@ -73,7 +74,7 @@ RUN set -ex \
 # ----------
 # 2. composer
 # ----------
-	&& curl -sS $COMPOSER_DOWNLOAD_URL | php -- --install-dir=/usr/bin --filename=composer \
+	&& curl -sS $COMPOSER_DOWNLOAD_URL | php -- --install-dir=/usr/bin --filename=composer --version=$COMPOSER_VERSION \
 	&& composer self-update \
 # ----------
 # 3. drush
@@ -91,6 +92,10 @@ RUN set -ex \
     && apk add --no-cache varnish\
     && rm -rf /var/log/varnish \
 	&& ln -s $VARNISH_LOG_DIR /var/log/varnish \
+# ----------
+# 5. Node
+# ----------
+    && apk add --update nodejs npm \
 # ----------
 # ~. clean up
 # ----------
