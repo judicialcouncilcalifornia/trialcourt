@@ -407,7 +407,6 @@
         },
         "patches": {
             "drupal/core": {
-                "Don't override media title with metadata on translation save.": "https://www.drupal.org/files/issues/2019-04-25/media-translation_hassourcefieldchanged-2999370-11.patch",
                 "Dynamically provide action plugins for content moderation": "https://www.drupal.org/files/issues/2020-01-25/2797583-149.patch",
                 "Content moderation state entity query support": "https://www.drupal.org/files/issues/2020-09-25/3025164-28.patch",
                 "Add Mayan and Tigrinya language support": "patches/add-mayan-tigrinya-languages-02.patch",
