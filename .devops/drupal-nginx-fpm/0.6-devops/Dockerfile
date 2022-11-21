@@ -1,6 +1,6 @@
 FROM devopswebcourtsnp.azurecr.io/source/drupal-nginx-fpm:0.6
-MAINTAINER Azure App Service Container Images <appsvc-images@microsoft.com>
-MAINTAINER Ivan Bueno <ivan.bueno@jud.ca.gov>
+LABEL maintainer="Azure App Service Container Images <appsvc-images@microsoft.com>"
+LABEL maintainer="Ivan Bueno <ivan.bueno@jud.ca.gov>"
 # ========
 # ENV vars
 # ========

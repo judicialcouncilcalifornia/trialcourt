@@ -1,6 +1,6 @@
-FROM php:7.4.33-zts-alpine3.16
-MAINTAINER Azure App Service Container Images <appsvc-images@microsoft.com>
-MAINTAINER Ivan Bueno <ivan.bueno@jud.ca.gov>
+FROM php:7.4.33-fpm-alpine3.16
+LABEL maintainer="Azure App Service Container Images <appsvc-images@microsoft.com>"
+LABEL maintainer="Ivan Bueno <ivan.bueno@jud.ca.gov>"
 # ========
 # ENV vars
 # ========
