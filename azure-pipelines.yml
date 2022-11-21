@@ -18,16 +18,16 @@ resources:
 variables:
   webAppName: 'trialcourt'
   dockerRegistryServiceConnection: '3f015a0b-e8e0-41a5-887c-d04efab1abd1'
-  imageRepository: 'build/$(webAppName)'
+  imageRepository: 'build/$(webAppName)/$(Build.SourceBranchName)'
   containerRegistry: 'devopswebcourtsnp.azurecr.io'
-  dockerfilePath: '$(Build.SourcesDirectory)/Dockerfile'
-  tag: 'build_$(Build.BuildId)-$(Build.SourceBranchName)-$(Build.SourceVersion)'
+  dockerfilePath: '$(Build.SourcesDirectory)/.devops/drupal-nginx-fpm/0.6-devops/Dockerfile'
+  tag: 'build_$(Build.BuildId)-$(Build.SourceVersion)'
   phpVersion: 7.4
   ${{ if eq(variables['Build.SourceBranchName'], 'master') }}:
     deploymentSlot: 'stage'
   ${{ else }}:
     deploymentSlot: '$(Build.SourceBranchName)'
-   
+
 
   # Agent VM image name
   vmImageName: 'ubuntu-latest'
@@ -81,6 +81,7 @@ stages:
               repository: $(imageRepository)
               dockerfile: $(dockerfilePath)
               tags: |
+                latest
                 $(tag)
               arguments: --label buildtype=nightly --build-arg GIT_BRANCH=$(Build.SourceBranchName)
           - task: Docker@2
@@ -90,6 +91,7 @@ stages:
               containerRegistry: $(dockerRegistryServiceConnection)
               repository: $(imageRepository)
               tags: |
+                latest
                 $(tag)
   - stage: Deploy
     displayName: Deploy
@@ -109,4 +111,3 @@ stages:
               resourceGroupName: 'jcc-webcourts-np-rg-apps'
               slotName: $(deploymentSlot)
               containers: '$(containerRegistry)/$(imageRepository):$(tag)'
-          
