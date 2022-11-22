@@ -130,7 +130,6 @@ stages:
           - task: AzureWebAppContainer@1
             inputs:
               azureSubscription: 'DevOps Web Service Non-Prod'
-              appName: 'SUP-DEV01'
-              deployToSlotOrASE: true
-              resourceGroupName: 'jcc-webcourts-np-rg-apps'
+              appName: 'nprd-ctcms-ct1-app'
+              resourceGroupName: 'nprd-ctcms-df1-app-rg'
               containers: '$(containerRegistry)/build/trialcourt/master:latest'
