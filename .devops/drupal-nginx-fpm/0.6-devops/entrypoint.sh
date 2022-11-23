@@ -58,6 +58,7 @@ setup_drupal(){
   chmod a+w "$DRUPAL_PRJ/web/sites/default"
   if [ -d "$DRUPAL_STORAGE" ]
   then
+    rm -rf $DRUPAL_PRJ/web/sites/default/files
     ln -s $DRUPAL_STORAGE $DRUPAL_PRJ/web/sites/default/files
   else
       echo "ERROR: Directory $DRUPAL_STORAGE is not mounted."
