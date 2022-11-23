@@ -36,11 +36,6 @@ setup_drupal(){
       scripts/theme.sh -i jcc_newsroom && scripts/theme.sh -b jcc_newsroom
   fi
 
-
-  test ! -d "$DRUPAL_PRJ/web/sites/default/files" && mkdir -p "$DRUPAL_PRJ/web/sites/default/files"
-  chmod a+w "$DRUPAL_PRJ/web/sites/default"
-  chmod a+w "$DRUPAL_PRJ/web/sites/default/files"
-
   # Tell code to use Azure Settings for all sites
   find $DRUPAL_PRJ/web/sites -maxdepth 1 -mindepth 1 -type d | while read dir; do
     SITE_ID=$(basename $dir)
@@ -60,6 +55,7 @@ setup_drupal(){
   ln -s $DRUPAL_PRJ/web $DRUPAL_HOME
 
   # Persist drupal/sites
+  chmod a+w "$DRUPAL_PRJ/web/sites/default"
   if [ -d "$DRUPAL_STORAGE" ]
   then
     ln -s $DRUPAL_STORAGE $DRUPAL_PRJ/web/sites/default/files
