@@ -85,6 +85,10 @@ RUN set -ex \
 # ------
     && apk add --no-cache openssh-server \
     && echo "$SSH_PASSWD" | chpasswd \
+# ------
+# tools
+# ------ \
+    && apk add --no-cache mysql-client \
 #---------------
 # openrc service
 #---------------

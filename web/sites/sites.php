@@ -5,6 +5,20 @@
  * Sites routing map.
  */
 
+// Dynamically handle Azure Site mapping.
+if (isset($_ENV['SITE_MAP_DOMAINS'])
+  && !empty($_ENV['SITE_MAP_DOMAINS'])
+  && isset($_ENV['SITE_MAP_ID'])
+  && !empty($_ENV['SITE_MAP_ID'])
+  ) {
+
+  $map_domains = explode(" ", $_ENV['SITE_MAP_DOMAINS']);
+  foreach ($map_domains as $domain) {
+    $sites[$domain] = $_ENV['SITE_MAP_ID'];
+  }
+
+}
+
 // Dynamically match sites directory to current host.
 $dirs = preg_grep('/^([^.])/', scandir('sites/'));
 foreach ($dirs as $dir) {

@@ -62,8 +62,7 @@ setup_drupal(){
   # Persist drupal/sites
   if [ -d "$DRUPAL_STORAGE" ]
   then
-    test ! -d "$DRUPAL_STORAGE/files" && mkdir -p "$DRUPAL_STORAGE/files"
-    ln -s $DRUPAL_STORAGE/files $DRUPAL_PRJ/web/sites/default/files
+    ln -s $DRUPAL_STORAGE $DRUPAL_PRJ/web/sites/default/files
   else
       echo "ERROR: Directory $DRUPAL_STORAGE is not mounted."
   fi
@@ -111,6 +110,9 @@ test -e /run/php/php-fpm.sock && rm -f /run/php/php-fpm.sock
 mkdir -p /run/php && touch /run/php/php-fpm.sock && chown nginx:nginx /run/php/php-fpm.sock && chmod 777 /run/php/php-fpm.sock
 
 sed -i "s/SSH_PORT/$SSH_PORT/g" /etc/ssh/sshd_config
+
+# Get environment variables to show up in SSH session
+eval $(printenv | awk -F= '{print "export " "\""$1"\"""=""\""$2"\"" }' >> /etc/profile)
 
 echo "Starting SSH ..."
 echo "Starting php-fpm ..."
