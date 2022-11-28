@@ -15,7 +15,7 @@ trigger:
 resources:
   - repo: self
 
-name: $(Year:YY)$(DayOfYear)$(Rev:.r)
+name: $(Build.BuildId)
 
 variables:
   dockerRegistryServiceConnection: '3f015a0b-e8e0-41a5-887c-d04efab1abd1'
@@ -124,7 +124,7 @@ stages:
               csmFile: '$(templateFile)'
               #overrideParameters: '-storageAccountType Standard_LRS'
               deploymentMode: 'Incremental'
-              deploymentName: 'DeployPipelineTemplate-$(Build.DefinitionName)'
+              deploymentName: 'DeployPipelineTemplate-$(Build.BuildId)'
 
 # Read a manifest file
   # alameda = site1
