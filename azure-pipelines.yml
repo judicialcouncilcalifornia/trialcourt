@@ -26,6 +26,7 @@ variables:
   phpVersion: 7.4
   location: 'West US 3'
   templateFile: './.devops/app-service.bicep'
+  sites: {}
 
   #TODO: inside foreach
   resourceGroupName: 'nprd-ctcms-df1-app-rg'
@@ -51,7 +52,16 @@ stages:
          steps:
            - script: |
                SITES=$( jq -r  '.sites' ./manifest.json )
-               echo "${SITES}"
+               echo "##vso[task.setvariable variable=sites;]${SITES}"
+
+       - job: PrintSites
+         displayName: Print sites variable
+         pool:
+           vmImage: $(vmImageName)
+         steps:
+           - script: |
+               echo $(sites)
+
 
  #  - ${{ each webApp in parameters.webApps }}:
  #    - task: AzureRmWebAppDeployment@4
