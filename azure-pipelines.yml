@@ -150,8 +150,8 @@ stages:
 
   - stage: Deploy
     displayName: Deploy
-    dependsOn: Build
-    condition: succeeded('Build')
+    dependsOn: Infrastructure
+    condition: succeeded('Infrastructure')
     jobs:
       - job: Deploy
         displayName: Deploy to App Service
