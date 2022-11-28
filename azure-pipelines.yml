@@ -50,7 +50,19 @@ stages:
            vmImage: $(vmImageName)
          steps:
            - script: |
-               echo jq .sites ./manifest.json
+               SITES = $(jq .sites ./manifest.json)
+               echo "${SITES}"
+
+ #  - ${{ each webApp in parameters.webApps }}:
+ #    - task: AzureRmWebAppDeployment@4
+ #      inputs:
+ #        ConnectionType: 'AzureRM'
+ #        azureSubscription: 'Azure-VSE-Subscription'
+ #        appType: 'webAppContainer'
+ #        WebAppName: '${{ webApp }}'
+ #        DockerNamespace: 'registrynamespace'
+ #        DockerRepository: 'image'
+ #        DockerImageTag: 'latest'
 
 
 #  - stage: Test
