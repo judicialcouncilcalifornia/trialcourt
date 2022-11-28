@@ -4,7 +4,7 @@
   '3'
 ])
 param deploymentFarm string = '1'
-param siteId string = '004'
+param siteId string = '005'
 
 @allowed([
   'nprd'
@@ -19,6 +19,9 @@ var webServerfarm = '${environment}-ctcms-df${deploymentFarm}-asp'
 var resourceGroup2 = 'nprd-ctcms-df1-net-rg'
 var virtualNetwork1 = 'nprd-ctcms-df1-vnet'
 var subnet1 = 'df1-asp-sn'
+
+var networkPrivateEndpoint3_var = 'nprd-ctcms-ct1-app-pe'
+var resourceGroup3 = 'nprd-ctcms-df1-app-rg'
 
 var cDNProfileFrontDoor1 = 'nprd-ctcms-fd'
 var cDNProfileFrontDoorOriginGroup1 = 'df1-ct1-fd-orggrp'
@@ -59,6 +62,27 @@ resource appService1_appServiceConfigRegionalVirtualNetworkIntegration1 'Microso
   name: 'appsettings'
   properties: {
     subnetResourceId: resourceId(resourceGroup2, 'Microsoft.Network/virtualNetworks/subnets', virtualNetwork1, subnet1)
+  }
+}
+
+resource networkPrivateEndpoint3 'Microsoft.Network/privateEndpoints@2020-11-01' = {
+  name: networkPrivateEndpoint3_var
+  location: resourceGroup().location
+  properties: {
+    subnet: {
+      id: resourceId('Microsoft.Network/virtualNetworks/subnets', virtualNetwork1, subnet1)
+    }
+    privateLinkServiceConnections: [
+      {
+        properties: {
+          privateLinkServiceId: resourceId(resourceGroup3, 'Microsoft.Web/sites', appService_var)
+          groupIds: [
+            'sites'
+          ]
+        }
+        name: 'nprd-ctcms-ct1-app-pe'
+      }
+    ]
   }
 }
 
