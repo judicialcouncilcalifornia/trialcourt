@@ -4,13 +4,14 @@
 # https://aka.ms/yaml
 
 trigger:
-- master
+- none
 
 variables:
   azureServiceConnection: 'DevOps Web Service Non-Prod'
   resourceGroupName: 'nprd-ctcms-df1-app-rg'
   location: 'West US 3'
   templateFile: './.devops/app-service.bicep'
+  timestamp: $(Get-Date -Format yyyyMMddhhmmss)
 
 pool:
   vmImage: ubuntu-latest
@@ -27,4 +28,4 @@ steps:
     csmFile: '$(templateFile)'
     #overrideParameters: '-storageAccountType Standard_LRS'
     deploymentMode: 'Incremental'
-    deploymentName: 'DeployPipelineTemplate-006'
+    deploymentName: 'DeployPipelineTemplate-$(timestamp)'

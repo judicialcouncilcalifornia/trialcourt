@@ -1,0 +1,42 @@
+
+trigger:
+  - none
+
+resources:
+  - repo: self
+
+variables:
+  webAppName: 'trialcourt'
+  dockerRegistryServiceConnection: '3f015a0b-e8e0-41a5-887c-d04efab1abd1'
+  imageRepository: 'build/$(webAppName)/$(Build.SourceBranchName)'
+  containerRegistry: 'devopswebcourtsnp.azurecr.io'
+  dockerfilePath: '$(Build.SourcesDirectory)/.devops/drupal-nginx-fpm/0.6-devops/Dockerfile'
+  tag: 'build_$(Build.BuildId)-$(Build.SourceVersion)'
+  phpVersion: 7.4
+  ${{ if eq(variables['Build.SourceBranchName'], 'master') }}:
+    deploymentSlot: 'stage'
+  ${{ else }}:
+    deploymentSlot: '$(Build.SourceBranchName)'
+
+
+  # Agent VM image name
+  vmImageName: 'ubuntu-latest'
+
+stages:
+
+    - stage: Deploy
+      displayName: Deploy
+      dependsOn: Build
+      condition: succeeded('Build')
+      jobs:
+        - job: Deploy
+          displayName: Deploy to App Service
+          pool:
+            vmImage: $(vmImageName)
+          steps:
+            - task: AzureWebAppContainer@1
+              inputs:
+                azureSubscription: 'DevOps Web Service Non-Prod'
+                appName: 'nprd-ctcms-ct1-app'
+                resourceGroupName: 'nprd-ctcms-df1-app-rg'
+                containers: '$(containerRegistry)/build/trialcourt/master:latest'

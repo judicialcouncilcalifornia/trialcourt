@@ -16,18 +16,25 @@ resources:
   - repo: self
 
 variables:
-  webAppName: 'trialcourt'
   dockerRegistryServiceConnection: '3f015a0b-e8e0-41a5-887c-d04efab1abd1'
-  imageRepository: 'build/$(webAppName)/$(Build.SourceBranchName)'
+  imageRepository: 'build/trialcourt/$(Build.SourceBranchName)'
   containerRegistry: 'devopswebcourtsnp.azurecr.io'
   dockerfilePath: '$(Build.SourcesDirectory)/.devops/drupal-nginx-fpm/0.6-devops/Dockerfile'
   tag: 'build_$(Build.BuildId)-$(Build.SourceVersion)'
   phpVersion: 7.4
-  ${{ if eq(variables['Build.SourceBranchName'], 'master') }}:
-    deploymentSlot: 'stage'
-  ${{ else }}:
-    deploymentSlot: '$(Build.SourceBranchName)'
+  location: 'West US 3'
+  templateFile: './.devops/app-service.bicep'
+  timestamp: $(Get-Date -Format yyyyMMddhhmmss)
 
+  #TODO: inside foreach
+  resourceGroupName: 'nprd-ctcms-df1-app-rg'
+
+  ${{ if eq(variables['Build.SourceBranchName'], 'master') }}:
+    deploymentSlot: 'production'
+    azureServiceConnection: 'DevOps Web Service Non-Prod'
+  ${{ else }}:
+    deploymentSlot: 'production'
+    azureServiceConnection: 'TODO'
 
   # Agent VM image name
   vmImageName: 'ubuntu-latest'
@@ -94,6 +101,30 @@ stages:
                 latest
                 $(tag)
 
+
+  - stage: Infrastructure
+    displayName: Infrastructure
+    dependsOn: Build
+    condition: succeeded('Build')
+    jobs:
+      - job: Provision
+        displayName: Provision App Service
+        pool:
+          vmImage: $(vmImageName)
+        steps:
+          - task: AzureResourceManagerTemplateDeployment@3
+            inputs:
+              deploymentScope: 'Resource Group'
+              azureResourceManagerConnection: '$(azureServiceConnection)'
+              action: 'Create Or Update Resource Group'
+              resourceGroupName: '$(resourceGroupName)'
+              location: '$(location)'
+              templateLocation: 'Linked artifact'
+              csmFile: '$(templateFile)'
+              #overrideParameters: '-storageAccountType Standard_LRS'
+              deploymentMode: 'Incremental'
+              deploymentName: 'DeployPipelineTemplate-$(timestamp)'
+
 # Read a manifest file
   # alameda = site1
   # sf = site2
@@ -106,8 +137,8 @@ stages:
    # backup the database of the site
    # backup the storage file of the site
 
-   # Run Bicep 
-    # (waiting on Kyle for template / 
+   # Run Bicep
+    # (waiting on Kyle for template /
     # waiting @Glen on sample code)
    # if app service exists
       # deploy
@@ -130,6 +161,6 @@ stages:
           - task: AzureWebAppContainer@1
             inputs:
               azureSubscription: 'DevOps Web Service Non-Prod'
-              appName: 'nprd-ctcms-ct1-app'
+              appName: 'nprd-ctcms-ct007-app'
               resourceGroupName: 'nprd-ctcms-df1-app-rg'
               containers: '$(containerRegistry)/build/trialcourt/master:latest'

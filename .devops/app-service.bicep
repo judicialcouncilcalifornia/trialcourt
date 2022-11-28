@@ -4,7 +4,7 @@
   '3'
 ])
 param deploymentFarm string = '1'
-param siteId string = '006'
+param siteId string = '007'
 
 @allowed([
   'nprd'
@@ -43,7 +43,7 @@ resource appService1 'Microsoft.Web/sites@2020-12-01' = {
     siteConfig: {
       alwaysOn: true
       appSettings: []
-      linuxFxVersion: 'DOCKER|devopswebcourtsnp.azurecr.io/build/trialcourt/master:latest'
+      linuxFxVersion: 'DOCKER|mcr.microsoft.com/appsvc/staticsite:latest'
       connectionStrings: []
       defaultDocuments: []
       ftpsState: 'FtpsOnly'
@@ -57,6 +57,10 @@ resource appService1 'Microsoft.Web/sites@2020-12-01' = {
   }
 }
 
+
+
+
+/*
 resource appService1_appServiceConfigRegionalVirtualNetworkIntegration1 'Microsoft.Web/sites/config@2018-11-01' = {
   parent: appService1
   name: 'appsettings'
@@ -112,3 +116,4 @@ resource cDNProfileFrontDoor1_cDNProfileFrontDoorOriginGroup1_cDNProfileFrontDoo
     appService1
   ]
 }
+*/
