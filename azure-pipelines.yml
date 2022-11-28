@@ -44,13 +44,13 @@ stages:
    - stage: Manifest
      displayName: Manifest
      jobs:
-       - job: InstallJQ
-         displayName: Install JQ
+       - job: ReadManifest
+         displayName: Read Manifest File
          pool:
            vmImage: $(vmImageName)
          steps:
            - script: |
-               sudo apt-get -y install jq
+               echo jq .sites ./manifest.json
 
 
 #  - stage: Test
