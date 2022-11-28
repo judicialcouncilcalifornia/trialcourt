@@ -17,8 +17,8 @@ var appService_var = '${environment}-ctcms-ct${siteId}-app'
 var webServerfarm = '${environment}-ctcms-df${deploymentFarm}-asp'
 
 var resourceGroup2 = 'nprd-ctcms-df1-net-rg'
-#var virtualNetwork1 = 'nprd-ctcms-df1-vnet'
-#var subnet1 = 'df1-asp-sn'
+// var virtualNetwork1 = 'nprd-ctcms-df1-vnet'
+// var subnet1 = 'df1-asp-sn'
 
 var cDNProfileFrontDoor1 = 'nprd-ctcms-fd'
 var cDNProfileFrontDoorOriginGroup1 = 'df1-ct1-fd-orggrp'
@@ -54,13 +54,13 @@ resource appService1 'Microsoft.Web/sites@2020-12-01' = {
   }
 }
 
-#resource appService1_appServiceConfigRegionalVirtualNetworkIntegration1 'Microsoft.Web/sites/config@2018-11-01' = {
-#  parent: appService1
-#  name: 'appsettings'
-#  properties: {
-#    subnetResourceId: resourceId(resourceGroup2, 'Microsoft.Network/virtualNetworks/subnets', virtualNetwork1, subnet1)
-#  }
-#}
+// resource appService1_appServiceConfigRegionalVirtualNetworkIntegration1 'Microsoft.Web/sites/config@2018-11-01' = {
+//  parent: appService1
+//  name: 'appsettings'
+//  properties: {
+//    subnetResourceId: resourceId(resourceGroup2, 'Microsoft.Network/virtualNetworks/subnets', virtualNetwork1, subnet1)
+//  }
+//}
 
 resource cDNProfileFrontDoor1_cDNProfileFrontDoorOriginGroup1_cDNProfileFrontDoorOriginGroupOrigin1 'Microsoft.Cdn/profiles/originGroups/origins@2021-06-01' = {
   name: '${cDNProfileFrontDoor1}/${cDNProfileFrontDoorOriginGroup1}/${cDNProfileFrontDoorOriginGroupOrigin1}'
