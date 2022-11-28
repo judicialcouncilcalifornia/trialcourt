@@ -44,7 +44,7 @@ stages:
    - stage: Manifest
      displayName: Manifest
      jobs:
-       - job: Install jq
+       - job: InstallJQ
          displayName: Install JQ
          pool:
            vmImage: $(vmImageName)
