@@ -26,7 +26,7 @@ variables:
   phpVersion: 7.4
   location: 'West US 3'
   templateFile: './.devops/app-service.bicep'
-  sites: {}
+  sites: []
 
   #TODO: inside foreach
   resourceGroupName: 'nprd-ctcms-df1-app-rg'
@@ -51,8 +51,8 @@ stages:
            vmImage: $(vmImageName)
          steps:
            - script: |
-               SITES=$( jq -r  '.sites' ./manifest.json )
-               echo "##vso[task.setvariable variable=sites;]${SITES}"
+               PARSEDSITES=$( jq -r  '.sites' ./manifest.json )
+               echo "##vso[task.setvariable variable=sites;]${PARSEDSITES}"
 
        - job: PrintSites
          displayName: Print sites variable
