@@ -41,6 +41,18 @@ variables:
   vmImageName: 'ubuntu-latest'
 
 stages:
+   - stage: Manifest
+     displayName: Manifest
+     jobs:
+       - job: Install jq
+         displayName: Install JQ
+         pool:
+           vmImage: $(vmImageName)
+         steps:
+           - script: |
+               sudo apt-get -y install jq
+
+
 #  - stage: Test
 #    displayName: Test
 #    jobs:
@@ -103,28 +115,28 @@ stages:
 #                $(tag)
 
 
-  - stage: Infrastructure
-    displayName: Infrastructure
-#    dependsOn: Test
-#    condition: succeeded('Test')
-    jobs:
-      - job: Provision
-        displayName: Provision App Service
-        pool:
-          vmImage: $(vmImageName)
-        steps:
-          - task: AzureResourceManagerTemplateDeployment@3
-            inputs:
-              deploymentScope: 'Resource Group'
-              azureResourceManagerConnection: '$(azureServiceConnection)'
-              action: 'Create Or Update Resource Group'
-              resourceGroupName: '$(resourceGroupName)'
-              location: '$(location)'
-              templateLocation: 'Linked artifact'
-              csmFile: '$(templateFile)'
-              #overrideParameters: '-storageAccountType Standard_LRS'
-              deploymentMode: 'Incremental'
-              deploymentName: 'DeployPipelineTemplate-$(Build.BuildId)'
+#  - stage: Infrastructure
+#    displayName: Infrastructure
+##    dependsOn: Test
+##    condition: succeeded('Test')
+#    jobs:
+#      - job: Provision
+#        displayName: Provision App Service
+#        pool:
+#          vmImage: $(vmImageName)
+#        steps:
+#          - task: AzureResourceManagerTemplateDeployment@3
+#            inputs:
+#              deploymentScope: 'Resource Group'
+#              azureResourceManagerConnection: '$(azureServiceConnection)'
+#              action: 'Create Or Update Resource Group'
+#              resourceGroupName: '$(resourceGroupName)'
+#              location: '$(location)'
+#              templateLocation: 'Linked artifact'
+#              csmFile: '$(templateFile)'
+#              #overrideParameters: '-storageAccountType Standard_LRS'
+#              deploymentMode: 'Incremental'
+#              deploymentName: 'DeployPipelineTemplate-$(Build.BuildId)'
 
 # Read a manifest file
   # alameda = site1
@@ -149,19 +161,19 @@ stages:
     # run post deployment db updates
     # config updates
 
-  - stage: Deploy
-    displayName: Deploy
-    dependsOn: Infrastructure
-    condition: succeeded('Infrastructure')
-    jobs:
-      - job: Deploy
-        displayName: Deploy to App Service
-        pool:
-          vmImage: $(vmImageName)
-        steps:
-          - task: AzureWebAppContainer@1
-            inputs:
-              azureSubscription: 'DevOps Web Service Non-Prod'
-              appName: 'nprd-ctcms-ct007-app'
-              resourceGroupName: 'nprd-ctcms-df1-app-rg'
-              containers: '$(containerRegistry)/build/trialcourt/master:latest'
+#  - stage: Deploy
+#    displayName: Deploy
+#    dependsOn: Infrastructure
+#    condition: succeeded('Infrastructure')
+#    jobs:
+#      - job: Deploy
+#        displayName: Deploy to App Service
+#        pool:
+#          vmImage: $(vmImageName)
+#        steps:
+#          - task: AzureWebAppContainer@1
+#            inputs:
+#              azureSubscription: 'DevOps Web Service Non-Prod'
+#              appName: 'nprd-ctcms-ct007-app'
+#              resourceGroupName: 'nprd-ctcms-df1-app-rg'
+#              containers: '$(containerRegistry)/build/trialcourt/master:latest'
