@@ -24,7 +24,6 @@ variables:
   phpVersion: 7.4
   location: 'West US 3'
   templateFile: './.devops/app-service.bicep'
-  timestamp: $(Get-Date -Format yyyyMMddhhmmss)
 
   #TODO: inside foreach
   resourceGroupName: 'nprd-ctcms-df1-app-rg'
@@ -70,42 +69,42 @@ stages:
           - script: composer -n unit-test
             displayName: 'Run unit tests'
 
-  - stage: Build
-    displayName: Build
-    dependsOn: Test
-    condition: and(succeeded('Test'), ne(variables['Build.SourceBranchName'], 'merge'))
-    jobs:
-      - job: Build
-        displayName: Build image
-        pool:
-          vmImage: $(vmImageName)
-        steps:
-          - task: Docker@2
-            displayName: Build
-            inputs:
-              command: build
-              containerRegistry: $(dockerRegistryServiceConnection)
-              repository: $(imageRepository)
-              dockerfile: $(dockerfilePath)
-              tags: |
-                latest
-                $(tag)
-              arguments: --label buildtype=nightly --build-arg GIT_BRANCH=$(Build.SourceBranchName)
-          - task: Docker@2
-            displayName: Push to registry
-            inputs:
-              command: push
-              containerRegistry: $(dockerRegistryServiceConnection)
-              repository: $(imageRepository)
-              tags: |
-                latest
-                $(tag)
+#  - stage: Build
+#    displayName: Build
+#    dependsOn: Test
+#    condition: and(succeeded('Test'), ne(variables['Build.SourceBranchName'], 'merge'))
+#    jobs:
+#      - job: Build
+#        displayName: Build image
+#        pool:
+#          vmImage: $(vmImageName)
+#        steps:
+#          - task: Docker@2
+#            displayName: Build
+#            inputs:
+#              command: build
+#              containerRegistry: $(dockerRegistryServiceConnection)
+#              repository: $(imageRepository)
+#              dockerfile: $(dockerfilePath)
+#              tags: |
+#                latest
+#                $(tag)
+#              arguments: --label buildtype=nightly --build-arg GIT_BRANCH=$(Build.SourceBranchName)
+#          - task: Docker@2
+#            displayName: Push to registry
+#            inputs:
+#              command: push
+#              containerRegistry: $(dockerRegistryServiceConnection)
+#              repository: $(imageRepository)
+#              tags: |
+#                latest
+#                $(tag)
 
 
   - stage: Infrastructure
     displayName: Infrastructure
-    dependsOn: Build
-    condition: succeeded('Build')
+    dependsOn: Test
+    condition: succeeded('Test')
     jobs:
       - job: Provision
         displayName: Provision App Service
@@ -123,7 +122,7 @@ stages:
               csmFile: '$(templateFile)'
               #overrideParameters: '-storageAccountType Standard_LRS'
               deploymentMode: 'Incremental'
-              deploymentName: 'DeployPipelineTemplate-$(timestamp)'
+              deploymentName: 'DeployPipelineTemplate-$(Build.BuildId)'
 
 # Read a manifest file
   # alameda = site1
