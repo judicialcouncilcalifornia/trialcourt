@@ -4,7 +4,7 @@
   '3'
 ])
 param deploymentFarm string = '1'
-param siteId string = '005'
+param siteId string = '006'
 
 @allowed([
   'nprd'
@@ -63,6 +63,9 @@ resource appService1_appServiceConfigRegionalVirtualNetworkIntegration1 'Microso
   properties: {
     subnetResourceId: resourceId(resourceGroup2, 'Microsoft.Network/virtualNetworks/subnets', virtualNetwork1, subnet1)
   }
+  dependsOn: [
+    appService1
+  ]
 }
 
 resource networkPrivateEndpoint3 'Microsoft.Network/privateEndpoints@2020-11-01' = {
@@ -84,6 +87,9 @@ resource networkPrivateEndpoint3 'Microsoft.Network/privateEndpoints@2020-11-01'
       }
     ]
   }
+  dependsOn: [
+    appService1
+  ]
 }
 
 resource cDNProfileFrontDoor1_cDNProfileFrontDoorOriginGroup1_cDNProfileFrontDoorOriginGroupOrigin1 'Microsoft.Cdn/profiles/originGroups/origins@2021-06-01' = {
@@ -102,4 +108,7 @@ resource cDNProfileFrontDoor1_cDNProfileFrontDoorOriginGroup1_cDNProfileFrontDoo
     }
     weight: 100
   }
+  dependsOn: [
+    appService1
+  ]
 }
