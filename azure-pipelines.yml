@@ -124,7 +124,7 @@ stages:
               csmFile: '$(templateFile)'
               #overrideParameters: '-storageAccountType Standard_LRS'
               deploymentMode: 'Incremental'
-              deploymentName: 'DeployPipelineTemplate-$(Build.BuildId)'
+              deploymentName: 'DeployPipelineTemplate-$(Build.DefinitionName)'
 
 # Read a manifest file
   # alameda = site1
