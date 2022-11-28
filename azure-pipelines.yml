@@ -15,6 +15,8 @@ trigger:
 resources:
   - repo: self
 
+name: $(Year:YY)$(DayOfYear)$(Rev:.r)
+
 variables:
   dockerRegistryServiceConnection: '3f015a0b-e8e0-41a5-887c-d04efab1abd1'
   imageRepository: 'build/trialcourt/$(Build.SourceBranchName)'
@@ -39,35 +41,35 @@ variables:
   vmImageName: 'ubuntu-latest'
 
 stages:
-  - stage: Test
-    displayName: Test
-    jobs:
-      - job: Compile
-        displayName: Compile code
-        pool:
-          vmImage: $(vmImageName)
-        steps:
-          - script: |
-              sudo update-alternatives --set php /usr/bin/php$(phpVersion)
-              sudo update-alternatives --set phar /usr/bin/phar$(phpVersion)
-              sudo update-alternatives --set phpdbg /usr/bin/phpdbg$(phpVersion)
-              sudo update-alternatives --set php-cgi /usr/bin/php-cgi$(phpVersion)
-              sudo update-alternatives --set phar.phar /usr/bin/phar.phar$(phpVersion)
-              php -version
-            displayName: 'Use PHP version $(phpVersion)'
-          - script: composer install --no-interaction --prefer-dist
-            displayName: 'Composer install'
-      - job: Analyze
-        displayName: Analyze code
-        pool:
-          vmImage: $(vmImageName)
-        steps:
-          - script: composer -n lint
-            displayName: 'Lint php for syntax errors'
-          - script: composer -n code-sniff
-            displayName: 'Check coding standards'
-          - script: composer -n unit-test
-            displayName: 'Run unit tests'
+#  - stage: Test
+#    displayName: Test
+#    jobs:
+#      - job: Compile
+#        displayName: Compile code
+#        pool:
+#          vmImage: $(vmImageName)
+#        steps:
+#          - script: |
+#              sudo update-alternatives --set php /usr/bin/php$(phpVersion)
+#              sudo update-alternatives --set phar /usr/bin/phar$(phpVersion)
+#              sudo update-alternatives --set phpdbg /usr/bin/phpdbg$(phpVersion)
+#              sudo update-alternatives --set php-cgi /usr/bin/php-cgi$(phpVersion)
+#              sudo update-alternatives --set phar.phar /usr/bin/phar.phar$(phpVersion)
+#              php -version
+#            displayName: 'Use PHP version $(phpVersion)'
+#          - script: composer install --no-interaction --prefer-dist
+#            displayName: 'Composer install'
+#      - job: Analyze
+#        displayName: Analyze code
+#        pool:
+#          vmImage: $(vmImageName)
+#        steps:
+#          - script: composer -n lint
+#            displayName: 'Lint php for syntax errors'
+#          - script: composer -n code-sniff
+#            displayName: 'Check coding standards'
+#          - script: composer -n unit-test
+#            displayName: 'Run unit tests'
 
 #  - stage: Build
 #    displayName: Build
@@ -103,8 +105,8 @@ stages:
 
   - stage: Infrastructure
     displayName: Infrastructure
-    dependsOn: Test
-    condition: succeeded('Test')
+#    dependsOn: Test
+#    condition: succeeded('Test')
     jobs:
       - job: Provision
         displayName: Provision App Service
