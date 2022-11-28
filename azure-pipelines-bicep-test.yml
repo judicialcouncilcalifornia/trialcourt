@@ -27,4 +27,4 @@ steps:
     csmFile: '$(templateFile)'
     #overrideParameters: '-storageAccountType Standard_LRS'
     deploymentMode: 'Incremental'
-    deploymentName: 'DeployPipelineTemplate-003'
+    deploymentName: 'DeployPipelineTemplate-004'
