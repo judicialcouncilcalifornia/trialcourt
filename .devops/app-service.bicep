@@ -49,7 +49,16 @@ resource appService1 'Microsoft.Web/sites@2020-12-01' = {
     serverFarmId: resourceId('Microsoft.Web/serverfarms', webServerfarm)
     siteConfig: {
       alwaysOn: true
-      appSettings: []
+      appSettings: [
+        {
+          name: 'setting1'
+          value: 'valueOfSetting1'
+        }
+        {
+          name: 'setting2'
+          value: 'valueOfSetting2'
+        }
+      ]
       linuxFxVersion: 'DOCKER|mcr.microsoft.com/appsvc/staticsite:latest'
       connectionStrings: []
       defaultDocuments: []
