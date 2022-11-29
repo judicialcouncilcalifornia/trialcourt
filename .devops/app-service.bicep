@@ -59,7 +59,6 @@ resource appService1 'Microsoft.Web/sites@2020-12-01' = {
   }
 }
 
-/*
 resource appService1_appServiceConfigRegionalVirtualNetworkIntegration1 'Microsoft.Web/sites/config@2018-11-01' = {
   parent: appService1
   name: 'appsettings'
