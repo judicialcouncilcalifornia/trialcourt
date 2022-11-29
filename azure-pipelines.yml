@@ -127,13 +127,13 @@ stages:
            - script: |
                case $(Build.SourceBranchName) in
                  master)
-                   echo "##vso[task.setvariable variable=siteEnvPrefix;]nprd"
+                   echo "##vso[task.setvariable variable=siteEnvPrefix;isOutput=true;]nprd"
                    ;;
                  stage)
-                   echo "##vso[task.setvariable variable=siteEnvPrefix;]uat"
+                   echo "##vso[task.setvariable variable=siteEnvPrefix;isOutput=true;]uat"
                    ;;
                  *)
-                   echo "##vso[task.setvariable variable=siteEnvPrefix;]int"
+                   echo "##vso[task.setvariable variable=siteEnvPrefix;isOutput=true;]int"
                    ;;
                esac
              displayName: 'Set Environment Prefix'
@@ -141,6 +141,8 @@ stages:
              displayName: 'Display Prefix'
        - job: ProcessSites
          displayName: Process sites from the manifest
+         variables:
+           siteEnvPrefix: $[ dependencies.ReadManifest.outputs['setVariable.siteEnvPrefix'] ]
          steps:
            - ${{ each site in parameters.sites }}:
                - script: |
