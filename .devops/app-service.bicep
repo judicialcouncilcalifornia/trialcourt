@@ -51,114 +51,114 @@ resource appService1 'Microsoft.Web/sites@2020-12-01' = {
       alwaysOn: true
       appSettings: [
         {
-          'name': 'APPINSIGHTS_INSTRUMENTATIONKEY',
-          'value': 'c0f63aa2-5037-4ac4-8aab-af33114aeeaa',
-          'slotSetting': false
+          name: 'APPINSIGHTS_INSTRUMENTATIONKEY',
+          value: 'c0f63aa2-5037-4ac4-8aab-af33114aeeaa',
+          slotSetting: false
         }
         {
-          'name': 'APPLICATIONINSIGHTS_CONNECTION_STRING',
-          'value': 'InstrumentationKey=c0f63aa2-5037-4ac4-8aab-af33114aeeaa;IngestionEndpoint=https://westus-0.in.applicationinsights.azure.com/;LiveEndpoint=https://westus.livediagnostics.monitor.azure.com/',
-          'slotSetting': false
+          name: 'APPLICATIONINSIGHTS_CONNECTION_STRING',
+          value: 'InstrumentationKey=c0f63aa2-5037-4ac4-8aab-af33114aeeaa;IngestionEndpoint=https://westus-0.in.applicationinsights.azure.com/;LiveEndpoint=https://westus.livediagnostics.monitor.azure.com/',
+          slotSetting: false
         }
         {
-          'name': 'ApplicationInsightsAgent_EXTENSION_VERSION',
-          'value': '~3',
-          'slotSetting': false
+          name: 'ApplicationInsightsAgent_EXTENSION_VERSION',
+          value: '~3',
+          slotSetting: false
         }
         {
-          'name': 'DATABASE_HOST',
-          'value': 'supdevmdb01.mariadb.database.azure.com',
-          'slotSetting': false
+          name: 'DATABASE_HOST',
+          value: 'supdevmdb01.mariadb.database.azure.com',
+          slotSetting: false
         }
         {
-          'name': 'DATABASE_NAME',
-          'value': 'supreme_stage',
-          'slotSetting': false
+          name: 'DATABASE_NAME',
+          value: 'supreme_stage',
+          slotSetting: false
         }
         {
-          'name': 'DATABASE_PASSWORD',
-          'value': 'AdamTheGreat1!',
-          'slotSetting': false
+          name: 'DATABASE_PASSWORD',
+          value: 'AdamTheGreat1!',
+          slotSetting: false
         }
         {
-          'name': 'DATABASE_USER',
-          'value': 'azuremdb@supdevmdb01',
-          'slotSetting': false
+          name: 'DATABASE_USER',
+          value: 'azuremdb@supdevmdb01',
+          slotSetting: false
         }
         {
-          'name': 'DOCKER_REGISTRY_SERVER_PASSWORD',
-          'value': '5Q+HLzRMaHGF=weHScWHkwp65wtvZ3or',
-          'slotSetting': false
+          name: 'DOCKER_REGISTRY_SERVER_PASSWORD',
+          value: '5Q+HLzRMaHGF=weHScWHkwp65wtvZ3or',
+          slotSetting: false
         }
         {
-          'name': 'DOCKER_REGISTRY_SERVER_URL',
-          'value': 'https://devopswebcourtsnp.azurecr.io',
-          'slotSetting': false
+          name: 'DOCKER_REGISTRY_SERVER_URL',
+          value: 'https://devopswebcourtsnp.azurecr.io',
+          slotSetting: false
         }
         {
-          'name': 'DOCKER_REGISTRY_SERVER_USERNAME',
-          'value': 'devopswebcourtsnp',
-          'slotSetting': false
+          name: 'DOCKER_REGISTRY_SERVER_USERNAME',
+          value: 'devopswebcourtsnp',
+          slotSetting: false
         }
         {
-          'name': 'GIT_BRANCH',
-          'value': 'master',
-          'slotSetting': false
+          name: 'GIT_BRANCH',
+          value: 'master',
+          slotSetting: false
         }
         {
-          'name': 'GIT_REPO',
-          'value': 'https://github.com/JudicialCouncilOfCalifornia/trialcourt',
-          'slotSetting': false
+          name: 'GIT_REPO',
+          value: 'https://github.com/JudicialCouncilOfCalifornia/trialcourt',
+          slotSetting: false
         }
         {
-          'name': 'REDIS_HOST',
-          'value': 'supdev.redis.cache.windows.net',
-          'slotSetting': false
+          name: 'REDIS_HOST',
+          value: 'supdev.redis.cache.windows.net',
+          slotSetting: false
         }
         {
-          'name': 'REDIS_PASSWORD',
-          'value': 'Ji1AizWN74MT4G0wRLMxOZICFsUVro93QAzCaJXe6nE=',
-          'slotSetting': false
+          name: 'REDIS_PASSWORD',
+          value: 'Ji1AizWN74MT4G0wRLMxOZICFsUVro93QAzCaJXe6nE=',
+          slotSetting: false
         }
         {
-          'name': 'REDIS_PORT',
-          'value': '6379',
-          'slotSetting': false
+          name: 'REDIS_PORT',
+          value: '6379',
+          slotSetting: false
         }
         {
-          'name': 'RESET_INSTANCE',
-          'value': 'false',
-          'slotSetting': false
+          name: 'RESET_INSTANCE',
+          value: 'false',
+          slotSetting: false
         }
         {
-          'name': 'WEBSITE_HTTPLOGGING_RETENTION_DAYS',
-          'value': '7',
-          'slotSetting': false
+          name: 'WEBSITE_HTTPLOGGING_RETENTION_DAYS',
+          value: '7',
+          slotSetting: false
         }
         {
-          'name': 'WEBSITE_PULL_IMAGE_OVER_VNET',
-          'value': '1',
-          'slotSetting': false
+          name: 'WEBSITE_PULL_IMAGE_OVER_VNET',
+          value: '1',
+          slotSetting: false
         }
         {
-          'name': 'WEBSITE_USE_DIAGNOSTIC_SERVER',
-          'value': 'true',
-          'slotSetting': false
+          name: 'WEBSITE_USE_DIAGNOSTIC_SERVER',
+          value: 'true',
+          slotSetting: false
         }
         {
-          'name': 'WEBSITES_CONTAINER_START_TIME_LIMIT',
-          'value': '300',
-          'slotSetting': false
+          name: 'WEBSITES_CONTAINER_START_TIME_LIMIT',
+          value: '300',
+          slotSetting: false
         }
         {
-          'name': 'WEBSITES_ENABLE_APP_SERVICE_STORAGE',
-          'value': 'true',
-          'slotSetting': false
+          name: 'WEBSITES_ENABLE_APP_SERVICE_STORAGE',
+          value: 'true',
+          slotSetting: false
         }
         {
-          'name': 'XDT_MicrosoftApplicationInsights_Mode',
-          'value': 'Recommended',
-          'slotSetting': false
+          name: 'XDT_MicrosoftApplicationInsights_Mode',
+          value: 'Recommended',
+          slotSetting: false
         }
       ]
       linuxFxVersion: 'DOCKER|mcr.microsoft.com/appsvc/staticsite:latest'
