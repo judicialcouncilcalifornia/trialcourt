@@ -145,8 +145,8 @@ stages:
        - job: ProcessSites
          displayName: Process sites
          dependsOn: ['ReadManifest']
-#         variables:
-#           siteEnvPrefix: $[ dependencies.ReadManifest.outputs['setVariable.siteEnvPrefix'] ]
+         variables:
+           siteEnvPrefixLocal: $[ dependencies.ReadManifest.outputs['setVariable.siteEnvPrefix'] ]
          steps:
            - ${{ each site in parameters.sites }}:
                - script: |
@@ -168,7 +168,7 @@ stages:
                    deploymentScope: 'Resource Group'
                    azureResourceManagerConnection: '$(azureServiceConnection)'
                    action: 'Create Or Update Resource Group'
-                   resourceGroupName: '$(siteEnvPrefix)$(ResourceGroupName)'
+                   resourceGroupName: '$(siteEnvPrefixLocal)$(ResourceGroupName)'
                    location: '$(location)'
                    templateLocation: 'Linked artifact'
                    csmFile: '$(templateFile)'
