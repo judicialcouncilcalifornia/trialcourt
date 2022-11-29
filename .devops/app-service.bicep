@@ -5,24 +5,24 @@
 ])
 param deploymentFarm string = '1'
 param siteId string = '008'
-param cmLocation1 string = resourceGroup().location
+param cmLocation string = resourceGroup().location
 
 @allowed([
   'nprd'
   'stage'
-  'prod'
+  'production'
 ])
 param environment string = 'nprd'
 
-var appService_var = '${environment}-ctcms-ct${siteId}-app'
+var appService = '${environment}-ctcms-ct${siteId}-app'
 var webServerfarm = '${environment}-ctcms-df${deploymentFarm}-asp'
 
-var resourceGroup2 = 'nprd-ctcms-df1-net-rg'
+var resourceGroupNet = 'nprd-ctcms-df1-net-rg'
 var virtualNetwork1 = 'nprd-ctcms-df1-vnet'
 var subnet1 = 'df1-asp-sn'
 
 var networkPrivateEndpoint3_var = 'nprd-ctcms-ct1-app-pe'
-var resourceGroup3 = 'nprd-ctcms-df1-app-rg'
+var resourceGroupApp = 'nprd-ctcms-df1-app-rg'
 
 var cDNProfileFrontDoor1 = 'nprd-ctcms-fd'
 var cDNProfileFrontDoorOriginGroup1 = 'df1-ct1-fd-orggrp'
@@ -30,12 +30,12 @@ var cDNProfileFrontDoorOriginGroupOrigin1 = 'df1-ct1-fd-origin'
 var subscriptionId = '539516a7-6f4e-450d-b99e-be9dcc48a4c4'
 
 resource appService1 'Microsoft.Web/sites@2020-12-01' = {
-  name: appService_var
+  name: appService
   identity: {
     type: 'SystemAssigned'
   }
   kind: 'app,linux,container'
-  location: cmLocation1
+  location: cmLocation
   properties: {
     enabled: true
     httpsOnly: true
@@ -63,7 +63,7 @@ resource appService1_appServiceConfigRegionalVirtualNetworkIntegration1 'Microso
   parent: appService1
   name: 'appsettings'
   properties: {
-    subnetResourceId: resourceId(resourceGroup2, 'Microsoft.Network/virtualNetworks/subnets', virtualNetwork1, subnet1)
+    subnetResourceId: resourceId(resourceGroupNet, 'Microsoft.Network/virtualNetworks/subnets', virtualNetwork1, subnet1)
   }
   dependsOn: [
     appService1
@@ -72,7 +72,7 @@ resource appService1_appServiceConfigRegionalVirtualNetworkIntegration1 'Microso
 
 resource networkPrivateEndpoint3 'Microsoft.Network/privateEndpoints@2020-11-01' = {
   name: networkPrivateEndpoint3_var
-  location: cmLocation1
+  location: cmLocation
   properties: {
     subnet: {
       id: resourceId('Microsoft.Network/virtualNetworks/subnets', virtualNetwork1, subnet1)
@@ -80,7 +80,7 @@ resource networkPrivateEndpoint3 'Microsoft.Network/privateEndpoints@2020-11-01'
     privateLinkServiceConnections: [
       {
         properties: {
-          privateLinkServiceId: resourceId(resourceGroup3, 'Microsoft.Web/sites', appService_var)
+          privateLinkServiceId: resourceId(resourceGroupApp, 'Microsoft.Web/sites', appService)
           groupIds: [
             'sites'
           ]
@@ -98,23 +98,23 @@ resource cDNProfileFrontDoor1_cDNProfileFrontDoorOriginGroup1_cDNProfileFrontDoo
   name: '${cDNProfileFrontDoor1}/${cDNProfileFrontDoorOriginGroup1}/${cDNProfileFrontDoorOriginGroupOrigin1}'
   properties: {
     enabledState: 'Enabled'
-    hostName: '${appService_var}.azurewebsites.net'
-    originHostHeader: '${appService_var}.azurewebsites.net'
+    hostName: '${appService}.azurewebsites.net'
+    originHostHeader: '${appService}.azurewebsites.net'
     httpPort: 80
     httpsPort: 443
     priority: 1
     weight: 100
     sharedPrivateLinkResource: {
       privateLink: {
-        id: '/subscriptions/${subscriptionId}/resourceGroups/nprd-ctcms-df1-app-rg/providers/Microsoft.Web/sites/${appService_var}'
+        id: '/subscriptions/${subscriptionId}/resourceGroups/${resourceGroupApp}/providers/Microsoft.Web/sites/${appService}'
       }
       groupId: 'sites'
-      privateLinkLocation: cmLocation1
+      privateLinkLocation: cmLocation
       requestMessage: 'Approve for FD'
     }
   }
   dependsOn: [
-    appService1
+    networkPrivateEndpoint3
   ]
 }
 
