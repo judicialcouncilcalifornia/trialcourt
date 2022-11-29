@@ -189,8 +189,3 @@ stages:
                    DatabaseName: ''
                    SqlUsername: 'azuremdb@supdevmdb01'
                    SqlPassword: 'AdamTheGreat1!'
-                   
-               - script: |
-                    # ssh
-                   ./devops/config-import.sh
-                 displayName: 'Run Drupal commands'
