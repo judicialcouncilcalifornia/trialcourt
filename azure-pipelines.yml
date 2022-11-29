@@ -174,28 +174,13 @@ stages:
                    deploymentMode: 'Incremental'
                    deploymentName: 'DeployPipelineTemplate-$(Build.BuildId)'
 
-# Read a manifest file
-  # alameda = site1
-  # sf = site2
-  # tehama =
+               - task: AzureWebAppContainer@1
+                 inputs:
+                   azureSubscription: $(azureServiceConnection)
+                   appName: '$(siteEnvPrefixLocal)-ctcms-ct$(siteId)-app'
+                   resourceGroupName: '$(siteEnvPrefixLocal)-ctcms-df$(siteFarmId)-app-rg'
+                   containers: '$(containerRegistry)/build/trialcourt/$(Build.SourceBranchName):latest'
 
-# loop through the sites
-
-   # HOLD:
-   # Separate pipeline ((get from Rob e-court))
-   # backup the database of the site
-   # backup the storage file of the site
-
-   # Run Bicep
-    # (waiting on Kyle for template /
-    # waiting @Glen on sample code)
-   # if app service exists
-      # deploy
-   # else
-      # create the app service
-   # ssh to the server
-    # run post deployment db updates
-    # config updates
 
 #  - stage: Deploy
 #    displayName: Deploy
