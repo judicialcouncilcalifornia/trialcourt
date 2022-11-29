@@ -189,6 +189,13 @@ stages:
                    DatabaseName: ''
                    SqlUsername: 'azuremdb@supdevmdb01'
                    SqlPassword: 'AdamTheGreat1!'
+                   
+               - task: SSH@0
+                 inputs:
+                   sshEndpoint: '$(azureServiceConnection)'
+                   runOptions: 'inline'
+                   inline: 'ls -la'
+                   readyTimeout: '20000'
 
 #  - stage: Deploy
 #    displayName: Deploy
