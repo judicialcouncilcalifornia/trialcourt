@@ -106,7 +106,7 @@ resource cDNProfileFrontDoor1_cDNProfileFrontDoorOriginGroup1_cDNProfileFrontDoo
     weight: 100
     sharedPrivateLinkResource: {
       privateLink: {
-        id: '/subscriptions/${subscriptionId}/resourceGroups/${resourceGroup3}/providers/Microsoft.Web/sites/${appService_var}'
+        id: '/subscriptions/${subscriptionId}/resourceGroups/nprd-ctcms-df1-app-rg/providers/Microsoft.Web/sites/${appService_var}'
       }
       groupId: 'sites'
       privateLinkLocation: cmLocation1
