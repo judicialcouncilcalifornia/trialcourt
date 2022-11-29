@@ -181,6 +181,15 @@ stages:
 #                   resourceGroupName: '$(siteEnvPrefixLocal)-ctcms-df$(siteFarmId)-app-rg'
 #                   containers: '$(containerRegistry)/build/trialcourt/$(Build.SourceBranchName):latest'
 
+               - task: MysqlDeploymentOnMachineGroup@1
+                 inputs:
+                   TaskNameSelector: 'InlineSqlTask'
+                   SqlInline: 'CREATE DATABASE $(siteName);'
+                   ServerName: 'supdevmdb01.mariadb.database.azure.com'
+                   DatabaseName: ''
+                   SqlUsername: 'azuremdb@supdevmdb01'
+                   SqlPassword: 'AdamTheGreat1!'
+
 #  - stage: Deploy
 #    displayName: Deploy
 #    dependsOn: Infrastructure
