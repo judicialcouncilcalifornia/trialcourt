@@ -9,8 +9,8 @@ param cmLocation string = resourceGroup().location
 
 @allowed([
   'nprd'
-  'stage'
-  'production'
+  'uat'
+  'prod'
 ])
 param environment string = 'nprd'
 
