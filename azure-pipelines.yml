@@ -190,26 +190,7 @@ stages:
                    SqlUsername: 'azuremdb@supdevmdb01'
                    SqlPassword: 'AdamTheGreat1!'
                    
-               - task: SSH@0
-                 inputs:
-                   sshEndpoint: '$(azureServiceConnection)'
-                   runOptions: 'inline'
-                   inline: 'ls -la'
-                   readyTimeout: '20000'
-
-#  - stage: Deploy
-#    displayName: Deploy
-#    dependsOn: Infrastructure
-#    condition: succeeded('Infrastructure')
-#    jobs:
-#      - job: Deploy
-#        displayName: Deploy to App Service
-#        pool:
-#          vmImage: $(vmImageName)
-#        steps:
-#          - task: AzureWebAppContainer@1
-#            inputs:
-#              azureSubscription: 'DevOps Web Service Non-Prod'
-#              appName: 'nprd-ctcms-ct007-app'
-#              resourceGroupName: 'nprd-ctcms-df1-app-rg'
-#              containers: '$(containerRegistry)/build/trialcourt/master:latest'
+               - script: |
+                    # ssh
+                   ./devops/config-import.sh
+                 displayName: 'Run Drupal commands'
