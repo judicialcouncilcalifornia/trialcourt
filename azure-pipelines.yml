@@ -15,6 +15,9 @@ trigger:
 resources:
   - repo: self
 
+pool:
+  vmImage: $(vmImageName)
+
 name: $(Build.BuildId)
 
 parameters:
@@ -121,8 +124,6 @@ stages:
      jobs:
        - job: ReadManifest
          displayName: Read Manifest File
-         pool:
-           vmImage: $(vmImageName)
          steps:
            - script: |
                case $(Build.SourceBranchName) in
@@ -141,7 +142,6 @@ stages:
              displayName: 'Set Environment Prefix'
        - job: ProcessSites
          displayName: Process site entries in the manifest
-         pool: $(vmImageName)
          steps:
            - ${{ each site in parameters.sites }}:
                - script: |
