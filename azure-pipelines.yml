@@ -24,10 +24,8 @@ parameters:
   - name: sites
     type: object
     default:
-      - 001|1|Sacramento
-      - 002|1|CountyB
-      - 003|2|CountyC
-      - 004|1|Orange
+      - 010|1|Sacramento
+      - 011|1|CountyB
 
 variables:
   dockerRegistryServiceConnection: '3f015a0b-e8e0-41a5-887c-d04efab1abd1'
@@ -156,7 +154,7 @@ stages:
                    echo "##vso[task.setvariable variable=SiteId;]${siteInfo[0]}"
                    echo "##vso[task.setvariable variable=SiteFarmId;]${siteInfo[1]}"
                    echo "##vso[task.setvariable variable=SiteName;]${siteInfo[2]}"
-                   echo "##vso[task.setvariable variable=ResourceGroupName;]$(SiteEnvPrefix)-ctcms-df${siteInfo[1]}-app-rg"
+                   echo "##vso[task.setvariable variable=ResourceGroupName;]-ctcms-df${siteInfo[1]}-app-rg"
                  displayName: 'Execute County: ${{ site }}'
 
                - task: AzureResourceManagerTemplateDeployment@3
@@ -164,7 +162,7 @@ stages:
                    deploymentScope: 'Resource Group'
                    azureResourceManagerConnection: '$(azureServiceConnection)'
                    action: 'Create Or Update Resource Group'
-                   resourceGroupName: '$(ResourceGroupName)'
+                   resourceGroupName: '$(SiteEnvPrefix)$(ResourceGroupName)'
                    location: '$(location)'
                    templateLocation: 'Linked artifact'
                    csmFile: '$(templateFile)'
