@@ -59,12 +59,16 @@ resource appService1 'Microsoft.Web/sites@2020-12-01' = {
   }
 }
 
+/*
 resource appService1_appServiceConfigRegionalVirtualNetworkIntegration1 'Microsoft.Web/sites/config@2018-11-01' = {
   parent: appService1
   name: 'appsettings'
   properties: {
     subnetResourceId: resourceId(resourceGroupNet, 'Microsoft.Network/virtualNetworks/subnets', virtualNetwork1, subnet1)
   }
+  dependsOn: [
+    appService1
+  ]
 }
 
 resource networkPrivateEndpoint3 'Microsoft.Network/privateEndpoints@2020-11-01' = {
@@ -86,6 +90,9 @@ resource networkPrivateEndpoint3 'Microsoft.Network/privateEndpoints@2020-11-01'
       }
     ]
   }
+  dependsOn: [
+    appService1
+  ]
 }
 
 resource cDNProfileFrontDoor1_cDNProfileFrontDoorOriginGroup1_cDNProfileFrontDoorOriginGroupOrigin1 'Microsoft.Cdn/profiles/originGroups/origins@2021-06-01' = {
