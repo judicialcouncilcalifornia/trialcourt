@@ -5,6 +5,7 @@
 ])
 param deploymentFarm string = '1'
 param siteId string = '008'
+param cmLocation1 string = resourceGroup().location
 
 @allowed([
   'nprd'
@@ -26,7 +27,7 @@ var resourceGroup3 = 'nprd-ctcms-df1-app-rg'
 var cDNProfileFrontDoor1 = 'nprd-ctcms-fd'
 var cDNProfileFrontDoorOriginGroup1 = 'df1-ct1-fd-orggrp'
 var cDNProfileFrontDoorOriginGroupOrigin1 = 'df1-ct1-fd-origin'
-var subscription = '539516a7-6f4e-450d-b99e-be9dcc48a4c4'
+var subscriptionId = '539516a7-6f4e-450d-b99e-be9dcc48a4c4'
 
 resource appService1 'Microsoft.Web/sites@2020-12-01' = {
   name: appService_var
@@ -34,7 +35,7 @@ resource appService1 'Microsoft.Web/sites@2020-12-01' = {
     type: 'SystemAssigned'
   }
   kind: 'app,linux,container'
-  location: resourceGroup().location
+  location: cmLocation1
   properties: {
     enabled: true
     httpsOnly: true
@@ -71,7 +72,7 @@ resource appService1_appServiceConfigRegionalVirtualNetworkIntegration1 'Microso
 
 resource networkPrivateEndpoint3 'Microsoft.Network/privateEndpoints@2020-11-01' = {
   name: networkPrivateEndpoint3_var
-  location: resourceGroup().location
+  location: cmLocation1
   properties: {
     subnet: {
       id: resourceId('Microsoft.Network/virtualNetworks/subnets', virtualNetwork1, subnet1)
@@ -105,10 +106,10 @@ resource cDNProfileFrontDoor1_cDNProfileFrontDoorOriginGroup1_cDNProfileFrontDoo
     weight: 100
     sharedPrivateLinkResource: {
       privateLink: {
-        id: '/subscriptions/${subscription}/resourceGroups/${resourceGroup3}/providers/Microsoft.Web/sites/${appService_var}'
+        id: '/subscriptions/${subscriptionId}/resourceGroups/${resourceGroup3}/providers/Microsoft.Web/sites/${appService_var}'
       }
       groupId: 'sites'
-      privateLinkLocation: resourceGroup().location
+      privateLinkLocation: cmLocation1
       requestMessage: 'Approve for FD'
     }
   }
