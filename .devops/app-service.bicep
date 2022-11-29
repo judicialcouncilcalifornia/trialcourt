@@ -115,8 +115,5 @@ resource cDNProfileFrontDoor1_cDNProfileFrontDoorOriginGroup1_cDNProfileFrontDoo
       requestMessage: 'Approve for FD'
     }
   }
-  dependsOn: [
-    AppService1
-  ]
 }
 
