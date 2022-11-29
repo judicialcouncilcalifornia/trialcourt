@@ -136,8 +136,6 @@ stages:
                    echo "##vso[task.setvariable variable=siteEnvPrefix;isOutput=true;]int"
                    ;;
                esac
-
-               echo "siteEnvPrefix is $(siteEnvPrefix)"
              displayName: 'Set Environment Prefix'
              name: EnvironmentPrefix
            - script: echo "$(EnvironmentPrefix.siteEnvPrefix)"
@@ -146,7 +144,7 @@ stages:
          displayName: Process sites
          dependsOn: ['ReadManifest']
          variables:
-           siteEnvPrefixLocal: $[ dependencies.ReadManifest.outputs['setVariable.siteEnvPrefix'] ]
+           siteEnvPrefixLocal: $[ dependencies.ReadManifest.outputs['EnvironmentPrefix.siteEnvPrefix'] ]
          steps:
            - ${{ each site in parameters.sites }}:
                - script: |
