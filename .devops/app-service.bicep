@@ -3,7 +3,7 @@
   '2'
   '3'
 ])
-param deploymentFarm string = '1'
+param siteFarmId string = '1'
 param siteId string = '009'
 param cmLocation string = resourceGroup().location
 
@@ -15,19 +15,19 @@ param cmLocation string = resourceGroup().location
 param environment string = 'nprd'
 
 var appService = '${environment}-ctcms-ct${siteId}-app'
-var webServerfarm = '${environment}-ctcms-df${deploymentFarm}-asp'
+var webServerfarm = '${environment}-ctcms-df${siteFarmId}-asp'
 
-var resourceGroupNet = 'nprd-ctcms-df1-net-rg'
-var virtualNetwork1 = 'nprd-ctcms-df1-vnet'
-var subnet1 = 'df1-asp-sn'
+var resourceGroupNet = '${environment}-ctcms-df${siteFarmId}-net-rg'
+var virtualNetwork1 = '${environment}-ctcms-df${siteFarmId}-vnet'
+var subnet1 = 'df${siteFarmId}-asp-sn'
 
-var networkPrivateEndpoint3_var = 'nprd-ctcms-ct1-app-pe'
-var resourceGroupApp = 'nprd-ctcms-df1-app-rg'
-var resourceGroupNet = 'nprd-ctcms-net-rg'
+var networkPrivateEndpoint3_var = '${environment}-ctcms-ct${siteId}-app-pe'
+var resourceGroupApp = '${environment}-ctcms-df${siteFarmId}-app-rg'
+var resourceGroupNet = '${environment}-ctcms-net-rg'
 
-var cDNProfileFrontDoor1 = 'nprd-ctcms-fd'
-var cDNProfileFrontDoorOriginGroup1 = 'df1-ct1-fd-orggrp'
-var cDNProfileFrontDoorOriginGroupOrigin1 = 'df1-ct1-fd-origin'
+var cDNProfileFrontDoor1 = '${environment}-ctcms-fd'
+var cDNProfileFrontDoorOriginGroup1 = 'df${siteFarmId}-ct${siteId}-fd-orggrp'
+var cDNProfileFrontDoorOriginGroupOrigin1 = 'df${siteFarmId}-ct${siteId}-fd-origin'
 var subscriptionId = '539516a7-6f4e-450d-b99e-be9dcc48a4c4'
 
 resource cDNProfileFrontDoor1_cDNProfileFrontDoorOriginGroup1 'Microsoft.Cdn/profiles/originGroups@2021-06-01' existing = {
@@ -60,7 +60,7 @@ resource appService1 'Microsoft.Web/sites@2020-12-01' = {
       minTlsVersion: '1.2'
       scmIpSecurityRestrictions: []
     }
-    virtualNetworkSubnetId: '/subscriptions/${subscription().subscriptionId}/resourceGroups/nprd-ctcms-net-rg/providers/Microsoft.Network/virtualNetworks/nprd-ctcms-df${deploymentFarm}-vnet/subnets/df${deploymentFarm}-asp-sn'
+    virtualNetworkSubnetId: '/subscriptions/${subscription().subscriptionId}/resourceGroups/$(resourceGroupNet)/providers/Microsoft.Network/virtualNetworks/$(environment)-ctcms-df${siteFarmId}-vnet/subnets/df${siteFarmId}-asp-sn'
   }
 }
 
@@ -90,7 +90,7 @@ resource networkPrivateEndpoint3 'Microsoft.Network/privateEndpoints@2020-11-01'
             'sites'
           ]
         }
-        name: 'nprd-ctcms-ct1-app-pe'
+        name: '$(environtment)-ctcms-ct$(siteId)-app-pe'
       }
     ]
   }
@@ -100,7 +100,6 @@ resource networkPrivateEndpoint3 'Microsoft.Network/privateEndpoints@2020-11-01'
 }
 
 resource cDNProfileFrontDoor1_cDNProfileFrontDoorOriginGroup1_cDNProfileFrontDoorOriginGroupOrigin1 'Microsoft.Cdn/profiles/originGroups/origins@2021-06-01' = {
-  scope: resourceGroup(resourceGroupNet)
   parent: cDNProfileFrontDoor1_cDNProfileFrontDoorOriginGroup1
   name: '${cDNProfileFrontDoorOriginGroupOrigin1}'
   properties: {
