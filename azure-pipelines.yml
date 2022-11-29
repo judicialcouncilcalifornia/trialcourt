@@ -37,11 +37,11 @@ variables:
   location: 'West US 3'
   templateFile: './.devops/app-service.bicep'
 
-  Site: ''
-  SiteId: ''
-  SiteName: ''
-  SiteFarmId: ''
-  SiteEnvPrefix: ''
+  site: ''
+  siteId: ''
+  siteName: ''
+  siteFarmId: ''
+  siteEnvPrefix: ''
   ResourceGroupName: ''
 
   ${{ if eq(variables['Build.SourceBranchName'], 'master') }}:
@@ -127,17 +127,17 @@ stages:
            - script: |
                case $(Build.SourceBranchName) in
                  master)
-                   echo "##vso[task.setvariable variable=SiteEnvPrefix;]nprd"
+                   echo "##vso[task.setvariable variable=siteEnvPrefix;isOutput=true;]nprd"
                    ;;
                  stage)
-                   echo "##vso[task.setvariable variable=SiteEnvPrefix;]uat"
+                   echo "##vso[task.setvariable variable=siteEnvPrefix;isOutput=true;]uat"
                    ;;
                  *)
-                   echo "##vso[task.setvariable variable=SiteEnvPrefix;]int"
+                   echo "##vso[task.setvariable variable=siteEnvPrefix;isOutput=true;]int"
                    ;;
                esac
              displayName: 'Set Environment Prefix'
-           - script: echo "$(SiteEnvPrefix)"
+           - script: echo "$(siteEnvPrefix)"
              displayName: 'Display Prefix'
        - job: ProcessSites
          displayName: Process sites from the manifest
@@ -150,10 +150,10 @@ stages:
                    echo "CountyId: ${siteInfo[0]}"
                    echo "CountyName : ${siteInfo[2]}"
                    echo "FarmId : ${siteInfo[1]}"
-                   echo "##vso[task.setvariable variable=Site;]${{site}}"
-                   echo "##vso[task.setvariable variable=SiteId;]${siteInfo[0]}"
-                   echo "##vso[task.setvariable variable=SiteFarmId;]${siteInfo[1]}"
-                   echo "##vso[task.setvariable variable=SiteName;]${siteInfo[2]}"
+                   echo "##vso[task.setvariable variable=site;]${{site}}"
+                   echo "##vso[task.setvariable variable=siteId;]${siteInfo[0]}"
+                   echo "##vso[task.setvariable variable=siteFarmId;]${siteInfo[1]}"
+                   echo "##vso[task.setvariable variable=siteName;]${siteInfo[2]}"
                    echo "##vso[task.setvariable variable=ResourceGroupName;]-ctcms-df${siteInfo[1]}-app-rg"
                  displayName: 'Execute County: ${{ site }}'
 
@@ -162,11 +162,11 @@ stages:
                    deploymentScope: 'Resource Group'
                    azureResourceManagerConnection: '$(azureServiceConnection)'
                    action: 'Create Or Update Resource Group'
-                   resourceGroupName: '$(SiteEnvPrefix)$(ResourceGroupName)'
+                   resourceGroupName: '$(siteEnvPrefix)$(ResourceGroupName)'
                    location: '$(location)'
                    templateLocation: 'Linked artifact'
                    csmFile: '$(templateFile)'
-                   overrideParameters: '-siteFarmId $(SiteFarmId) -siteId $(SiteId) -environment $(SiteEnvPrefix)'
+                   overrideParameters: '-siteFarmId $(siteFarmId) -siteId $(siteId) -environment $(siteEnvPrefix)'
                    deploymentMode: 'Incremental'
                    deploymentName: 'DeployPipelineTemplate-$(Build.BuildId)'
 
