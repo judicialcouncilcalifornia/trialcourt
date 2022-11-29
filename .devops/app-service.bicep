@@ -152,7 +152,7 @@ resource appService1 'Microsoft.Web/sites@2020-12-01' = {
     virtualNetworkSubnetId: '/subscriptions/${subscription().subscriptionId}/resourceGroups/$(resourceGroupNetRg)/providers/Microsoft.Network/virtualNetworks/$(environment)-ctcms-df${siteFarmId}-vnet/subnets/df${siteFarmId}-asp-sn'
   }
 }
-
+/*
 resource appService1_appServiceConfigRegionalVirtualNetworkIntegration1 'Microsoft.Web/sites/config@2018-11-01' = {
   parent: appService1
   name: 'appsettings'
@@ -187,7 +187,7 @@ resource networkPrivateEndpoint3 'Microsoft.Network/privateEndpoints@2020-11-01'
     appService1
   ]
 }
-
+*/
 resource cDNProfileFrontDoor1_cDNProfileFrontDoorOriginGroup1_cDNProfileFrontDoorOriginGroupOrigin1 'Microsoft.Cdn/profiles/originGroups/origins@2021-06-01' = {
   parent: cDNProfileFrontDoor1_cDNProfileFrontDoorOriginGroup1
   name: '${cDNProfileFrontDoorOriginGroupOrigin1}'
