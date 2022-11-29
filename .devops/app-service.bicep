@@ -4,7 +4,7 @@
   '3'
 ])
 param deploymentFarm string = '1'
-param siteId string = '008'
+param siteId string = '009'
 param cmLocation string = resourceGroup().location
 
 @allowed([
@@ -116,7 +116,7 @@ resource cDNProfileFrontDoor1_cDNProfileFrontDoorOriginGroup1_cDNProfileFrontDoo
     }
   }
   dependsOn: [
-    networkPrivateEndpoint3
+    AppService1
   ]
 }
 
