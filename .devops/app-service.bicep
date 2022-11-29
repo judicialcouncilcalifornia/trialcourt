@@ -4,7 +4,7 @@
   '3'
 ])
 param deploymentFarm string = '1'
-param siteId string = '007'
+param siteId string = '008'
 
 @allowed([
   'nprd'
@@ -26,6 +26,7 @@ var resourceGroup3 = 'nprd-ctcms-df1-app-rg'
 var cDNProfileFrontDoor1 = 'nprd-ctcms-fd'
 var cDNProfileFrontDoorOriginGroup1 = 'df1-ct1-fd-orggrp'
 var cDNProfileFrontDoorOriginGroupOrigin1 = 'df1-ct1-fd-origin'
+var subscription = '539516a7-6f4e-450d-b99e-be9dcc48a4c4'
 
 resource appService1 'Microsoft.Web/sites@2020-12-01' = {
   name: appService_var
@@ -57,10 +58,6 @@ resource appService1 'Microsoft.Web/sites@2020-12-01' = {
   }
 }
 
-
-
-
-/*
 resource appService1_appServiceConfigRegionalVirtualNetworkIntegration1 'Microsoft.Web/sites/config@2018-11-01' = {
   parent: appService1
   name: 'appsettings'
@@ -100,20 +97,23 @@ resource cDNProfileFrontDoor1_cDNProfileFrontDoorOriginGroup1_cDNProfileFrontDoo
   name: '${cDNProfileFrontDoor1}/${cDNProfileFrontDoorOriginGroup1}/${cDNProfileFrontDoorOriginGroupOrigin1}'
   properties: {
     enabledState: 'Enabled'
-    enforceCertificateNameCheck: true
     hostName: '${appService_var}.azurewebsites.net'
+    originHostHeader: '${appService_var}.azurewebsites.net'
     httpPort: 80
     httpsPort: 443
     priority: 1
-    sharedPrivateLinkResource: {
-      groupId: 'sites'
-      privateLink: resourceId(resourceGroup2, 'Microsoft.Web/sites', appService_var)
-      requestMessage: 'AutomationRequest'
-    }
     weight: 100
+    sharedPrivateLinkResource: {
+      privateLink: {
+        id: '/subscriptions/${subscription}/resourceGroups/${resourceGroup3}/providers/Microsoft.Web/sites/${appService_var}'
+      }
+      groupId: 'sites'
+      privateLinkLocation: resourceGroup().location
+      requestMessage: 'Approve for FD'
+    }
   }
   dependsOn: [
     appService1
   ]
 }
-*/
+
