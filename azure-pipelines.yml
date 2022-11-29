@@ -122,12 +122,12 @@ stages:
      displayName: Manifest
      jobs:
        - job: ReadManifest
-         displayName: Read Manifest File
+         displayName: Read manifest file
          steps:
            - script: |
                case $(Build.SourceBranchName) in
                  master)
-                   echo "##vso[task.setvariable variable=siteEnvPrefix;]nprd"
+                   echo "##vso[task.setvariable variable=siteEnvPrefix;isOutput=true;]nprd"
                    ;;
                  stage)
                    echo "##vso[task.setvariable variable=siteEnvPrefix;isOutput=true;]uat"
@@ -139,10 +139,11 @@ stages:
 
                echo "siteEnvPrefix is $(siteEnvPrefix)"
              displayName: 'Set Environment Prefix'
-           - script: echo "$(siteEnvPrefix)"
+             name: EnvironmentPrefix
+           - script: echo "$(EnvironmentPrefix.siteEnvPrefix)"
              displayName: 'Display Prefix'
        - job: ProcessSites
-         displayName: Process sites from the manifest
+         displayName: Process sites
          dependsOn: ['ReadManifest']
 #         variables:
 #           siteEnvPrefix: $[ dependencies.ReadManifest.outputs['setVariable.siteEnvPrefix'] ]
