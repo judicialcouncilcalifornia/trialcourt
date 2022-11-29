@@ -23,6 +23,7 @@ var subnet1 = 'df1-asp-sn'
 
 var networkPrivateEndpoint3_var = 'nprd-ctcms-ct1-app-pe'
 var resourceGroupApp = 'nprd-ctcms-df1-app-rg'
+var resourceGroupNet = 'nprd-ctcms-net-rg'
 
 var cDNProfileFrontDoor1 = 'nprd-ctcms-fd'
 var cDNProfileFrontDoorOriginGroup1 = 'df1-ct1-fd-orggrp'
@@ -99,6 +100,7 @@ resource networkPrivateEndpoint3 'Microsoft.Network/privateEndpoints@2020-11-01'
 }
 
 resource cDNProfileFrontDoor1_cDNProfileFrontDoorOriginGroup1_cDNProfileFrontDoorOriginGroupOrigin1 'Microsoft.Cdn/profiles/originGroups/origins@2021-06-01' = {
+  scope: resourceGroupNet
   parent: cDNProfileFrontDoor1_cDNProfileFrontDoorOriginGroup1
   name: '${cDNProfileFrontDoorOriginGroupOrigin1}'
   properties: {
