@@ -149,7 +149,7 @@ resource appService1 'Microsoft.Web/sites@2020-12-01' = {
       minTlsVersion: '1.2'
       scmIpSecurityRestrictions: []
     }
-    virtualNetworkSubnetId: '/subscriptions/${subscription().subscriptionId}/resourceGroups/$(resourceGroupNetRg)/providers/Microsoft.Network/virtualNetworks/$(environment)-ctcms-df${siteFarmId}-vnet/subnets/df${siteFarmId}-asp-sn'
+    virtualNetworkSubnetId: '/subscriptions/${subscription().subscriptionId}/resourceGroups/${resourceGroupNetRg}/providers/Microsoft.Network/virtualNetworks/${environment}-ctcms-df${siteFarmId}-vnet/subnets/df${siteFarmId}-asp-sn'
   }
 }
 /*
@@ -179,7 +179,7 @@ resource networkPrivateEndpoint3 'Microsoft.Network/privateEndpoints@2020-11-01'
             'sites'
           ]
         }
-        name: '$(environtment)-ctcms-ct$(siteId)-app-pe'
+        name: '${environtment}-ctcms-ct${siteId}-app-pe'
       }
     ]
   }
