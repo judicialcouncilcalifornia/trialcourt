@@ -24,8 +24,8 @@ parameters:
   - name: sites
     type: object
     default:
-      - 010|1|Sacramento
-      - 011|1|CountyB
+      - 010|1|sacramento
+      - 011|1|countyb
 
 variables:
   dockerRegistryServiceConnection: '3f015a0b-e8e0-41a5-887c-d04efab1abd1'
@@ -52,7 +52,7 @@ variables:
     azureServiceConnection: 'TODO'
 
   # Agent VM image name
-  vmImageName: 'ubuntu-latest'
+  vmImageName: 'ubuntu-22.04'
 
 stages:
 
@@ -159,28 +159,27 @@ stages:
                    echo "##vso[task.setvariable variable=siteFarmId;]${siteInfo[1]}"
                    echo "##vso[task.setvariable variable=siteName;]${siteInfo[2]}"
                    echo "##vso[task.setvariable variable=ResourceGroupName;]-ctcms-df${siteInfo[1]}-app-rg"
-                 displayName: 'Execute County: ${{ site }}'
+                 displayName: 'Site: ${{ site }}'
 
-               - task: AzureResourceManagerTemplateDeployment@3
-                 inputs:
-                   deploymentScope: 'Resource Group'
-                   azureResourceManagerConnection: '$(azureServiceConnection)'
-                   action: 'Create Or Update Resource Group'
-                   resourceGroupName: '$(siteEnvPrefixLocal)$(ResourceGroupName)'
-                   location: '$(location)'
-                   templateLocation: 'Linked artifact'
-                   csmFile: '$(templateFile)'
-                   overrideParameters: '-siteFarmId $(siteFarmId) -siteId $(siteId) -environment $(siteEnvPrefixLocal)'
-                   deploymentMode: 'Incremental'
-                   deploymentName: 'DeployPipelineTemplate-$(Build.BuildId)'
-
-               - task: AzureWebAppContainer@1
-                 inputs:
-                   azureSubscription: $(azureServiceConnection)
-                   appName: '$(siteEnvPrefixLocal)-ctcms-ct$(siteId)-app'
-                   resourceGroupName: '$(siteEnvPrefixLocal)-ctcms-df$(siteFarmId)-app-rg'
-                   containers: '$(containerRegistry)/build/trialcourt/$(Build.SourceBranchName):latest'
-
+#               - task: AzureResourceManagerTemplateDeployment@3
+#                 inputs:
+#                   deploymentScope: 'Resource Group'
+#                   azureResourceManagerConnection: '$(azureServiceConnection)'
+#                   action: 'Create Or Update Resource Group'
+#                   resourceGroupName: '$(siteEnvPrefixLocal)$(ResourceGroupName)'
+#                   location: '$(location)'
+#                   templateLocation: 'Linked artifact'
+#                   csmFile: '$(templateFile)'
+#                   overrideParameters: '-siteFarmId $(siteFarmId) -siteId $(siteId) -environment $(siteEnvPrefixLocal)'
+#                   deploymentMode: 'Incremental'
+#                   deploymentName: 'DeployPipelineTemplate-$(Build.BuildId)'
+#
+#               - task: AzureWebAppContainer@1
+#                 inputs:
+#                   azureSubscription: $(azureServiceConnection)
+#                   appName: '$(siteEnvPrefixLocal)-ctcms-ct$(siteId)-app'
+#                   resourceGroupName: '$(siteEnvPrefixLocal)-ctcms-df$(siteFarmId)-app-rg'
+#                   containers: '$(containerRegistry)/build/trialcourt/$(Build.SourceBranchName):latest'
 
 #  - stage: Deploy
 #    displayName: Deploy
