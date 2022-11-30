@@ -174,7 +174,6 @@ stages:
                 deploymentName: 'DeployPipelineTemplate-$(Build.BuildId)'
 
             - template: azure-pipelines-deploy.yml
-              displayName: '-- Push latest container'
               parameters:
                 siteEnvPrefixLocal: $(siteEnvPrefixLocal)
                 siteId: $(siteId)
