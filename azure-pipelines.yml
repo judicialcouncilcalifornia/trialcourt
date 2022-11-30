@@ -24,7 +24,7 @@ parameters:
   - name: sites
     type: object
     default:
-      - sacramento|1|012
+      - fremont|1|013
 
 variables:
   dockerRegistryServiceConnection: '3f015a0b-e8e0-41a5-887c-d04efab1abd1'
