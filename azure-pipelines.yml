@@ -159,10 +159,10 @@ stages:
                 echo "##vso[task.setvariable variable=siteFarmId;]${siteInfo[1]}"
                 echo "##vso[task.setvariable variable=siteName;]${siteInfo[2]}"
                 echo "##vso[task.setvariable variable=ResourceGroupName;]-ctcms-df${siteInfo[1]}-app-rg"
-              displayName: 'Site: ${{ site }}'
+              displayName: 'SITE: ${{ siteInfo[2] }}'
 
             - task: AzureResourceManagerTemplateDeployment@3
-              displayName: 'Provision $(siteName) App Service'
+              displayName: '-- Provision $(siteName) App Service'
               inputs:
                 deploymentScope: 'Resource Group'
                 azureResourceManagerConnection: '$(azureServiceConnection)'
@@ -176,7 +176,7 @@ stages:
                 deploymentName: 'DeployPipelineTemplate-$(Build.BuildId)'
 
             - task: AzureWebAppContainer@1
-              displayName: 'Push latest container'
+              displayName: '-- Push latest container'
               inputs:
                 azureSubscription: $(azureServiceConnection)
                 appName: '$(siteEnvPrefixLocal)-ctcms-ct$(siteId)-app'
@@ -184,7 +184,7 @@ stages:
                 containers: '$(containerRegistry)/build/trialcourt/$(Build.SourceBranchName):latest'
 
             - task: MysqlDeploymentOnMachineGroup@1
-              displayName: 'Create a database if not exists'
+              displayName: '-- Create a database if not exists'
               inputs:
                 TaskNameSelector: 'InlineSqlTask'
                 SqlInline: 'CREATE DATABASE IF NOT EXISTS $(siteName);'
@@ -194,7 +194,7 @@ stages:
                 SqlPassword: 'AdamTheGreat1!'
 
             - task: AzureCLI@2
-              displayName: 'Create an SSH remote connection to the App Service'
+              displayName: '-- Create an SSH remote connection to the App Service'
               inputs:
                 azureSubscription: $(azureServiceConnection)
                 scriptType: bash
