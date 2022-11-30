@@ -24,8 +24,7 @@ parameters:
   - name: sites
     type: object
     default:
-      - 010|1|sacramento
-      - 011|1|countyb
+      - 012|1|sacramento
 
 variables:
   dockerRegistryServiceConnection: '3f015a0b-e8e0-41a5-887c-d04efab1abd1'
@@ -161,18 +160,18 @@ stages:
                    echo "##vso[task.setvariable variable=ResourceGroupName;]-ctcms-df${siteInfo[1]}-app-rg"
                  displayName: 'Site: ${{ site }}'
 
-#               - task: AzureResourceManagerTemplateDeployment@3
-#                 inputs:
-#                   deploymentScope: 'Resource Group'
-#                   azureResourceManagerConnection: '$(azureServiceConnection)'
-#                   action: 'Create Or Update Resource Group'
-#                   resourceGroupName: '$(siteEnvPrefixLocal)$(ResourceGroupName)'
-#                   location: '$(location)'
-#                   templateLocation: 'Linked artifact'
-#                   csmFile: '$(templateFile)'
-#                   overrideParameters: '-siteFarmId $(siteFarmId) -siteId $(siteId) -environment $(siteEnvPrefixLocal)'
-#                   deploymentMode: 'Incremental'
-#                   deploymentName: 'DeployPipelineTemplate-$(Build.BuildId)'
+               - task: AzureResourceManagerTemplateDeployment@3
+                 inputs:
+                   deploymentScope: 'Resource Group'
+                   azureResourceManagerConnection: '$(azureServiceConnection)'
+                   action: 'Create Or Update Resource Group'
+                   resourceGroupName: '$(siteEnvPrefixLocal)$(ResourceGroupName)'
+                   location: '$(location)'
+                   templateLocation: 'Linked artifact'
+                   csmFile: '$(templateFile)'
+                   overrideParameters: '-siteFarmId $(siteFarmId) -siteId $(siteId) -environment $(siteEnvPrefixLocal)'
+                   deploymentMode: 'Incremental'
+                   deploymentName: 'DeployPipelineTemplate-$(Build.BuildId)'
 #
 #               - task: AzureWebAppContainer@1
 #                 inputs:
@@ -184,7 +183,7 @@ stages:
                - task: MysqlDeploymentOnMachineGroup@1
                  inputs:
                    TaskNameSelector: 'InlineSqlTask'
-                   SqlInline: 'CREATE DATABASE $(siteName);'
+                   SqlInline: 'CREATE DATABASE IF NOT EXISTS $(siteName);'
                    ServerName: 'supdevmdb01.mariadb.database.azure.com'
                    DatabaseName: ''
                    SqlUsername: 'azuremdb@supdevmdb01'

@@ -150,7 +150,20 @@ resource appService1 'Microsoft.Web/sites@2020-12-01' = {
       scmIpSecurityRestrictions: []
     }
     virtualNetworkSubnetId: '/subscriptions/${subscription().subscriptionId}/resourceGroups/${resourceGroupNetRg}/providers/Microsoft.Network/virtualNetworks/${environment}-ctcms-df${siteFarmId}-vnet/subnets/df${siteFarmId}-asp-sn'
+
+
+    azureStorageAccounts: [
+      {
+        fileshare: {
+          type: 'AzureFiles'
+          accountName: '$(environment)ctcmsdf$(siteFarmId)sa'
+          shareName: 'courtsfileshare'
+          mountPath: '/storage/files'
+        }
+      }
+    ]
   }
+
 }
 /*
 resource appService1_appServiceConfigRegionalVirtualNetworkIntegration1 'Microsoft.Web/sites/config@2018-11-01' = {
