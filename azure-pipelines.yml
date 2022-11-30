@@ -161,6 +161,7 @@ stages:
                  displayName: 'Site: ${{ site }}'
 
                - task: AzureResourceManagerTemplateDeployment@3
+                 displayName: 'Provision $(siteName) App Service'
                  inputs:
                    deploymentScope: 'Resource Group'
                    azureResourceManagerConnection: '$(azureServiceConnection)'
@@ -172,15 +173,17 @@ stages:
                    overrideParameters: '-siteFarmId $(siteFarmId) -siteId $(siteId) -environment $(siteEnvPrefixLocal)'
                    deploymentMode: 'Incremental'
                    deploymentName: 'DeployPipelineTemplate-$(Build.BuildId)'
-#
-#               - task: AzureWebAppContainer@1
-#                 inputs:
-#                   azureSubscription: $(azureServiceConnection)
-#                   appName: '$(siteEnvPrefixLocal)-ctcms-ct$(siteId)-app'
-#                   resourceGroupName: '$(siteEnvPrefixLocal)-ctcms-df$(siteFarmId)-app-rg'
-#                   containers: '$(containerRegistry)/build/trialcourt/$(Build.SourceBranchName):latest'
+
+               - task: AzureWebAppContainer@1
+                 displayName: 'Push latest container'
+                 inputs:
+                   azureSubscription: $(azureServiceConnection)
+                   appName: '$(siteEnvPrefixLocal)-ctcms-ct$(siteId)-app'
+                   resourceGroupName: '$(siteEnvPrefixLocal)-ctcms-df$(siteFarmId)-app-rg'
+                   containers: '$(containerRegistry)/build/trialcourt/$(Build.SourceBranchName):latest'
 
                - task: MysqlDeploymentOnMachineGroup@1
+                 displayName: 'Create a database if not exists'
                  inputs:
                    TaskNameSelector: 'InlineSqlTask'
                    SqlInline: 'CREATE DATABASE IF NOT EXISTS $(siteName);'
