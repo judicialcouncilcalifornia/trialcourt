@@ -173,17 +173,13 @@ stages:
                 deploymentMode: 'Incremental'
                 deploymentName: 'DeployPipelineTemplate-$(Build.BuildId)'
 
-            - extends:
-                template: azure-pipelines-deploy.yml
-                parameters:
-                  siteEnvPrefixLocal: $(siteEnvPrefixLocal)
-                  siteId: $(siteId)
-                  siteFarmId: $(siteFarmId)
-                  branch: $(Build.SourceBranchName)
-                  azureServiceConnection: $(azureServiceConnection)
-                  dockerRegistryServiceConnection: $(dockerRegistryServiceConnection)
-                  imageRepository: $(imageRepository)
-                  containerRegistry: $(containerRegistry)
+            - task: AzureWebAppContainer@1
+              displayName: '-- Push latest container'
+              inputs:
+                azureSubscription: $(azureServiceConnection)
+                appName: '$(siteEnvPrefixLocal)-ctcms-ct$(siteId)-app'
+                resourceGroupName: '$(siteEnvPrefixLocal)-ctcms-df$(siteFarmId)-app-rg'
+                containers: '$(containerRegistry)/build/trialcourt/$(Build.SourceBranchName):latest'
 
             - task: MysqlDeploymentOnMachineGroup@1
               displayName: '-- Create a database if not exists'
