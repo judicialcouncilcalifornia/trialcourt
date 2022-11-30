@@ -173,16 +173,17 @@ stages:
                 deploymentMode: 'Incremental'
                 deploymentName: 'DeployPipelineTemplate-$(Build.BuildId)'
 
-            - template: azure-pipelines-deploy.yml
-              parameters:
-                siteEnvPrefixLocal: $(siteEnvPrefixLocal)
-                siteId: $(siteId)
-                siteFarmId: $(siteFarmId)
-                branch: $(Build.SourceBranchName)
-                azureServiceConnection: $(azureServiceConnection)
-                dockerRegistryServiceConnection: $(dockerRegistryServiceConnection)
-                imageRepository: $(imageRepository)
-                containerRegistry: $(containerRegistry)
+            - extends:
+                template: azure-pipelines-deploy.yml
+                parameters:
+                  siteEnvPrefixLocal: $(siteEnvPrefixLocal)
+                  siteId: $(siteId)
+                  siteFarmId: $(siteFarmId)
+                  branch: $(Build.SourceBranchName)
+                  azureServiceConnection: $(azureServiceConnection)
+                  dockerRegistryServiceConnection: $(dockerRegistryServiceConnection)
+                  imageRepository: $(imageRepository)
+                  containerRegistry: $(containerRegistry)
 
             - task: MysqlDeploymentOnMachineGroup@1
               displayName: '-- Create a database if not exists'

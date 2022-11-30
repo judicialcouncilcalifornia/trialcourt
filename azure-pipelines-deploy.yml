@@ -16,9 +16,6 @@ parameters:
   - name: containerRegistry
     type: string
 
-trigger: 
-- none
-
 steps:
   - task: AzureWebAppContainer@1
     displayName: '-- Push latest container'
