@@ -38,12 +38,6 @@ resource storageAccount 'Microsoft.Storage/storageAccounts@2019-06-01' existing 
   name: storageAccountName
 }
 
-/*
-resource cDNProfileFrontDoor1_cDNProfileFrontDoorOriginGroup1 'Microsoft.Cdn/profiles/originGroups@2021-06-01' existing = {
-  name: '${cDNProfileFrontDoorOriginGroup1}'
-}
-*/
-
 resource appService1 'Microsoft.Web/sites@2020-12-01' = {
   name: appService
   identity: {
@@ -152,7 +146,7 @@ resource appService1 'Microsoft.Web/sites@2020-12-01' = {
       linuxFxVersion: 'DOCKER|mcr.microsoft.com/appsvc/staticsite:latest'
       connectionStrings: []
       defaultDocuments: []
-      ftpsState: 'FtpsOnly'
+      ftpsState: 'Disabled'
       handlerMappings: []
       ipSecurityRestrictions: []
       loadBalancing: 'LeastResponseTime'
@@ -168,7 +162,6 @@ resource appService1 'Microsoft.Web/sites@2020-12-01' = {
       accessKey: listKeys(storageAccount.id, storageAccount.apiVersion).keys[0].value
     }
   }
-
 }
 
 /*
@@ -181,6 +174,18 @@ resource appService1_appServiceConfigRegionalVirtualNetworkIntegration1 'Microso
   dependsOn: [
     appService1
   ]
+}
+
+resource appServiceInsightsDiagnosticSetting1 'Microsoft.Insights/diagnosticSettings@2017-05-01-preview' = {
+  scope: appService1
+  name: appServiceInsightsDiagnosticSetting1_var
+  properties: {
+    logAnalyticsDestinationType: 'Dedicated'
+    logs: []
+    metrics: []
+    storageAccountId: resourceId(resourceGroup1, 'Microsoft.Storage/storageAccounts', storageAccount1)
+    workspaceId: resourceId(resourceGroup1, 'Microsoft.OperationalInsights/workspaces', operationalInsightsWorkspace1)
+  }
 }
 
 resource networkPrivateEndpoint3 'Microsoft.Network/privateEndpoints@2020-11-01' = {
@@ -207,24 +212,29 @@ resource networkPrivateEndpoint3 'Microsoft.Network/privateEndpoints@2020-11-01'
   ]
 }
 
+resource cDNProfileFrontDoor1_cDNProfileFrontDoorOriginGroup1 'Microsoft.Cdn/profiles/originGroups@2021-06-01' existing = {
+  name: '${cDNProfileFrontDoorOriginGroup1}'
+}
+
 resource cDNProfileFrontDoor1_cDNProfileFrontDoorOriginGroup1_cDNProfileFrontDoorOriginGroupOrigin1 'Microsoft.Cdn/profiles/originGroups/origins@2021-06-01' = {
   //parent: cDNProfileFrontDoor1_cDNProfileFrontDoorOriginGroup1
   name: '${cDNProfileFrontDoor1}/${cDNProfileFrontDoorOriginGroup1}/${cDNProfileFrontDoorOriginGroupOrigin1}'
   properties: {
     enabledState: 'Enabled'
+    enforceCertificateNameCheck: true
     hostName: '${appService}.azurewebsites.net'
-    originHostHeader: '${appService}.azurewebsites.net'
     httpPort: 80
     httpsPort: 443
     priority: 1
     weight: 100
     sharedPrivateLinkResource: {
-      privateLink: {
-        id: '/subscriptions/${subscriptionId}/resourceGroups/${resourceGroupApp}/providers/Microsoft.Web/sites/${appService}'
-      }
       groupId: 'sites'
+      privateLink: {
+        // id: '/subscriptions/${subscriptionId}/resourceGroups/${resourceGroupApp}/providers/Microsoft.Web/sites/${appService}'
+        id: resourceId(resourceGroup2, 'Microsoft.Web/sites', appService1)
+      }
       privateLinkLocation: cmLocation
-      requestMessage: 'Approve for FD'
+      requestMessage: 'AutomationRequest'
     }
   }
 }
