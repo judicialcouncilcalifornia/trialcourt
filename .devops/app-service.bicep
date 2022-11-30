@@ -35,9 +35,9 @@ var storageAccountName = '${environment}ctcmsdf${siteFarmId}sa'
 var shareName = 'courtsfileshare'
 var mountPath = '/storage/files'
 
-resource storageAccount 'Microsoft.Storage/storageAccounts@2019-06-01' existing = {
-  name: storageAccountName
-}
+// resource storageAccount 'Microsoft.Storage/storageAccounts@2019-06-01' existing = {
+//   name: storageAccountName
+// }
 
 resource appService1 'Microsoft.Web/sites@2020-12-01' = {
   name: appService
@@ -163,13 +163,13 @@ resource appService1 'Microsoft.Web/sites@2020-12-01' = {
       scmIpSecurityRestrictions: []
     }
     virtualNetworkSubnetId: '/subscriptions/${subscription().subscriptionId}/resourceGroups/${resourceGroupNetRg}/providers/Microsoft.Network/virtualNetworks/${environment}-ctcms-df${siteFarmId}-vnet/subnets/df${siteFarmId}-asp-sn'
-    '${shareName}': {
-      type: 'AzureFiles'
-      shareName: shareName
-      mountPath: mountPath
-      accountName: storageAccount.name      
-      accessKey: listKeys(storageAccount.id, storageAccount.apiVersion).keys[0].value
-    }
+    // '${shareName}': {
+    //   type: 'AzureFiles'
+    //   shareName: shareName
+    //   mountPath: mountPath
+    //   accountName: storageAccount.name      
+    //   accessKey: listKeys(storageAccount.id, storageAccount.apiVersion).keys[0].value
+    // }
   }
 }
 
@@ -240,7 +240,7 @@ resource cDNProfileFrontDoor1_cDNProfileFrontDoorOriginGroup1_cDNProfileFrontDoo
       groupId: 'sites'
       privateLink: {
         // id: '/subscriptions/${subscriptionId}/resourceGroups/${resourceGroupApp}/providers/Microsoft.Web/sites/${appService}'
-        id: resourceId(resourceGroup2, 'Microsoft.Web/sites', appService1)
+        id: resourceId(resourceGroup2, 'Microsoft.Web/sites', appService)
       }
       privateLinkLocation: cmLocation
       requestMessage: 'AutomationRequest'
@@ -248,3 +248,4 @@ resource cDNProfileFrontDoor1_cDNProfileFrontDoorOriginGroup1_cDNProfileFrontDoo
   }
 }
 */
+
