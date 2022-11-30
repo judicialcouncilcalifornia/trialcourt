@@ -29,11 +29,21 @@ var cDNProfileFrontDoor1 = '${environment}-ctcms-fd'
 var cDNProfileFrontDoorOriginGroup1 = 'df${siteFarmId}-ct${siteId}-fd-orggrp'
 var cDNProfileFrontDoorOriginGroupOrigin1 = 'df${siteFarmId}-ct${siteId}-fd-origin'
 var subscriptionId = '539516a7-6f4e-450d-b99e-be9dcc48a4c4'
+
+var storageAccountName = '${environment}ctcmsdf${siteFarmId}sa'
+var shareName = 'courtsfileshare'
+var mountPath = '/storage/files'
+
+resource storageAccount 'Microsoft.Storage/storageAccounts@2019-06-01' existing = {
+  name: storageAccountName
+}
+
 /*
 resource cDNProfileFrontDoor1_cDNProfileFrontDoorOriginGroup1 'Microsoft.Cdn/profiles/originGroups@2021-06-01' existing = {
   name: '${cDNProfileFrontDoorOriginGroup1}'
 }
 */
+
 resource appService1 'Microsoft.Web/sites@2020-12-01' = {
   name: appService
   identity: {
@@ -150,21 +160,17 @@ resource appService1 'Microsoft.Web/sites@2020-12-01' = {
       scmIpSecurityRestrictions: []
     }
     virtualNetworkSubnetId: '/subscriptions/${subscription().subscriptionId}/resourceGroups/${resourceGroupNetRg}/providers/Microsoft.Network/virtualNetworks/${environment}-ctcms-df${siteFarmId}-vnet/subnets/df${siteFarmId}-asp-sn'
-
-
-    azureStorageAccounts: [
-      {
-        fileshare: {
-          type: 'AzureFiles'
-          accountName: '$(environment)ctcmsdf$(siteFarmId)sa'
-          shareName: 'courtsfileshare'
-          mountPath: '/storage/files'
-        }
-      }
-    ]
+    '${shareName}': {
+      type: 'AzureFiles'
+      shareName: shareName
+      mountPath: mountPath
+      accountName: storageAccount.name      
+      accessKey: listKeys(storageAccount.id, storageAccount.apiVersion).keys[0].value
+    }
   }
 
 }
+
 /*
 resource appService1_appServiceConfigRegionalVirtualNetworkIntegration1 'Microsoft.Web/sites/config@2018-11-01' = {
   parent: appService1
