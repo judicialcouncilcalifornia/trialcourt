@@ -6,6 +6,7 @@
 param siteFarmId string = '1'
 param siteId string = '009'
 param cmLocation string = resourceGroup().location
+param siteName string = ''
 
 @allowed([
   'nprd'
@@ -68,7 +69,7 @@ resource appService1 'Microsoft.Web/sites@2020-12-01' = {
         }
         {
           name: 'DATABASE_NAME'
-          value: 'supreme_stage'
+          value: '${siteName}'
         }
         {
           name: 'DATABASE_PASSWORD'
@@ -137,6 +138,14 @@ resource appService1 'Microsoft.Web/sites@2020-12-01' = {
         {
           name: 'XDT_MicrosoftApplicationInsights_Mode'
           value: 'Recommended'
+        }
+        {
+          name: 'SITE_MAP_ID'
+          value: '${siteName}'
+        }
+        {
+          name: 'SITE_MAP_DOMAINS'
+          value: '${environment}-ctcms-ct${siteId}-app.azurewebsites.net'
         }
       ]
       linuxFxVersion: 'DOCKER|mcr.microsoft.com/appsvc/staticsite:latest'
