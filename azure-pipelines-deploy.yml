@@ -16,8 +16,7 @@ parameters:
   - name: containerRegistry
     type: string
 
-trigger:
-  - none
+trigger: none
 
 steps:
   - task: AzureWebAppContainer@1
