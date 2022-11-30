@@ -139,9 +139,9 @@ stages:
              name: EnvironmentPrefix
            - script: echo "$(EnvironmentPrefix.siteEnvPrefix)"
              displayName: 'Display Prefix'
-
-       - job: ProvisionAppService
-         displayName: 'Provision App Services'
+             
+       - job: ProcessSites
+         displayName: Process sites
          dependsOn: ['ReadManifest']
          variables:
            siteEnvPrefixLocal: $[ dependencies.ReadManifest.outputs['EnvironmentPrefix.siteEnvPrefix'] ]
@@ -159,7 +159,7 @@ stages:
                    echo "##vso[task.setvariable variable=siteFarmId;]${siteInfo[1]}"
                    echo "##vso[task.setvariable variable=siteName;]${siteInfo[2]}"
                    echo "##vso[task.setvariable variable=ResourceGroupName;]-ctcms-df${siteInfo[1]}-app-rg"
-                 displayName: '$(siteName)'
+                 displayName: 'Site: ${{ site }}'
 
                - task: AzureResourceManagerTemplateDeployment@3
                  displayName: 'Provision $(siteName) App Service'
@@ -175,13 +175,6 @@ stages:
                    deploymentMode: 'Incremental'
                    deploymentName: 'DeployPipelineTemplate-$(Build.BuildId)'
 
-       - job: PushContainer
-         displayName: 'Push container to app service'
-         dependsOn: ['ProvisionAppService']
-         variables:
-           siteEnvPrefixLocal: $[ dependencies.ReadManifest.outputs['EnvironmentPrefix.siteEnvPrefix'] ]
-         steps:
-           - ${{ each site in parameters.sites }}:
                - task: AzureWebAppContainer@1
                  displayName: 'Push latest container'
                  inputs:
@@ -190,13 +183,6 @@ stages:
                    resourceGroupName: '$(siteEnvPrefixLocal)-ctcms-df$(siteFarmId)-app-rg'
                    containers: '$(containerRegistry)/build/trialcourt/$(Build.SourceBranchName):latest'
 
-       - job: CreateDatabase
-         displayName: 'Push container to app service'
-         dependsOn: ['ProvisionAppService']
-         variables:
-           siteEnvPrefixLocal: $[ dependencies.ReadManifest.outputs['EnvironmentPrefix.siteEnvPrefix'] ]
-         steps:
-           - ${{ each site in parameters.sites }}:
                - task: MysqlDeploymentOnMachineGroup@1
                  displayName: 'Create a database if not exists'
                  inputs:
