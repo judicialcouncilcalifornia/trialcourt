@@ -2,25 +2,26 @@
 trigger:
   - none
 
-resources:
-  - repo: self
+parameters:
+  - name: siteEnvPrefixLocal
+    type: string
+  - name: siteId
+    type: string
+  - name: siteFarmId
+    type: string
+  - name: branch
+    type: string
+  - name: azureServiceConnection
+    type: string
+  - name: dockerRegistryServiceConnection
+    type: string
+  - name: imageRepository
+    type: string
+  - name: containerRegistry
+    type: string
 
-variables:
-  webAppName: 'trialcourt'
-  dockerRegistryServiceConnection: '3f015a0b-e8e0-41a5-887c-d04efab1abd1'
-  imageRepository: 'build/$(webAppName)/$(Build.SourceBranchName)'
-  containerRegistry: 'devopswebcourtsnp.azurecr.io'
-  dockerfilePath: '$(Build.SourcesDirectory)/.devops/drupal-nginx-fpm/0.6-devops/Dockerfile'
-  tag: 'build_$(Build.BuildId)-$(Build.SourceVersion)'
-  phpVersion: 7.4
-  ${{ if eq(variables['Build.SourceBranchName'], 'master') }}:
-    deploymentSlot: 'stage'
-  ${{ else }}:
-    deploymentSlot: '$(Build.SourceBranchName)'
-
-
-  # Agent VM image name
-  vmImageName: 'ubuntu-latest'
+pool:
+  vmImage: 'ubuntu-22.04'
 
 stages:
 
@@ -31,12 +32,11 @@ stages:
       jobs:
         - job: Deploy
           displayName: Deploy to App Service
-          pool:
-            vmImage: $(vmImageName)
           steps:
             - task: AzureWebAppContainer@1
+              displayName: '-- Push latest container'
               inputs:
-                azureSubscription: 'DevOps Web Service Non-Prod'
-                appName: 'nprd-ctcms-ct1-app'
-                resourceGroupName: 'nprd-ctcms-df1-app-rg'
-                containers: '$(containerRegistry)/build/trialcourt/master:latest'
+                azureSubscription: ${{azureServiceConnection}}
+                appName: '${{siteEnvPrefixLocal}}-ctcms-ct${{siteId}}-app'
+                resourceGroupName: '${{siteEnvPrefixLocal}}-ctcms-df${{siteFarmId}}-app-rg'
+                containers: '$(containerRegistry)/$(imageRepository):latest'

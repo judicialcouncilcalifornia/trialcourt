@@ -16,7 +16,7 @@ resources:
   - repo: self
 
 pool:
-  vmImage: $(vmImageName)
+  vmImage: 'ubuntu-22.04'
 
 name: $(Build.BuildId)
 
@@ -24,7 +24,7 @@ parameters:
   - name: sites
     type: object
     default:
-      - alameda|1|014
+      - tehama|1|015
 
 variables:
   dockerRegistryServiceConnection: '3f015a0b-e8e0-41a5-887c-d04efab1abd1'
@@ -50,8 +50,6 @@ variables:
     deploymentSlot: 'production'
     azureServiceConnection: 'TODO'
 
-  # Agent VM image name
-  vmImageName: 'ubuntu-22.04'
 
 stages:
 
@@ -175,13 +173,17 @@ stages:
                 deploymentMode: 'Incremental'
                 deploymentName: 'DeployPipelineTemplate-$(Build.BuildId)'
 
-            - task: AzureWebAppContainer@1
+            - template: azure-pipelines-deploy.yml
               displayName: '-- Push latest container'
-              inputs:
-                azureSubscription: $(azureServiceConnection)
-                appName: '$(siteEnvPrefixLocal)-ctcms-ct$(siteId)-app'
-                resourceGroupName: '$(siteEnvPrefixLocal)-ctcms-df$(siteFarmId)-app-rg'
-                containers: '$(containerRegistry)/build/trialcourt/$(Build.SourceBranchName):latest'
+              parameters:
+                siteEnvPrefixLocal: $(siteEnvPrefixLocal)
+                siteId: $(siteId)
+                siteFarmId: $(siteFarmId)
+                branch: $(Build.SourceBranchName)
+                azureServiceConnection: $(azureServiceConnection)
+                dockerRegistryServiceConnection: $(dockerRegistryServiceConnection)
+                imageRepository: $(imageRepository)
+                containerRegistry: $(containerRegistry)
 
             - task: MysqlDeploymentOnMachineGroup@1
               displayName: '-- Create a database if not exists'
@@ -193,14 +195,14 @@ stages:
                 SqlUsername: 'azuremdb@supdevmdb01'
                 SqlPassword: 'AdamTheGreat1!'
 
-            - task: AzureCLI@2
-              displayName: '-- Create an SSH remote connection to the App Service'
-              inputs:
-                azureSubscription: $(azureServiceConnection)
-                scriptType: bash
-                scriptLocation: inlineScript
-                inlineScript: |
-                  az --version
-                  az account show
-                  az webapp config set --resource-group $(siteEnvPrefixLocal)-ctcms-df$(siteFarmId)-app-rg -n $(siteEnvPrefixLocal)-ctcms-ct$(siteId)-app --remote-debugging-enabled=false
-                  az webapp create-remote-connection --subscription 539516a7-6f4e-450d-b99e-be9dcc48a4c4 --resource-group $(siteEnvPrefixLocal)-ctcms-df$(siteFarmId)-app-rg -n $(siteEnvPrefixLocal)-ctcms-ct$(siteId)-app &
+            # - task: AzureCLI@2
+            #   displayName: '-- Create an SSH remote connection to the App Service'
+            #   inputs:
+            #     azureSubscription: $(azureServiceConnection)
+            #     scriptType: bash
+            #     scriptLocation: inlineScript
+            #     inlineScript: |
+            #       az --version
+            #       az account show
+            #       az webapp config set --resource-group $(siteEnvPrefixLocal)-ctcms-df$(siteFarmId)-app-rg -n $(siteEnvPrefixLocal)-ctcms-ct$(siteId)-app --remote-debugging-enabled=false
+            #       az webapp create-remote-connection --subscription 539516a7-6f4e-450d-b99e-be9dcc48a4c4 --resource-group $(siteEnvPrefixLocal)-ctcms-df$(siteFarmId)-app-rg -n $(siteEnvPrefixLocal)-ctcms-ct$(siteId)-app &
