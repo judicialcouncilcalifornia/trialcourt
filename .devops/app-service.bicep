@@ -167,7 +167,7 @@ resource appService1 'Microsoft.Web/sites@2020-12-01' = {
     //   type: 'AzureFiles'
     //   shareName: shareName
     //   mountPath: mountPath
-    //   accountName: storageAccount.name      
+    //   accountName: storageAccount.name
     //   accessKey: listKeys(storageAccount.id, storageAccount.apiVersion).keys[0].value
     // }
   }
@@ -247,5 +247,6 @@ resource cDNProfileFrontDoor1_cDNProfileFrontDoorOriginGroup1_cDNProfileFrontDoo
     }
   }
 }
+
 */
 
