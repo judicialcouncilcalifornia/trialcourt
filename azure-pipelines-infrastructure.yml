@@ -88,7 +88,7 @@ stages:
               displayName: 'SITE: ${{ site }}'
 
             - task: AzureResourceManagerTemplateDeployment@3
-              displayName: '-- Provision $(siteName) App Service'
+              displayName: '-- Provision App Service'
               inputs:
                 deploymentScope: 'Resource Group'
                 azureResourceManagerConnection: '$(azureServiceConnection)'
