@@ -1,3 +1,4 @@
+//  --- this is Kyle's-- var from other templates in the event I need them
 //var appService1 = 'nprd-ctcms-ct1-app${uniqueMod}'
 //var cDNProfileFrontDoor1 = 'nprd-ctcms-fd'
 //var cDNProfileFrontDoorOriginGroup1 = 'df1-ct1-fd-orggrp'
