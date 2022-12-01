@@ -1,0 +1,132 @@
+trigger:
+  - develop
+  - stage
+  - master
+
+resources:
+  - repo: self
+
+pool:
+  vmImage: 'ubuntu-22.04'
+
+name: $(Build.BuildId)
+
+parameters:
+  - name: sites
+    type: object
+    default:
+      - tehama|1|015
+
+variables:
+  dockerRegistryServiceConnection: '3f015a0b-e8e0-41a5-887c-d04efab1abd1'
+  imageRepository: 'build/trialcourt/$(Build.SourceBranchName)'
+  containerRegistry: 'devopswebcourtsnp.azurecr.io'
+  dockerfilePath: '$(Build.SourcesDirectory)/.devops/drupal-nginx-fpm/0.6-devops/Dockerfile'
+  tag: 'build_$(Build.BuildId)-$(Build.SourceVersion)'
+  location: 'West US 3'
+  templateFile: './.devops/app-service.bicep'
+
+  site: ''
+  siteId: ''
+  siteName: ''
+  siteFarmId: ''
+  siteEnvPrefix: ''
+  ResourceGroupName: ''
+
+  ${{ if eq(variables['Build.SourceBranchName'], 'master') }}:
+    deploymentSlot: 'production'
+    azureServiceConnection: 'DevOps Web Service Non-Prod'
+  ${{ else }}:
+    deploymentSlot: 'production'
+    azureServiceConnection: 'TODO'
+
+
+stages:
+
+  - stage: Manifest
+    displayName: Manifest
+    jobs:
+      - job: ReadManifest
+        displayName: Read manifest file
+        steps:
+          - script: |
+              case $(Build.SourceBranchName) in
+                master)
+                  echo "##vso[task.setvariable variable=siteEnvPrefix;isOutput=true;]nprd"
+                  ;;
+                stage)
+                  echo "##vso[task.setvariable variable=siteEnvPrefix;isOutput=true;]uat"
+                  ;;
+                *)
+                  echo "##vso[task.setvariable variable=siteEnvPrefix;isOutput=true;]int"
+                  ;;
+              esac
+            displayName: 'Set Environment Prefix'
+            name: EnvironmentPrefix
+          - script: echo "$(EnvironmentPrefix.siteEnvPrefix)"
+            displayName: 'Display Prefix'
+            
+      - job: ProcessSites
+        displayName: Process sites
+        dependsOn: ['ReadManifest']
+        variables:
+          siteEnvPrefixLocal: $[ dependencies.ReadManifest.outputs['EnvironmentPrefix.siteEnvPrefix'] ]
+        steps:
+          - ${{ each site in parameters.sites }}:
+            - script: |
+                IFS='|'
+                read -a siteInfo <<< "${{site}}"
+
+                echo "CountyId: ${siteInfo[0]}"
+                echo "CountyName : ${siteInfo[2]}"
+                echo "FarmId : ${siteInfo[1]}"
+                echo "##vso[task.setvariable variable=site;]${{site}}"
+                echo "##vso[task.setvariable variable=siteId;]${siteInfo[2]}"
+                echo "##vso[task.setvariable variable=siteFarmId;]${siteInfo[1]}"
+                echo "##vso[task.setvariable variable=siteName;]${siteInfo[0]}"
+                echo "##vso[task.setvariable variable=ResourceGroupName;]-ctcms-df${siteInfo[1]}-app-rg"
+              displayName: 'SITE: ${{ site }}'
+
+            - task: AzureResourceManagerTemplateDeployment@3
+              displayName: '-- Provision $(siteName) App Service'
+              inputs:
+                deploymentScope: 'Resource Group'
+                azureResourceManagerConnection: '$(azureServiceConnection)'
+                action: 'Create Or Update Resource Group'
+                resourceGroupName: '$(siteEnvPrefixLocal)$(ResourceGroupName)'
+                location: '$(location)'
+                templateLocation: 'Linked artifact'
+                csmFile: '$(templateFile)'
+                overrideParameters: '-siteFarmId $(siteFarmId) -siteId $(siteId) -environment $(siteEnvPrefixLocal) -siteName $(siteName)'
+                deploymentMode: 'Incremental'
+                deploymentName: 'DeployPipelineTemplate-$(Build.BuildId)'
+
+            - task: AzureWebAppContainer@1
+              displayName: '-- Push latest container'
+              inputs:
+                azureSubscription: $(azureServiceConnection)
+                appName: '$(siteEnvPrefixLocal)-ctcms-ct$(siteId)-app'
+                resourceGroupName: '$(siteEnvPrefixLocal)-ctcms-df$(siteFarmId)-app-rg'
+                containers: '$(containerRegistry)/build/trialcourt/$(Build.SourceBranchName):latest'
+
+            - task: MysqlDeploymentOnMachineGroup@1
+              displayName: '-- Create a database if not exists'
+              inputs:
+                TaskNameSelector: 'InlineSqlTask'
+                SqlInline: 'CREATE DATABASE IF NOT EXISTS $(siteName);'
+                ServerName: 'supdevmdb01.mariadb.database.azure.com'
+                DatabaseName: ''
+                SqlUsername: 'azuremdb@supdevmdb01'
+                SqlPassword: 'AdamTheGreat1!'
+
+            # - task: AzureCLI@2
+            #   displayName: '-- Create an SSH remote connection to the App Service'
+            #   inputs:
+            #     azureSubscription: $(azureServiceConnection)
+            #     scriptType: bash
+            #     scriptLocation: inlineScript
+            #     inlineScript: |
+            #       az --version
+            #       az account show
+            #       az webapp config set --resource-group $(siteEnvPrefixLocal)-ctcms-df$(siteFarmId)-app-rg -n $(siteEnvPrefixLocal)-ctcms-ct$(siteId)-app --remote-debugging-enabled=false
+            #       az webapp create-remote-connection --subscription 539516a7-6f4e-450d-b99e-be9dcc48a4c4 --resource-group $(siteEnvPrefixLocal)-ctcms-df$(siteFarmId)-app-rg -n $(siteEnvPrefixLocal)-ctcms-ct$(siteId)-app &
