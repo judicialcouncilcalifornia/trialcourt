@@ -18,26 +18,43 @@ parameters:
       - tehama|1|015
 
 variables:
-  dockerRegistryServiceConnection: $(DOCKER-REGISTRY-DERVICE-CONNECTION)
-  imageRepository: 'build/trialcourt/$(Build.SourceBranchName)'
-  containerRegistry: 'devopswebcourtsnp.azurecr.io'
-  dockerfilePath: '$(Build.SourcesDirectory)/.devops/drupal-nginx-fpm/0.6-devops/Dockerfile'
-  tag: 'build_$(Build.BuildId)-$(Build.SourceVersion)'
-  phpVersion: 7.4
+- group: Connections
+- name: dockerRegistryServiceConnection 
+  value: $(DOCKER-REGISTRY-DERVICE-CONNECTION)
+- name: imageRepository
+  value: 'build/trialcourt/$(Build.SourceBranchName)'
+- name: containerRegistry
+  value: 'devopswebcourtsnp.azurecr.io'
+- name: dockerfilePath
+  value: '$(Build.SourcesDirectory)/.devops/drupal-nginx-fpm/0.6-devops/Dockerfile'
+- name: tag
+  value: 'build_$(Build.BuildId)-$(Build.SourceVersion)'
+- name: phpVersion
+  value: 7.4
 
-  site: ''
-  siteId: ''
-  siteName: ''
-  siteFarmId: ''
-  siteEnvPrefix: ''
-  ResourceGroupName: ''
+- name: site
+  value: ''
+- name: siteId
+  value: ''
+- name: siteName
+  value: ''
+- name: siteFarmId
+  value: ''
+- name: siteEnvPrefix
+  value: ''
+- name: ResourceGroupName
+  value: ''
 
   ${{ if eq(variables['Build.SourceBranchName'], 'master') }}:
-    deploymentSlot: 'production'
-    azureServiceConnection: 'DevOps Web Service Non-Prod'
+- name: deploymentSlot
+  value: 'production'
+- name: azureServiceConnection
+  value: 'DevOps Web Service Non-Prod'
   ${{ else }}:
-    deploymentSlot: 'production'
-    azureServiceConnection: 'TODO'
+- name: deploymentSlot
+  value: 'production'
+- name: azureServiceConnection
+  value: 'TODO'
 
 
 stages:
