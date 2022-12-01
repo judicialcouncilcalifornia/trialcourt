@@ -43,63 +43,62 @@ variables:
 
 stages:
 
+  - stage: Test
+    displayName: Test
+    jobs:
+      - job: Compile
+        displayName: Compile code
+        pool:
+          vmImage: 'ubuntu-latest'
+        steps:
+          - script: |
+              sudo update-alternatives --set php /usr/bin/php$(phpVersion)
+              sudo update-alternatives --set phar /usr/bin/phar$(phpVersion)
+              sudo update-alternatives --set phpdbg /usr/bin/phpdbg$(phpVersion)
+              sudo update-alternatives --set php-cgi /usr/bin/php-cgi$(phpVersion)
+              sudo update-alternatives --set phar.phar /usr/bin/phar.phar$(phpVersion)
+              php -version
+            displayName: 'Use PHP version $(phpVersion)'
+          - script: composer install --no-interaction --prefer-dist
+            displayName: 'Composer install'
+      - job: Analyze
+        displayName: Analyze code
+        steps:
+          - script: composer -n lint
+            displayName: 'Lint php for syntax errors'
+          - script: composer -n code-sniff
+            displayName: 'Check coding standards'
+          - script: composer -n unit-test
+            displayName: 'Run unit tests'
 
-#  - stage: Test
-#    displayName: Test
-#    jobs:
-#      - job: Compile
-#        displayName: Compile code
-#        pool:
-#          vmImage: 'ubuntu-latest'
-#        steps:
-#          - script: |
-#              sudo update-alternatives --set php /usr/bin/php$(phpVersion)
-#              sudo update-alternatives --set phar /usr/bin/phar$(phpVersion)
-#              sudo update-alternatives --set phpdbg /usr/bin/phpdbg$(phpVersion)
-#              sudo update-alternatives --set php-cgi /usr/bin/php-cgi$(phpVersion)
-#              sudo update-alternatives --set phar.phar /usr/bin/phar.phar$(phpVersion)
-#              php -version
-#            displayName: 'Use PHP version $(phpVersion)'
-#          - script: composer install --no-interaction --prefer-dist
-#            displayName: 'Composer install'
-#      - job: Analyze
-#        displayName: Analyze code
-#        steps:
-#          - script: composer -n lint
-#            displayName: 'Lint php for syntax errors'
-#          - script: composer -n code-sniff
-#            displayName: 'Check coding standards'
-#          - script: composer -n unit-test
-#            displayName: 'Run unit tests'
-
-#  - stage: Build
-#    displayName: Build
-#    dependsOn: Test
-#    condition: and(succeeded('Test'), ne(variables['Build.SourceBranchName'], 'merge'))
-#    jobs:
-#      - job: Build
-#        displayName: Build image
-#        steps:
-#          - task: Docker@2
-#            displayName: Build
-#            inputs:
-#              command: build
-#              containerRegistry: $(dockerRegistryServiceConnection)
-#              repository: $(imageRepository)
-#              dockerfile: $(dockerfilePath)
-#              tags: |
-#                latest
-#                $(tag)
-#              arguments: --label buildtype=nightly --build-arg GIT_BRANCH=$(Build.SourceBranchName)
-#          - task: Docker@2
-#            displayName: Push to registry
-#            inputs:
-#              command: push
-#              containerRegistry: $(dockerRegistryServiceConnection)
-#              repository: $(imageRepository)
-#              tags: |
-#                latest
-#                $(tag)
+  - stage: Build
+    displayName: Build
+    dependsOn: Test
+    condition: and(succeeded('Test'), ne(variables['Build.SourceBranchName'], 'merge'))
+    jobs:
+      - job: Build
+        displayName: Build image
+        steps:
+          - task: Docker@2
+            displayName: Build
+            inputs:
+              command: build
+              containerRegistry: $(dockerRegistryServiceConnection)
+              repository: $(imageRepository)
+              dockerfile: $(dockerfilePath)
+              tags: |
+                latest
+                $(tag)
+              arguments: --label buildtype=nightly --build-arg GIT_BRANCH=$(Build.SourceBranchName)
+          - task: Docker@2
+            displayName: Push to registry
+            inputs:
+              command: push
+              containerRegistry: $(dockerRegistryServiceConnection)
+              repository: $(imageRepository)
+              tags: |
+                latest
+                $(tag)
 
   - stage: Manifest
     displayName: Manifest
@@ -145,13 +144,13 @@ stages:
                 echo "##vso[task.setvariable variable=ResourceGroupName;]-ctcms-df${siteInfo[1]}-app-rg"
               displayName: 'SITE: ${{ site }}'
 
-#            - task: AzureWebAppContainer@1
-#              displayName: '-- Push latest container'
-#              inputs:
-#                azureSubscription: $(azureServiceConnection)
-#                appName: '$(siteEnvPrefixLocal)-ctcms-ct$(siteId)-app'
-#                resourceGroupName: '$(siteEnvPrefixLocal)-ctcms-df$(siteFarmId)-app-rg'
-#                containers: '$(containerRegistry)/build/trialcourt/$(Build.SourceBranchName):latest'
+            - task: AzureWebAppContainer@1
+              displayName: '-- Push latest container'
+              inputs:
+                azureSubscription: $(azureServiceConnection)
+                appName: '$(siteEnvPrefixLocal)-ctcms-ct$(siteId)-app'
+                resourceGroupName: '$(siteEnvPrefixLocal)-ctcms-df$(siteFarmId)-app-rg'
+                containers: '$(containerRegistry)/build/trialcourt/$(Build.SourceBranchName):latest'
 
             - task: AzureCLI@2
               displayName: '-- Create an SSH remote connection to the App Service'
@@ -161,8 +160,8 @@ stages:
                 scriptLocation: inlineScript
                 inlineScript: |
                   ssh -Q cipher
-#                  az login --identity
-#                  az webapp config set --resource-group $(siteEnvPrefixLocal)-ctcms-df$(siteFarmId)-app-rg -n $(siteEnvPrefixLocal)-ctcms-ct$(siteId)-app --remote-debugging-enabled=false
-#                  az webapp create-remote-connection --subscription 539516a7-6f4e-450d-b99e-be9dcc48a4c4 --resource-group $(siteEnvPrefixLocal)-ctcms-df$(siteFarmId)-app-rg -n $(siteEnvPrefixLocal)-ctcms-ct$(siteId)-app --port $(sshPort) &
-#                  sleep 20
-#                  ssh root:Docker!@127.0.0.1 -p $(sshPort) "df -H"
+                  az login --identity
+                  az webapp config set --resource-group $(siteEnvPrefixLocal)-ctcms-df$(siteFarmId)-app-rg -n $(siteEnvPrefixLocal)-ctcms-ct$(siteId)-app --remote-debugging-enabled=false
+                  az webapp create-remote-connection --subscription 539516a7-6f4e-450d-b99e-be9dcc48a4c4 --resource-group $(siteEnvPrefixLocal)-ctcms-df$(siteFarmId)-app-rg -n $(siteEnvPrefixLocal)-ctcms-ct$(siteId)-app --port $(sshPort) &
+                  sleep 20
+                  ssh root:Docker!@127.0.0.1 -p $(sshPort) "df -H"
