@@ -1,4 +1,4 @@
-//  --- this is Kyle's-- var from other templates in the event I need them
+//  --- this is Kyle'  pile of var from other templates in the event he needs them
 //var appService1 = 'nprd-ctcms-ct1-app${uniqueMod}'
 //var cDNProfileFrontDoor1 = 'nprd-ctcms-fd'
 //var cDNProfileFrontDoorOriginGroup1 = 'df1-ct1-fd-orggrp'
@@ -15,7 +15,7 @@
 //var appServiceInsightsDiagnosticSetting1_var = 'nprd-ctcms-ct1-diag'
 //var resourceGroup2 = 'nprd-ctcms-${dfN}-net-rg'
 //var subnet1 = '${dfN}-asp-sn'
-//var virtualNetwork1 = 'nprd-ctcms-${dfN}-vnet'
+//var dfVirtualNetwork1  'nprd-ctcms-${dfN}-vnet'
 //var cDNProfileFrontDoorEndpoint1 = 'df1-ct1-fd-endpoint'
 //var cDNProfileFrontDoorEndpointsRoute1 = 'df1-ct1-route'
 //var cDNProfileFrontDoorOriginGroup1 = 'df1-ct1-fd-orggrp'
@@ -30,37 +30,39 @@ param siteFarmId string = '1'
 param siteId string = '009'
 param cmLocation string = resourceGroup().location
 param siteName string = ''
+param uniqueMod string = ''
 
 @allowed([
   'nprd'
   'uat'
   'prod'
 ])
-param environment string = 'nprd'
+param env string = 'nprd'
 
-var appService = '${environment}-ctcms-ct${siteId}-app'
-var webServerfarm = '${environment}-ctcms-df${siteFarmId}-asp'
+var appService = '${env}-ctcms-ct${siteId}-app'
+var webServerfarm = '${env}-ctcms-df${siteFarmId}-asp'
 
-var resourceGroupNet = '${environment}-ctcms-df${siteFarmId}-net-rg'
-var virtualNetwork1 = '${environment}-ctcms-df${siteFarmId}-vnet'
-var subnet1 = 'df${siteFarmId}-asp-sn'
+var resourceGroupNet = '${env}-ctcms-df${siteFarmId}-net-rg'
+var dfVirtualNetwork = '${env}-ctcms-df${siteFarmId}-vnet'
+var subnet = 'df${siteFarmId}-asp-sn'
 
-var networkPrivateEndpoint3_var = '${environment}-ctcms-ct${siteId}-app-pe'
-var resourceGroupApp = '${environment}-ctcms-df${siteFarmId}-app-rg'
-var resourceGroupNetRg = '${environment}-ctcms-net-rg'
+var networkPrivateEndpoint3_var = '${env}-ctcms-ct${siteId}-app-pe'
+var resourceGroupApp = '${env}-ctcms-df${siteFarmId}-app-rg'
+var resourceGroupNetRg = '${env}-ctcms-net-rg'
 
-var cDNProfileFrontDoor1 = '${environment}-ctcms-fd'
+var cDNProfileFrontDoor1 = '${env}-ctcms-fd'
 var cDNProfileFrontDoorOriginGroup1 = 'df${siteFarmId}-ct${siteId}-fd-orggrp'
 var cDNProfileFrontDoorOriginGroupOrigin1 = 'df${siteFarmId}-ct${siteId}-fd-origin'
 var subscriptionId = '539516a7-6f4e-450d-b99e-be9dcc48a4c4'
 
-var storageAccountName = '${environment}ctcmsdf${siteFarmId}sa'
+var storageAccountName = '${env}ctcmsdf${siteFarmId}}sa${uniqueMod}'
 var shareName = 'courtsfileshare'
 var mountPath = '/storage/files'
 
-// resource storageAccount 'Microsoft.Storage/storageAccounts@2019-06-01' existing = {
-//   name: storageAccountName
-// }
+resource storageAccount 'Microsoft.Storage/storageAccounts@2019-06-01' existing = {
+scope: resourceGroup('${env}-ctcms-df${siteFarmId}-data-rg')
+name: storageAccountName
+}
 
 resource appService1 'Microsoft.Web/sites@2020-12-01' = {
   name: appService
@@ -96,7 +98,7 @@ resource appService1 'Microsoft.Web/sites@2020-12-01' = {
         }
         {
           name: 'DATABASE_NAME'
-          value: '${siteName}'
+          value: siteName
         }
         {
           name: 'DATABASE_PASSWORD'
@@ -168,11 +170,11 @@ resource appService1 'Microsoft.Web/sites@2020-12-01' = {
         }
         {
           name: 'SITE_MAP_ID'
-          value: '${siteName}'
+          value: siteName
         }
         {
           name: 'SITE_MAP_DOMAINS'
-          value: '${environment}-ctcms-ct${siteId}-app.azurewebsites.net'
+          value: '${env}-ctcms-ct${siteId}-app.azurewebsites.net'
         }
       ]
       linuxFxVersion: 'DOCKER|mcr.microsoft.com/appsvc/staticsite:latest'
@@ -185,16 +187,22 @@ resource appService1 'Microsoft.Web/sites@2020-12-01' = {
       minTlsVersion: '1.2'
       scmIpSecurityRestrictions: []
     }
-    virtualNetworkSubnetId: '/subscriptions/${subscription().subscriptionId}/resourceGroups/${resourceGroupNetRg}/providers/Microsoft.Network/virtualNetworks/${environment}-ctcms-df${siteFarmId}-vnet/subnets/df${siteFarmId}-asp-sn'
-    // '${shareName}': {
-    //   type: 'AzureFiles'
-    //   shareName: shareName
-    //   mountPath: mountPath
-    //   accountName: storageAccount.name
-    //   accessKey: listKeys(storageAccount.id, storageAccount.apiVersion).keys[0].value
-    // }
+    virtualNetworkSubnetId: '/subscriptions/${subscription().subscriptionId}/resourceGroups/${resourceGroupNetRg}/providers/Microsoft.Network/virtualNetworks/${env}-ctcms-df${siteFarmId}-vnet/subnets/df${siteFarmId}-asp-sn'
   }
 }
+
+resource storageSetting 'Microsoft.Web/sites/config@2021-01-15' = {
+  name: '${appService1}/azurestorageaccounts'
+  properties: {
+    '${shareName}': {
+      type: 'AzureFiles'
+      shareName: shareName
+      mountPath: mountPath
+      accountName: storageAccountName
+    }
+  }
+}
+
 
 /*  ############### - Per Court Deployment/ move to code pipeline
 resource cDNProfileFrontDoor1_cDNProfileFrontDoorEndpoint1 'Microsoft.Cdn/profiles/afdEndpoints@2021-06-01' = {
@@ -316,7 +324,7 @@ resource appService1_appServiceConfigRegionalVirtualNetworkIntegration1 'Microso
   parent: appService1
   name: 'appsettings'
   properties: {
-    subnetResourceId: resourceId(resourceGroup2, 'Microsoft.Network/virtualNetworks/subnets', virtualNetwork1, subnet1)
+    subnetResourceId: resourceId(resourceGroup2, 'Microsoft.Network/virtualNetworks/subnets' dfVirtualNetwork1, subnet1)
   }
 }
 
@@ -356,7 +364,7 @@ resource networkPrivateEndpoint3 'Microsoft.Network/privateEndpoints@2020-11-01'
   location: cmLocation1
   properties: {
     subnet: {
-      id: resourceId('Microsoft.Network/virtualNetworks/subnets', virtualNetwork1, subnet1)
+      id: resourceId('Microsoft.Network/virtualNetworks/subnets' dfVirtualNetwork1, subnet1)
     }
     privateLinkServiceConnections: [
       {
@@ -403,7 +411,7 @@ resource appService1_appServiceConfigRegionalVirtualNetworkIntegration1 'Microso
   parent: appService1
   name: 'appsettings'
   properties: {
-    subnetResourceId: resourceId(resourceGroupNet, 'Microsoft.Network/virtualNetworks/subnets', virtualNetwork1, subnet1)
+    subnetResourceId: resourceId(resourceGroupNet, 'Microsoft.Network/virtualNetworks/subnets' dfVirtualNetwork1, subnet1)
   }
   dependsOn: [
     appService1
@@ -427,7 +435,7 @@ resource networkPrivateEndpoint3 'Microsoft.Network/privateEndpoints@2020-11-01'
   location: cmLocation
   properties: {
     subnet: {
-      id: resourceId('Microsoft.Network/virtualNetworks/subnets', virtualNetwork1, subnet1)
+      id: resourceId('Microsoft.Network/virtualNetworks/subnets' dfVirtualNetwork1, subnet1)
     }
     privateLinkServiceConnections: [
       {
