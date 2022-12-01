@@ -48,8 +48,6 @@ stages:
      jobs:
        - job: Compile
          displayName: Compile code
-         pool:
-           vmImage: $(vmImageName)
          steps:
            - script: |
                sudo update-alternatives --set php /usr/bin/php$(phpVersion)
@@ -63,8 +61,6 @@ stages:
              displayName: 'Composer install'
        - job: Analyze
          displayName: Analyze code
-         pool:
-           vmImage: $(vmImageName)
          steps:
            - script: composer -n lint
              displayName: 'Lint php for syntax errors'
@@ -80,8 +76,6 @@ stages:
      jobs:
        - job: Build
          displayName: Build image
-         pool:
-           vmImage: $(vmImageName)
          steps:
            - task: Docker@2
              displayName: Build
