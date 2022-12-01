@@ -161,6 +161,6 @@ stages:
                   az webapp config set --resource-group $(siteEnvPrefixLocal)-ctcms-df$(siteFarmId)-app-rg -n $(siteEnvPrefixLocal)-ctcms-ct$(siteId)-app --remote-debugging-enabled=false
                   az webapp create-remote-connection --subscription 539516a7-6f4e-450d-b99e-be9dcc48a4c4 --resource-group $(siteEnvPrefixLocal)-ctcms-df$(siteFarmId)-app-rg -n $(siteEnvPrefixLocal)-ctcms-ct$(siteId)-app --port $(sshPort) &
                   sleep 20
-                  mkdir -p ~/.ssh/known_hosts
+                  mkdir -p ~/.ssh && touch ~/.ssh/known_hosts
                   ssh-keyscan -t rsa @127.0.0.1 >> ~/.ssh/known_hosts
                   ssh root:Docker!@127.0.0.1 -p $(sshPort) "df -H"
