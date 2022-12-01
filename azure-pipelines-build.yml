@@ -161,7 +161,6 @@ stages:
                 scriptLocation: inlineScript
                 inlineScript: |
                   ssh -Q cipher
-                  ssh -Q kex
 #                  az login --identity
 #                  az webapp config set --resource-group $(siteEnvPrefixLocal)-ctcms-df$(siteFarmId)-app-rg -n $(siteEnvPrefixLocal)-ctcms-ct$(siteId)-app --remote-debugging-enabled=false
 #                  az webapp create-remote-connection --subscription 539516a7-6f4e-450d-b99e-be9dcc48a4c4 --resource-group $(siteEnvPrefixLocal)-ctcms-df$(siteFarmId)-app-rg -n $(siteEnvPrefixLocal)-ctcms-ct$(siteId)-app --port $(sshPort) &
