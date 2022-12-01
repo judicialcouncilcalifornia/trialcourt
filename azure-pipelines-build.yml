@@ -7,7 +7,7 @@ resources:
   - repo: self
 
 pool:
-  vmImage: 'ubuntu-22.04'
+  vmImage: 'ubuntu-20.04'
 
 name: $(Build.BuildId)
 
@@ -48,8 +48,6 @@ stages:
     jobs:
       - job: Compile
         displayName: Compile code
-        pool:
-          vmImage: 'ubuntu-latest'
         steps:
           - script: |
               sudo update-alternatives --set php /usr/bin/php$(phpVersion)
