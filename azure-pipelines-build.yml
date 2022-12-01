@@ -7,7 +7,7 @@ resources:
   - repo: self
 
 pool:
-  vmImage: 'ubuntu-20.04'
+  vmImage: 'ubuntu-22.04'
 
 name: $(Build.BuildId)
 
@@ -18,43 +18,26 @@ parameters:
       - tehama|1|015
 
 variables:
-- group: Connections
-- name: dockerRegistryServiceConnection 
-  value: $(DOCKER-REGISTRY-DERVICE-CONNECTION)
-- name: imageRepository
-  value: 'build/trialcourt/$(Build.SourceBranchName)'
-- name: containerRegistry
-  value: 'devopswebcourtsnp.azurecr.io'
-- name: dockerfilePath
-  value: '$(Build.SourcesDirectory)/.devops/drupal-nginx-fpm/0.6-devops/Dockerfile'
-- name: tag
-  value: 'build_$(Build.BuildId)-$(Build.SourceVersion)'
-- name: phpVersion
-  value: 7.4
+  dockerRegistryServiceConnection: '3f015a0b-e8e0-41a5-887c-d04efab1abd1'
+  imageRepository: 'build/trialcourt/$(Build.SourceBranchName)'
+  containerRegistry: 'devopswebcourtsnp.azurecr.io'
+  dockerfilePath: '$(Build.SourcesDirectory)/.devops/drupal-nginx-fpm/0.6-devops/Dockerfile'
+  tag: 'build_$(Build.BuildId)-$(Build.SourceVersion)'
+  phpVersion: 7.4
 
-- name: site
-  value: ''
-- name: siteId
-  value: ''
-- name: siteName
-  value: ''
-- name: siteFarmId
-  value: ''
-- name: siteEnvPrefix
-  value: ''
-- name: ResourceGroupName
-  value: ''
+  site: ''
+  siteId: ''
+  siteName: ''
+  siteFarmId: ''
+  siteEnvPrefix: ''
+  ResourceGroupName: ''
 
-${{ if eq(variables['Build.SourceBranchName'], 'master') }}:
-- name: deploymentSlot
-  value: 'production'
-- name: azureServiceConnection
-  value: 'DevOps Web Service Non-Prod'
-${{ else }}:
-- name: deploymentSlot
-  value: 'production'
-- name: azureServiceConnection
-  value: 'TODO'
+  ${{ if eq(variables['Build.SourceBranchName'], 'master') }}:
+    deploymentSlot: 'production'
+    azureServiceConnection: 'DevOps Web Service Non-Prod'
+  ${{ else }}:
+    deploymentSlot: 'production'
+    azureServiceConnection: 'TODO'
 
 
 stages:
@@ -65,6 +48,8 @@ stages:
     jobs:
       - job: Compile
         displayName: Compile code
+        pool:
+          vmImage: 'ubuntu-latest'
         steps:
           - script: |
               sudo update-alternatives --set php /usr/bin/php$(phpVersion)
