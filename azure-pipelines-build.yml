@@ -142,13 +142,13 @@ stages:
                 echo "##vso[task.setvariable variable=ResourceGroupName;]-ctcms-df${siteInfo[1]}-app-rg"
               displayName: 'SITE: ${{ site }}'
 
-            - task: AzureWebAppContainer@1
-              displayName: '-- Push latest container'
-              inputs:
-                azureSubscription: $(azureServiceConnection)
-                appName: '$(siteEnvPrefixLocal)-ctcms-ct$(siteId)-app'
-                resourceGroupName: '$(siteEnvPrefixLocal)-ctcms-df$(siteFarmId)-app-rg'
-                containers: '$(containerRegistry)/build/trialcourt/$(Build.SourceBranchName):latest'
+#            - task: AzureWebAppContainer@1
+#              displayName: '-- Push latest container'
+#              inputs:
+#                azureSubscription: $(azureServiceConnection)
+#                appName: '$(siteEnvPrefixLocal)-ctcms-ct$(siteId)-app'
+#                resourceGroupName: '$(siteEnvPrefixLocal)-ctcms-df$(siteFarmId)-app-rg'
+#                containers: '$(containerRegistry)/build/trialcourt/$(Build.SourceBranchName):latest'
 
             - task: AzureCLI@2
               displayName: '-- Create an SSH remote connection to the App Service'
@@ -157,7 +157,7 @@ stages:
                 scriptType: bash
                 scriptLocation: inlineScript
                 inlineScript: |
-                  az login
+                  az login --allow-no-subscriptions
                   az webapp config set --resource-group $(siteEnvPrefixLocal)-ctcms-df$(siteFarmId)-app-rg -n $(siteEnvPrefixLocal)-ctcms-ct$(siteId)-app --remote-debugging-enabled=false
                   az webapp create-remote-connection --subscription 539516a7-6f4e-450d-b99e-be9dcc48a4c4 --resource-group $(siteEnvPrefixLocal)-ctcms-df$(siteFarmId)-app-rg -n $(siteEnvPrefixLocal)-ctcms-ct$(siteId)-app --port $(sshPort) &
                   sleep 20
