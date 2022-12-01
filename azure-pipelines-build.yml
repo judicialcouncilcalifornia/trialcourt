@@ -18,7 +18,7 @@ parameters:
       - tehama|1|015
 
 variables:
-  dockerRegistryServiceConnection: '3f015a0b-e8e0-41a5-887c-d04efab1abd1'
+  dockerRegistryServiceConnection: $(DOCKER-REGISTRY-DERVICE-CONNECTION)
   imageRepository: 'build/trialcourt/$(Build.SourceBranchName)'
   containerRegistry: 'devopswebcourtsnp.azurecr.io'
   dockerfilePath: '$(Build.SourcesDirectory)/.devops/drupal-nginx-fpm/0.6-devops/Dockerfile'
