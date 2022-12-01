@@ -45,12 +45,12 @@ variables:
 - name: ResourceGroupName
   value: ''
 
-  ${{ if eq(variables['Build.SourceBranchName'], 'master') }}:
+${{ if eq(variables['Build.SourceBranchName'], 'master') }}:
 - name: deploymentSlot
   value: 'production'
 - name: azureServiceConnection
   value: 'DevOps Web Service Non-Prod'
-  ${{ else }}:
+${{ else }}:
 - name: deploymentSlot
   value: 'production'
 - name: azureServiceConnection
