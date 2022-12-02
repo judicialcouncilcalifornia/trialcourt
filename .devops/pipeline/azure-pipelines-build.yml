@@ -1,0 +1,184 @@
+trigger:
+  - develop
+  - stage
+  - master
+
+resources:
+  - repo: self
+
+pool:
+  vmImage: 'ubuntu-20.04'
+
+name: $(Build.BuildId)
+
+parameters:
+  - name: sites
+    type: object
+    default:
+      - fresno|1|017
+
+variables:
+  dockerRegistryServiceConnection: '3f015a0b-e8e0-41a5-887c-d04efab1abd1'
+  imageRepository: 'build/trialcourt/$(Build.SourceBranchName)'
+  containerRegistry: 'devopswebcourtsnp.azurecr.io'
+  dockerfilePath: '$(Build.SourcesDirectory)/.devops/container/drupal-nginx-fpm/0.6-devops/Dockerfile'
+  tag: 'build_$(Build.BuildId)-$(Build.SourceVersion)'
+  phpVersion: 7.4
+  sshPort: 9837
+  templateFile: './.devops/bicep/ivan-app-service.bicep'
+
+  site: ''
+  siteId: ''
+  siteName: ''
+  siteFarmId: ''
+  siteEnvPrefix: ''
+  ResourceGroupName: ''
+
+  ${{ if eq(variables['Build.SourceBranchName'], 'master') }}:
+    deploymentSlot: 'production'
+    azureServiceConnection: 'DevOps Web Service Non-Prod'
+  ${{ else }}:
+    deploymentSlot: 'production'
+    azureServiceConnection: 'TODO'
+
+
+stages:
+
+  - stage: Test
+    displayName: Test
+    jobs:
+      - job: Compile
+        displayName: Compile code
+        steps:
+          - script: |
+              sudo update-alternatives --set php /usr/bin/php$(phpVersion)
+              sudo update-alternatives --set phar /usr/bin/phar$(phpVersion)
+              sudo update-alternatives --set phpdbg /usr/bin/phpdbg$(phpVersion)
+              sudo update-alternatives --set php-cgi /usr/bin/php-cgi$(phpVersion)
+              sudo update-alternatives --set phar.phar /usr/bin/phar.phar$(phpVersion)
+              php -version
+            displayName: 'Use PHP version $(phpVersion)'
+          - script: composer install --no-interaction --prefer-dist
+            displayName: 'Composer install'
+      - job: Analyze
+        displayName: Analyze code
+        steps:
+          - script: composer -n lint
+            displayName: 'Lint php for syntax errors'
+          - script: composer -n code-sniff
+            displayName: 'Check coding standards'
+          - script: composer -n unit-test
+            displayName: 'Run unit tests'
+
+  - stage: Build
+    displayName: Build
+    dependsOn: Test
+    condition: and(succeeded('Test'), ne(variables['Build.SourceBranchName'], 'merge'))
+    jobs:
+      - job: Build
+        displayName: Build image
+        steps:
+          - task: Docker@2
+            displayName: Build
+            inputs:
+              command: build
+              containerRegistry: $(dockerRegistryServiceConnection)
+              repository: $(imageRepository)
+              dockerfile: $(dockerfilePath)
+              tags: |
+                latest
+                $(tag)
+              arguments: --label buildtype=nightly --build-arg GIT_BRANCH=$(Build.SourceBranchName)
+          - task: Docker@2
+            displayName: Push to registry
+            inputs:
+              command: push
+              containerRegistry: $(dockerRegistryServiceConnection)
+              repository: $(imageRepository)
+              tags: |
+                latest
+                $(tag)
+
+  - stage: Manifest
+    displayName: Manifest
+    jobs:
+      - job: ReadManifest
+        displayName: Read manifest file
+        steps:
+          - script: |
+              case $(Build.SourceBranchName) in
+                master)
+                  echo "##vso[task.setvariable variable=siteEnvPrefix;isOutput=true;]nprd"
+                  ;;
+                stage)
+                  echo "##vso[task.setvariable variable=siteEnvPrefix;isOutput=true;]uat"
+                  ;;
+                *)
+                  echo "##vso[task.setvariable variable=siteEnvPrefix;isOutput=true;]int"
+                  ;;
+              esac
+            displayName: 'Set Environment Prefix'
+            name: EnvironmentPrefix
+          - script: echo "$(EnvironmentPrefix.siteEnvPrefix)"
+            displayName: 'Display Prefix'
+
+      - job: ProcessSites
+        displayName: Process sites
+        dependsOn: ['ReadManifest']
+        variables:
+          siteEnvPrefixLocal: $[ dependencies.ReadManifest.outputs['EnvironmentPrefix.siteEnvPrefix'] ]
+        steps:
+          - ${{ each site in parameters.sites }}:
+            - script: |
+                IFS='|'
+                read -a siteInfo <<< "${{site}}"
+
+                echo "CountyId: ${siteInfo[0]}"
+                echo "CountyName : ${siteInfo[2]}"
+                echo "FarmId : ${siteInfo[1]}"
+                echo "##vso[task.setvariable variable=site;]${{site}}"
+                echo "##vso[task.setvariable variable=siteId;]${siteInfo[2]}"
+                echo "##vso[task.setvariable variable=siteFarmId;]${siteInfo[1]}"
+                echo "##vso[task.setvariable variable=siteName;]${siteInfo[0]}"
+                echo "##vso[task.setvariable variable=ResourceGroupName;]-ctcms-df${siteInfo[1]}-app-rg"
+              displayName: 'SITE: ${{ site }}'
+
+            - task: AzureResourceManagerTemplateDeployment@3
+              displayName: '-- Provision App Service'
+              inputs:
+                deploymentScope: 'Resource Group'
+                azureResourceManagerConnection: '$(azureServiceConnection)'
+                action: 'Create Or Update Resource Group'
+                resourceGroupName: '$(siteEnvPrefixLocal)$(ResourceGroupName)'
+                location: '$(location)'
+                templateLocation: 'Linked artifact'
+                csmFile: '$(templateFile)'
+                overrideParameters: '-siteFarmId $(siteFarmId) -siteId $(siteId) -environment $(siteEnvPrefixLocal) -siteName $(siteName)'
+                deploymentMode: 'Incremental'
+                deploymentName: 'DeployPipelineTemplate-$(Build.BuildId)'
+
+            - task: AzureWebAppContainer@1
+              displayName: '-- Push latest container'
+              inputs:
+                azureSubscription: $(azureServiceConnection)
+                appName: '$(siteEnvPrefixLocal)-ctcms-ct$(siteId)-app'
+                resourceGroupName: '$(siteEnvPrefixLocal)-ctcms-df$(siteFarmId)-app-rg'
+                containers: '$(containerRegistry)/build/trialcourt/$(Build.SourceBranchName):latest'
+
+#            - task: AzureCLI@2
+#              displayName: '-- Create an SSH remote connection to the App Service'
+#              inputs:
+#                azureSubscription: $(azureServiceConnection)
+#                scriptType: bash
+#                scriptLocation: inlineScript
+#                inlineScript: |
+#                  az login --identity
+#                  az webapp ssh -n $(siteEnvPrefixLocal)-ctcms-ct$(siteId)-app --resource-group $(siteEnvPrefixLocal)-ctcms-df$(siteFarmId)-app-rg
+#                  df -h
+#                  cd /var/drupal_prj
+#                  ls -la
+#                  az webapp config set --resource-group $(siteEnvPrefixLocal)-ctcms-df$(siteFarmId)-app-rg -n $(siteEnvPrefixLocal)-ctcms-ct$(siteId)-app --remote-debugging-enabled=false
+#                  az webapp create-remote-connection --subscription 539516a7-6f4e-450d-b99e-be9dcc48a4c4 --resource-group $(siteEnvPrefixLocal)-ctcms-df$(siteFarmId)-app-rg -n $(siteEnvPrefixLocal)-ctcms-ct$(siteId)-app --port $(sshPort) &
+#                  mkdir -p ~/.ssh && touch ~/.ssh/config
+#                  echo -e "Host 127.0.0.1\n\tStrictHostKeyChecking no\n" >> ~/.ssh/config
+#                  ssh root:Docker!@127.0.0.1 -p $(sshPort) "df -H"
