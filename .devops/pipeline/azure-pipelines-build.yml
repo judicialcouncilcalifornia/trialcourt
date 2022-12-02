@@ -163,7 +163,7 @@ stages:
                 azureSubscription: $(azureServiceConnection)
                 appName: '$(siteEnvPrefixLocal)-ctcms-ct$(siteId)-app'
                 resourceGroupName: '$(siteEnvPrefixLocal)-ctcms-df$(siteFarmId)-app-rg'
-                containers: '$(containerRegistry)/build/trialcourt/$(Build.SourceBranchName):latest'
+                containers: '$(containerRegistry)/build/trialcourt/$(Build.SourceBranchName):$(tag)'
 
 #            - task: AzureCLI@2
 #              displayName: '-- Create an SSH remote connection to the App Service'
