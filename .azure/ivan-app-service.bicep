@@ -35,10 +35,6 @@ var storageAccountName = '${environment}ctcmsdf${siteFarmId}sa'
 var shareName = 'courtsfileshare'
 var mountPath = '/storage/files'
 
-// resource storageAccount 'Microsoft.Storage/storageAccounts@2019-06-01' existing = {
-//   name: storageAccountName
-// }
-
 resource appService1 'Microsoft.Web/sites@2020-12-01' = {
   name: appService
   identity: {
@@ -163,90 +159,5 @@ resource appService1 'Microsoft.Web/sites@2020-12-01' = {
       scmIpSecurityRestrictions: []
     }
     virtualNetworkSubnetId: '/subscriptions/${subscription().subscriptionId}/resourceGroups/${resourceGroupNetRg}/providers/Microsoft.Network/virtualNetworks/${environment}-ctcms-df${siteFarmId}-vnet/subnets/df${siteFarmId}-asp-sn'
-    // '${shareName}': {
-    //   type: 'AzureFiles'
-    //   shareName: shareName
-    //   mountPath: mountPath
-    //   accountName: storageAccount.name
-    //   accessKey: listKeys(storageAccount.id, storageAccount.apiVersion).keys[0].value
-    // }
   }
 }
-
-/*
-resource appService1_appServiceConfigRegionalVirtualNetworkIntegration1 'Microsoft.Web/sites/config@2018-11-01' = {
-  parent: appService1
-  name: 'appsettings'
-  properties: {
-    subnetResourceId: resourceId(resourceGroupNet, 'Microsoft.Network/virtualNetworks/subnets', virtualNetwork1, subnet1)
-  }
-  dependsOn: [
-    appService1
-  ]
-}
-
-resource appServiceInsightsDiagnosticSetting1 'Microsoft.Insights/diagnosticSettings@2017-05-01-preview' = {
-  scope: appService1
-  name: appServiceInsightsDiagnosticSetting1_var
-  properties: {
-    logAnalyticsDestinationType: 'Dedicated'
-    logs: []
-    metrics: []
-    storageAccountId: resourceId(resourceGroup1, 'Microsoft.Storage/storageAccounts', storageAccount1)
-    workspaceId: resourceId(resourceGroup1, 'Microsoft.OperationalInsights/workspaces', operationalInsightsWorkspace1)
-  }
-}
-
-resource networkPrivateEndpoint3 'Microsoft.Network/privateEndpoints@2020-11-01' = {
-  name: networkPrivateEndpoint3_var
-  location: cmLocation
-  properties: {
-    subnet: {
-      id: resourceId('Microsoft.Network/virtualNetworks/subnets', virtualNetwork1, subnet1)
-    }
-    privateLinkServiceConnections: [
-      {
-        properties: {
-          privateLinkServiceId: resourceId(resourceGroupApp, 'Microsoft.Web/sites', appService)
-          groupIds: [
-            'sites'
-          ]
-        }
-        name: '${environtment}-ctcms-ct${siteId}-app-pe'
-      }
-    ]
-  }
-  dependsOn: [
-    appService1
-  ]
-}
-
-resource cDNProfileFrontDoor1_cDNProfileFrontDoorOriginGroup1 'Microsoft.Cdn/profiles/originGroups@2021-06-01' existing = {
-  name: '${cDNProfileFrontDoorOriginGroup1}'
-}
-
-resource cDNProfileFrontDoor1_cDNProfileFrontDoorOriginGroup1_cDNProfileFrontDoorOriginGroupOrigin1 'Microsoft.Cdn/profiles/originGroups/origins@2021-06-01' = {
-  //parent: cDNProfileFrontDoor1_cDNProfileFrontDoorOriginGroup1
-  name: '${cDNProfileFrontDoor1}/${cDNProfileFrontDoorOriginGroup1}/${cDNProfileFrontDoorOriginGroupOrigin1}'
-  properties: {
-    enabledState: 'Enabled'
-    enforceCertificateNameCheck: true
-    hostName: '${appService}.azurewebsites.net'
-    httpPort: 80
-    httpsPort: 443
-    priority: 1
-    weight: 100
-    sharedPrivateLinkResource: {
-      groupId: 'sites'
-      privateLink: {
-        // id: '/subscriptions/${subscriptionId}/resourceGroups/${resourceGroupApp}/providers/Microsoft.Web/sites/${appService}'
-        id: resourceId(resourceGroup2, 'Microsoft.Web/sites', appService)
-      }
-      privateLinkLocation: cmLocation
-      requestMessage: 'AutomationRequest'
-    }
-  }
-}
-
-*/
-
