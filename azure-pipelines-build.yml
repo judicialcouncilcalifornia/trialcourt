@@ -25,6 +25,7 @@ variables:
   tag: 'build_$(Build.BuildId)-$(Build.SourceVersion)'
   phpVersion: 7.4
   sshPort: 9837
+  templateFile: './.devops/app-service.bicep'
 
   site: ''
   siteId: ''
