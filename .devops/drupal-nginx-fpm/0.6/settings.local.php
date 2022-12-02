@@ -23,6 +23,8 @@ if (isset($_ENV['REDIS_HOST'])) {
   $settings['redis.connection']['password'] = $_ENV["REDIS_PASSWORD"];
   $settings['cache']['default'] = 'cache.backend.redis';
 
+  $settings['cache_prefix']['default'] = $_ENV['SITE_MAP_ID'];
+
   // Apply changes to the container configuration to better leverage Redis.
   // This includes using Redis for the lock and flood control systems, as well
   // as the cache tag checksum. Alternatively, copy the contents of that file

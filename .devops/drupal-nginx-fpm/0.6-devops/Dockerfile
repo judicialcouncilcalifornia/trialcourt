@@ -1,4 +1,4 @@
-FROM devopswebcourtsnp.azurecr.io/source/drupal-nginx-fpm:0.6
+FROM devopswebcourtsnp.azurecr.io/source/drupal-nginx-fpm:0.61
 LABEL maintainer="Azure App Service Container Images <appsvc-images@microsoft.com>"
 LABEL maintainer="Ivan Bueno <ivan.bueno@jud.ca.gov>"
 # ========
@@ -43,7 +43,6 @@ RUN set -ex \
 	&& apk upgrade \
 	&& rm -rf /var/cache/apk/* \
 	&& rm -rf /etc/nginx/conf.d/default.conf
-
 # =========
 # Build source
 # =========
@@ -55,7 +54,6 @@ RUN set -ex \
   && scripts/theme.sh -i jcc_base && scripts/theme.sh -b jcc_base \
   && scripts/theme.sh -i jcc_deprep && scripts/theme.sh -b jcc_deprep \
   && scripts/theme.sh -i jcc_newsroom && scripts/theme.sh -b jcc_newsroom
-
 # =========
 # Configure
 # =========
