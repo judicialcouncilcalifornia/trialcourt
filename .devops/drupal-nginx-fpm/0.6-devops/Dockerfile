@@ -43,7 +43,6 @@ RUN set -ex \
 	&& apk upgrade \
 	&& rm -rf /var/cache/apk/* \
 	&& rm -rf /etc/nginx/conf.d/default.conf
-
 # =========
 # Build source
 # =========
@@ -55,7 +54,6 @@ RUN set -ex \
   && scripts/theme.sh -i jcc_base && scripts/theme.sh -b jcc_base \
   && scripts/theme.sh -i jcc_deprep && scripts/theme.sh -b jcc_deprep \
   && scripts/theme.sh -i jcc_newsroom && scripts/theme.sh -b jcc_newsroom
-
 # =========
 # Configure
 # =========
