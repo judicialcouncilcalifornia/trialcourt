@@ -21,11 +21,11 @@ variables:
   dockerRegistryServiceConnection: '3f015a0b-e8e0-41a5-887c-d04efab1abd1'
   imageRepository: 'build/trialcourt/$(Build.SourceBranchName)'
   containerRegistry: 'devopswebcourtsnp.azurecr.io'
-  dockerfilePath: '$(Build.SourcesDirectory)/.devops/drupal-nginx-fpm/0.6-devops/Dockerfile'
+  dockerfilePath: '$(Build.SourcesDirectory)/.devops/container/drupal-nginx-fpm/0.6-devops/Dockerfile'
   tag: 'build_$(Build.BuildId)-$(Build.SourceVersion)'
   phpVersion: 7.4
   sshPort: 9837
-  templateFile: './.azure/ivan-app-service.bicep'
+  templateFile: './.devops/bicep/ivan-app-service.bicep'
 
   site: ''
   siteId: ''
@@ -163,7 +163,7 @@ stages:
                 azureSubscription: $(azureServiceConnection)
                 appName: '$(siteEnvPrefixLocal)-ctcms-ct$(siteId)-app'
                 resourceGroupName: '$(siteEnvPrefixLocal)-ctcms-df$(siteFarmId)-app-rg'
-                containers: '$(containerRegistry)/build/trialcourt/$(Build.SourceBranchName):latest'
+                containers: '$(containerRegistry)/build/trialcourt/$(Build.SourceBranchName):$(tag)'
 
 #            - task: AzureCLI@2
 #              displayName: '-- Create an SSH remote connection to the App Service'
