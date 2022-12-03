@@ -70,7 +70,7 @@ resource appService1 'Microsoft.Web/sites@2020-12-01' = {
         }
         {
           name: 'DATABASE_HOST'
-          value: 'supdevmdb01.mariadb.database.azure.com'
+          value: '@Microsoft.KeyVault(VaultName=nprd-ctcms-df1-kv-01;SecretName=DATABASEHOST)'
         }
         {
           name: 'DATABASE_NAME'
@@ -78,23 +78,23 @@ resource appService1 'Microsoft.Web/sites@2020-12-01' = {
         }
         {
           name: 'DATABASE_PASSWORD'
-          value: 'AdamTheGreat1!'
+          value: '@Microsoft.KeyVault(VaultName=nprd-ctcms-df1-kv-01;SecretName=DATABASEPASSWORD)'
         }
         {
           name: 'DATABASE_USER'
-          value: 'azuremdb@supdevmdb01'
+          value: '@Microsoft.KeyVault(VaultName=nprd-ctcms-df1-kv-01;SecretName=DATABASEUSER)'
         }
         {
           name: 'DOCKER_REGISTRY_SERVER_PASSWORD'
-          value: '5Q+HLzRMaHGF=weHScWHkwp65wtvZ3or'
+          value: '@Microsoft.KeyVault(VaultName=nprd-ctcms-df1-kv-01;SecretName=DOCKERREGISTRYSERVERPASSWORD)'
         }
         {
           name: 'DOCKER_REGISTRY_SERVER_URL'
-          value: 'https://devopswebcourtsnp.azurecr.io'
+          value: '@Microsoft.KeyVault(VaultName=nprd-ctcms-df1-kv-01;SecretName=DOCKERREGISTRYSERVERURL)'
         }
         {
           name: 'DOCKER_REGISTRY_SERVER_USERNAME'
-          value: 'devopswebcourtsnp'
+          value: '@Microsoft.KeyVault(VaultName=nprd-ctcms-df1-kv-01;SecretName=DOCKERREGISTRYSERVERUSERNAME)'
         }
         {
           name: 'GIT_BRANCH'
@@ -106,11 +106,11 @@ resource appService1 'Microsoft.Web/sites@2020-12-01' = {
         }
         {
           name: 'REDIS_HOST'
-          value: 'supdev.redis.cache.windows.net'
+          value: '@Microsoft.KeyVault(VaultName=nprd-ctcms-df1-kv-01;SecretName=REDISHOST)'
         }
         {
           name: 'REDIS_PASSWORD'
-          value: 'Ji1AizWN74MT4G0wRLMxOZICFsUVro93QAzCaJXe6nE='
+          value: '@Microsoft.KeyVault(VaultName=nprd-ctcms-df1-kv-01;SecretName=REDISPASSWORD)'
         }
         {
           name: 'REDIS_PORT'
