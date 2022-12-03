@@ -23,8 +23,9 @@ parameters:
 
 variables:
   dockerRegistryServiceConnection: '3f015a0b-e8e0-41a5-887c-d04efab1abd1'
+  containerRegistryServiceConnection: 'POC Container Registry'
   imageRepository: 'build/trialcourt/$(Build.SourceBranchName)'
-  containerRegistry: 'devopswebcourtsnp.azurecr.io'
+  containerRegistry: 'nprdctcmscr01.azurecr.io'
   dockerfilePath: '$(Build.SourcesDirectory)/.devops/container/drupal-nginx-fpm/0.6-devops/Dockerfile'
   tag: 'build_$(Build.BuildId)-$(Build.SourceVersion)'
   phpVersion: 7.4
@@ -86,7 +87,7 @@ stages:
             displayName: Build
             inputs:
               command: build
-              containerRegistry: $(dockerRegistryServiceConnection)
+              containerRegistry: $(containerRegistryServiceConnection)
               repository: $(imageRepository)
               dockerfile: $(dockerfilePath)
               tags: |
@@ -97,7 +98,7 @@ stages:
             displayName: Push to registry
             inputs:
               command: push
-              containerRegistry: $(dockerRegistryServiceConnection)
+              containerRegistry: $(containerRegistryServiceConnection)
               repository: $(imageRepository)
               tags: |
                 latest
