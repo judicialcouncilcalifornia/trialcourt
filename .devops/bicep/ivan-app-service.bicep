@@ -24,7 +24,8 @@ var subnet1 = 'df${siteFarmId}-asp-sn'
 
 var networkPrivateEndpoint3_var = '${environment}-ctcms-ct${siteId}-app-pe'
 var resourceGroupApp = '${environment}-ctcms-df${siteFarmId}-app-rg'
-var resourceGroupNetRg = '${environment}-ctcms-net-rg'
+// var resourceGroupNetRg = '${environment}-ctcms-net-rg'
+var resourceGroupNetRg = '${environment}-ctcms-df${siteFarmId}-net-rg'
 
 var cDNProfileFrontDoor1 = '${environment}-ctcms-fd'
 var cDNProfileFrontDoorOriginGroup1 = 'df${siteFarmId}-ct${siteId}-fd-orggrp'
