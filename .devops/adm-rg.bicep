@@ -1,13 +1,10 @@
 //var appService1 = 'nprd-ctcms-ct1-app${uniqueMod}'
-//var cDNProfileFrontDoor1 = 'nprd-ctcms-fd'
-//var cDNProfileFrontDoorOriginGroup1 = 'df1-ct1-fd-orggrp'
-//var cDNProfileFrontDoorOriginGroupOrigin1 = 'df1-ct1-fd-origin'
-//var resourceGroup2 = 'nprd-ctcms-${dfN}-app-rg'
+
 //var resourceGroup3 = 'nprd-ctcms-${dfN}-admin-rg'
 //var appService1 = 'nprd-ctcms-ct1-app${uniqueMod}'
 //var networkPrivateEndpoint3_var = 'nprd-ctcms-ct1-app-pe'
-//var networkPrivateEndpointPrivateDnsZoneGroup3 = 'nprd-ctcms-ct1-app-pe-dns'
-//var appDns = 'privatelink.azurewebsites.net'
+
+
 //var resourceGroup3 = 'nprd-ctcms-${dfN}-app-rg'
 //var appService1_var = 'nprd-ctcms-ct1-app${uniqueMod}'
 //var appServiceConfigRegionalVirtualNetworkIntegration1 = 'virtualNetwork'
@@ -15,19 +12,35 @@
 //var resourceGroup2 = 'nprd-ctcms-${dfN}-net-rg'
 //var subnet1 = '${dfN}-asp-sn'
 //var dfVirtualNetwork1  'nprd-ctcms-${dfN}-vnet'
-//var cDNProfileFrontDoorEndpoint1 = 'df1-ct1-fd-endpoint'
-//var cDNProfileFrontDoorEndpointsRoute1 = 'df1-ct1-route'
-//var cDNProfileFrontDoorOriginGroup1 = 'df1-ct1-fd-orggrp'
-//var cDNProfileFrontDoorSecurityPolicy1 = 'nprdfdsecpol'
 
+param env string = 'nprd'
+param siteId string = '001'
+param uniqueMod string = '42'
+param cmLocation string = resourceGroup().location
+param siteFarmId string = '1'
 
-var cDNProfileFrontDoor1 = '${env}-ctcms-fd'
+var appResourceGroup = '${env}-ctcms-df${siteFarmId}-app-rg'
+var appService = '${env}-ctcms-ct${siteId}-app${uniqueMod}'
 var cDNProfileFrontDoorOriginGroup1 = 'df${siteFarmId}-ct${siteId}-fd-orggrp'
+var cDNProfileFrontDoorSecurityPolicy1 = '${env}fdsecpol'
 var cDNProfileFrontDoorOriginGroupOrigin1 = 'df${siteFarmId}-ct${siteId}-fd-origin'
+var envFrontDoorName = '${env}-ctcms-fd'
+var cDNProfileFrontDoorEndpoint1 = 'df${siteFarmId}-ct${siteId}-fd-endpoint'
+var cDNProfileFrontDoorEndpointsRoute1 = 'df${siteFarmId}-ct${siteId}-route'
+var fdWafPolicy = 'nprdwafpol1'
 
+
+
+resource envFrontDoor 'Microsoft.Cdn/profiles@2021-06-01' existing = {
+  name: envFrontDoorName
+}
+
+resource networkFrontDoorWebApplicationFirewallPolicy1 'Microsoft.Network/FrontDoorWebApplicationFirewallPolicies@2020-11-01' existing = {
+  name: fdWafPolicy
+}
 
 resource cDNProfileFrontDoor1_cDNProfileFrontDoorEndpoint1 'Microsoft.Cdn/profiles/afdEndpoints@2021-06-01' = {
-  parent: cDNProfileFrontDoor1
+  parent: envFrontDoor
   name: cDNProfileFrontDoorEndpoint1
   location: 'global'
   properties: {
@@ -37,7 +50,7 @@ resource cDNProfileFrontDoor1_cDNProfileFrontDoorEndpoint1 'Microsoft.Cdn/profil
 }
 
 resource cDNProfileFrontDoor1_cDNProfileFrontDoorOriginGroup1 'Microsoft.Cdn/profiles/originGroups@2021-06-01' = {
-  parent: cDNProfileFrontDoor1
+  parent: envFrontDoor
   name: cDNProfileFrontDoorOriginGroup1
   properties: {
     healthProbeSettings: {
@@ -56,7 +69,7 @@ resource cDNProfileFrontDoor1_cDNProfileFrontDoorOriginGroup1 'Microsoft.Cdn/pro
 }
 
 resource cDNProfileFrontDoor1_cDNProfileFrontDoorSecurityPolicy1 'Microsoft.Cdn/profiles/securityPolicies@2021-06-01' = {
-  parent: cDNProfileFrontDoor1
+  parent: envFrontDoor
   name: cDNProfileFrontDoorSecurityPolicy1
   properties: {
     parameters: {
@@ -106,41 +119,29 @@ resource cDNProfileFrontDoor1_cDNProfileFrontDoorEndpoint1_cDNProfileFrontDoorEn
   }
 }
 
-resource cDNProfileFrontDoor1_cDNProfileFrontDoorOriginGroup1_cDNProfileFrontDoorOriginGroupOrigin1 'Microsoft.Cdn/profiles/originGroups/origins@2021-06-01' = {
-  name: '${cDNProfileFrontDoor1}/${cDNProfileFrontDoorOriginGroup1}/${cDNProfileFrontDoorOriginGroupOrigin1}'
+resource fdOrigin 'Microsoft.Cdn/profiles/originGroups/origins@2021-06-01' = {
+  parent: cDNProfileFrontDoor1_cDNProfileFrontDoorOriginGroup1
+  name: cDNProfileFrontDoorOriginGroupOrigin1 //'${envFrontDoor}/${cDNProfileFrontDoorOriginGroup1}/${cDNProfileFrontDoorOriginGroupOrigin1}'
   properties: {
     enabledState: 'Enabled'
     enforceCertificateNameCheck: true
-    hostName: 'nprd-ctcms-ct1-app${uniqueMod}.azurewebsites.net'
+    hostName: '${env}-ctcms-ct${siteId}-app${uniqueMod}.azurewebsites.net'
     httpPort: 80
     httpsPort: 443
     priority: 1
     sharedPrivateLinkResource: {
       groupId: 'sites'
       privateLink: {
-        id: resourceId(resourceGroup2, 'Microsoft.Web/sites', appService1)
+        id: resourceId(appResourceGroup, 'Microsoft.Web/sites', appService)
       }
-      privateLinkLocation: cmLocation1
+      privateLinkLocation: cmLocation
       requestMessage: 'AutomationRequest'
     }
     weight: 100
   }
 }
 
-resource networkPrivateEndpoint3_networkPrivateEndpointPrivateDnsZoneGroup3 'Microsoft.Network/privateEndpoints/privateDnsZoneGroups@2020-08-01' = {
-  parent: networkPrivateEndpoint3
-  name: networkPrivateEndpointPrivateDnsZoneGroup3
-  properties: {
-    privateDnsZoneConfigs: [
-      {
-        name: 'nprd-ctcms-ct1-app-dns'
-        properties: {
-          privateDnsZoneId: resourceId(resourceGroup1, 'Microsoft.Network/privateDnsZones', appDns)
-        }
-      }
-    ]
-  }
-}
+
 
 
 
@@ -156,7 +157,7 @@ var cDNProfileFrontDoorOriginGroupOrigin1 = 'df1-ct1-fd-origin'
 var resourceGroup2 = 'nprd-ctcms-df1-app-rg'
 
 
-resource cDNProfileFrontDoor1_cDNProfileFrontDoorOriginGroup1_cDNProfileFrontDoorOriginGroupOrigin1 'Microsoft.Cdn/profiles/originGroups/origins@2022-05-01-preview' = {
+resource fdOrigin 'Microsoft.Cdn/profiles/originGroups/origins@2022-05-01-preview' = {
   name: '${cDNProfileFrontDoor1}/${cDNProfileFrontDoorOriginGroup1}/${cDNProfileFrontDoorOriginGroupOrigin1}'
   properties: {
     enabledState: 'Enabled'
