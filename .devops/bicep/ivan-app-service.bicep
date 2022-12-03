@@ -164,6 +164,6 @@ resource appService1 'Microsoft.Web/sites@2020-12-01' = {
       scmIpSecurityRestrictions: []
     }
     //virtualNetworkSubnetId: '/subscriptions/${subscription().subscriptionId}/resourceGroups/${resourceGroupNetRg}/providers/Microsoft.Network/virtualNetworks/${environment}-ctcms-df${siteFarmId}-vnet/subnets/df${siteFarmId}-asp-sn'
-    virtualNetworkSubnetId: '/subscriptions/981cd141-7390-4618-808e-7c57fcf96d93/resourceGroups/nprd-ctcms-df1-net-rg/providers/Microsoft.Network/virtualNetworks/nprd-ctcms-df1-vnet/subnets/df1-asp-sn'
+    //virtualNetworkSubnetId: '/subscriptions/981cd141-7390-4618-808e-7c57fcf96d93/resourceGroups/nprd-ctcms-df1-net-rg/providers/Microsoft.Network/virtualNetworks/nprd-ctcms-df1-vnet/subnets/df1-asp-sn'
   }
 }
