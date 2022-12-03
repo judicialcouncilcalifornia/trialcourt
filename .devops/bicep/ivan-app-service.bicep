@@ -29,7 +29,11 @@ var resourceGroupNetRg = '${environment}-ctcms-net-rg'
 var cDNProfileFrontDoor1 = '${environment}-ctcms-fd'
 var cDNProfileFrontDoorOriginGroup1 = 'df${siteFarmId}-ct${siteId}-fd-orggrp'
 var cDNProfileFrontDoorOriginGroupOrigin1 = 'df${siteFarmId}-ct${siteId}-fd-origin'
-var subscriptionId = '539516a7-6f4e-450d-b99e-be9dcc48a4c4'
+
+// Non-Prod
+// var subscriptionId = '539516a7-6f4e-450d-b99e-be9dcc48a4c4'
+// POC
+var subscriptionId = '981cd141-7390-4618-808e-7c57fcf96d93'
 
 var storageAccountName = '${environment}ctcmsdf${siteFarmId}sa'
 var shareName = 'courtsfileshare'

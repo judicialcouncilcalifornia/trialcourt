@@ -15,7 +15,11 @@ parameters:
   - name: sites
     type: object
     default:
-      - fresno|1|017
+      - alameda|1|101
+      - amdr|1|102
+      - butte|1|103
+      - colusa|1|104
+      - eldorado|1|105
 
 variables:
   dockerRegistryServiceConnection: '3f015a0b-e8e0-41a5-887c-d04efab1abd1'
