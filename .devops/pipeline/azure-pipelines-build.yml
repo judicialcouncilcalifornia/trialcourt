@@ -15,19 +15,18 @@ parameters:
   - name: sites
     type: object
     default:
-      - alameda|1|101
-      - amdr|1|102
+      - slo2|1|203
 
 variables:
   dockerRegistryServiceConnection: '3f015a0b-e8e0-41a5-887c-d04efab1abd1'
-  containerRegistryServiceConnection: 'POC Container Registry'
+  containerRegistryServiceConnection: 'POC Manual connection'
   imageRepository: 'build/trialcourt/$(Build.SourceBranchName)'
   containerRegistry: 'nprdctcmscr01.azurecr.io'
   dockerfilePath: '$(Build.SourcesDirectory)/.devops/container/drupal-nginx-fpm/0.6-devops/Dockerfile'
   tag: 'build_$(Build.BuildId)-$(Build.SourceVersion)'
   phpVersion: 7.4
   sshPort: 9837
-  templateFile: './.devops/bicep/ivan-app-service.bicep'
+  templateFile: './.devops/site-build.bicep'
 
   site: ''
   siteId: ''
@@ -35,6 +34,7 @@ variables:
   siteFarmId: ''
   siteEnvPrefix: ''
   ResourceGroupName: ''
+  uniqueMod: '01'
 
   ${{ if eq(variables['Build.SourceBranchName'], 'master') }}:
     deploymentSlot: 'production'
@@ -154,25 +154,25 @@ stages:
                 echo "##vso[task.setvariable variable=ResourceGroupName;]-ctcms-df${siteInfo[1]}-app-rg"
               displayName: 'SITE: ${{ site }}'
 
-            - task: AzureResourceManagerTemplateDeployment@3
-              displayName: '-- Provision App Service'
-              inputs:
-                deploymentScope: 'Resource Group'
-                azureResourceManagerConnection: '$(azureServiceConnection)'
-                action: 'Create Or Update Resource Group'
-                resourceGroupName: '$(siteEnvPrefixLocal)$(ResourceGroupName)'
-                location: '$(location)'
-                templateLocation: 'Linked artifact'
-                csmFile: '$(templateFile)'
-                overrideParameters: '-siteFarmId $(siteFarmId) -siteId $(siteId) -environment $(siteEnvPrefixLocal) -siteName $(siteName)'
-                deploymentMode: 'Incremental'
-                deploymentName: 'DeployPipelineTemplate-$(Build.BuildId)'
+#            - task: AzureResourceManagerTemplateDeployment@3
+#              displayName: '-- Provision App Service'
+#              inputs:
+#                deploymentScope: 'Resource Group'
+#                azureResourceManagerConnection: '$(azureServiceConnection)'
+#                action: 'Create Or Update Resource Group'
+#                resourceGroupName: '$(siteEnvPrefixLocal)$(ResourceGroupName)'
+#                location: '$(location)'
+#                templateLocation: 'Linked artifact'
+#                csmFile: '$(templateFile)'
+#                overrideParameters: '-siteFarmId $(siteFarmId) -siteId $(siteId) -environment $(siteEnvPrefixLocal) -siteName $(siteName) -uniqueMod $(uniqueMod)'
+#                deploymentMode: 'Incremental'
+#                deploymentName: 'DeployPipelineTemplate-$(Build.BuildId)'
 
             - task: AzureWebAppContainer@1
               displayName: '-- Push latest container'
               inputs:
                 azureSubscription: $(azureServiceConnection)
-                appName: '$(siteEnvPrefixLocal)-ctcms-ct$(siteId)-app'
+                appName: '$(siteEnvPrefixLocal)-ctcms-ct$(siteId)-app$(uniqueMod)'
                 resourceGroupName: '$(siteEnvPrefixLocal)-ctcms-df$(siteFarmId)-app-rg'
                 containers: '$(containerRegistry)/build/trialcourt/$(Build.SourceBranchName):latest'
 
