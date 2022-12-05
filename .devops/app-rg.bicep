@@ -192,17 +192,29 @@ resource appServiceInsightsDiagnosticSetting1 'Microsoft.Insights/diagnosticSett
   }
 }
 
-/* - MI role assignment to implement
-resource dataDfResourceGroup 'Microsoft.Resources/resourceGroups@2019-05-01' existing = {
-  scope: subscription()
-  name: resourceGroupData
-}
 
 @description('Specifies the role definition ID (contrib) used in the role assignment.')
 var roleDefinitionID = 'b24988ac-6180-42a0-ab88-20f7382dd24c'
 
 @description('Specifies the principal ID assigned to the role.')
 var principalId = appService1.identity.principalId
+
+module ResourceGroupRoleAssignment './role-assign.bicep' = {
+  name: 'ResourceGroupRoleAssignment'
+  scope: resourceGroup(resourceGroupData)
+  params: {
+    PrincipalId: principalId
+    RoleDefinitionId: roleDefinitionID
+  }
+}
+
+/* - MI role assignment to implement
+
+resource dataDfResourceGroup 'Microsoft.Resources/resourceGroups@2019-05-01' existing = {
+  scope: subscription()
+  name: resourceGroupData
+}
+
 
 var roleAssignmentName= guid(appService1.name, roleDefinitionID, resourceGroup().id)
 
@@ -215,5 +227,7 @@ resource roleAssignment 'Microsoft.Authorization/roleAssignments@2021-04-01-prev
     principalId: principalId
   }
 }
+
+
 */
 
