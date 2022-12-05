@@ -15,8 +15,7 @@ parameters:
   - name: sites
     type: object
     default:
-      - alameda|1|200
-      - sc|1|201
+      - slo2|1|203
 
 variables:
   dockerRegistryServiceConnection: '3f015a0b-e8e0-41a5-887c-d04efab1abd1'

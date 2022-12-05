@@ -64,7 +64,7 @@ resource appService1 'Microsoft.Web/sites@2020-12-01' = {
         }
         {
           name: 'DATABASE_NAME'
-          value: siteName
+          value: '${siteName}'
         }
         {
           name: 'DATABASE_PASSWORD'
@@ -136,7 +136,7 @@ resource appService1 'Microsoft.Web/sites@2020-12-01' = {
         }
         {
           name: 'SITE_MAP_ID'
-          value: siteName
+          value: '${siteName}'
         }
         {
           name: 'SITE_MAP_DOMAINS'
