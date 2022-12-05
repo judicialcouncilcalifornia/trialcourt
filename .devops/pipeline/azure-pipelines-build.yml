@@ -133,10 +133,19 @@ stages:
         variables:
           siteEnvPrefixLocal: $[ dependencies.ReadManifest.outputs['EnvironmentPrefix.siteEnvPrefix'] ]
         steps:
+          - script: |
+              rm -rf $(Build.ArtifactStagingDirectory)/manifest.txt
+              touch $(Build.ArtifactStagingDirectory)/manifest.txt
+
+              rm -rf $(Build.ArtifactStagingDirectory)/build-image.txt
+              echo $(tag) > $(Build.ArtifactStagingDirectory)/build-image.txt
+            displayName: 'Initialize drop files'
+
           - ${{ each site in parameters.sites }}:
             - script: |
                 IFS='|'
                 read -a siteInfo <<< "${{site}}"
+                echo ${{site}} >> $(Build.ArtifactStagingDirectory)/manifest.txt
 
                 echo "CountyId: ${siteInfo[0]}"
                 echo "CountyName : ${siteInfo[2]}"
@@ -187,3 +196,9 @@ stages:
 #                  mkdir -p ~/.ssh && touch ~/.ssh/config
 #                  echo -e "Host 127.0.0.1\n\tStrictHostKeyChecking no\n" >> ~/.ssh/config
 #                  ssh root:Docker!@127.0.0.1 -p $(sshPort) "df -H"
+
+          - task: PublishBuildArtifacts@1
+            inputs:
+              PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+              ArtifactName: 'drop'
+              publishLocation: 'Container'
