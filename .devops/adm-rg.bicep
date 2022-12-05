@@ -117,6 +117,9 @@ resource cDNProfileFrontDoor1_cDNProfileFrontDoorEndpoint1_cDNProfileFrontDoorEn
     ruleSets: []
     supportedProtocols: []
   }
+  dependsOn: [
+    fdOrigin
+  ]
 }
 
 resource fdOrigin 'Microsoft.Cdn/profiles/originGroups/origins@2021-06-01' = {
