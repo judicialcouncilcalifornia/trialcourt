@@ -207,27 +207,3 @@ module ResourceGroupRoleAssignment './role-assign.bicep' = {
     RoleDefinitionId: roleDefinitionID
   }
 }
-
-/* - MI role assignment to implement
-
-resource dataDfResourceGroup 'Microsoft.Resources/resourceGroups@2019-05-01' existing = {
-  scope: subscription()
-  name: resourceGroupData
-}
-
-
-var roleAssignmentName= guid(appService1.name, roleDefinitionID, resourceGroup().id)
-
-
-resource roleAssignment 'Microsoft.Authorization/roleAssignments@2021-04-01-preview' = {
-  name: roleAssignmentName
-  properties: {
-    scope: dataDfResourceGroup
-    roleDefinitionId: resourceId('Microsoft.Authorization/roleDefinitions', roleDefinitionID)
-    principalId: principalId
-  }
-}
-
-
-*/
-
