@@ -18,16 +18,11 @@ parameters:
       - slo2|1|203
 
 variables:
-  dockerRegistryServiceConnection: '3f015a0b-e8e0-41a5-887c-d04efab1abd1'
-  containerRegistryServiceConnection: 'POC Manual connection'
   imageRepository: 'build/trialcourt/$(Build.SourceBranchName)'
-  containerRegistry: 'nprdctcmscr01.azurecr.io'
   dockerfilePath: '$(Build.SourcesDirectory)/.devops/container/drupal-nginx-fpm/0.6-devops/Dockerfile'
   tag: 'build_$(Build.BuildId)-$(Build.SourceVersion)'
   phpVersion: 7.4
   sshPort: 9837
-  templateFile: './.devops/site-build.bicep'
-
   site: ''
   siteId: ''
   siteName: ''
@@ -37,69 +32,74 @@ variables:
   uniqueMod: '01'
 
   ${{ if eq(variables['Build.SourceBranchName'], 'master') }}:
-    deploymentSlot: 'production'
-    azureServiceConnection: 'POC Resource Manager'
+    azureServiceConnection: 'POC Manual connection'
+    dockerRegistryServiceConnection: 'POC Container Registry'
+    containerRegistry: 'nprdctcmscr01.azurecr.io'
+  ${{ elseif eq(variables['Build.SourceBranchName'], 'stage') }}:
+    azureServiceConnection: 'POC Manual connection'
+    dockerRegistryServiceConnection: 'POC Container Registry'
+    containerRegistry: 'nprdctcmscr01.azurecr.io'
   ${{ else }}:
-    deploymentSlot: 'production'
     azureServiceConnection: 'TODO'
-
+    dockerRegistryServiceConnection: '3f015a0b-e8e0-41a5-887c-d04efab1abd1'
+    containerRegistry: 'nprdctcmscr01.azurecr.io'
 
 stages:
 
-#  - stage: Test
-#    displayName: Test
-#    jobs:
-#      - job: Compile
-#        displayName: Compile code
-#        steps:
-#          - script: |
-#              sudo update-alternatives --set php /usr/bin/php$(phpVersion)
-#              sudo update-alternatives --set phar /usr/bin/phar$(phpVersion)
-#              sudo update-alternatives --set phpdbg /usr/bin/phpdbg$(phpVersion)
-#              sudo update-alternatives --set php-cgi /usr/bin/php-cgi$(phpVersion)
-#              sudo update-alternatives --set phar.phar /usr/bin/phar.phar$(phpVersion)
-#              php -version
-#            displayName: 'Use PHP version $(phpVersion)'
-#          - script: composer install --no-interaction --prefer-dist
-#            displayName: 'Composer install'
-#      - job: Analyze
-#        displayName: Analyze code
-#        steps:
-#          - script: composer -n lint
-#            displayName: 'Lint php for syntax errors'
-#          - script: composer -n code-sniff
-#            displayName: 'Check coding standards'
-#          - script: composer -n unit-test
-#            displayName: 'Run unit tests'
-#
-#  - stage: Build
-#    displayName: Build
-#    dependsOn: Test
-#    condition: and(succeeded('Test'), ne(variables['Build.SourceBranchName'], 'merge'))
-#    jobs:
-#      - job: Build
-#        displayName: Build image
-#        steps:
-#          - task: Docker@2
-#            displayName: Build
-#            inputs:
-#              command: build
-#              containerRegistry: $(dockerRegistryServiceConnection)
-#              repository: $(imageRepository)
-#              dockerfile: $(dockerfilePath)
-#              tags: |
-#                latest
-#                $(tag)
-#              arguments: --label buildtype=nightly --build-arg GIT_BRANCH=$(Build.SourceBranchName)
-#          - task: Docker@2
-#            displayName: Push to registry
-#            inputs:
-#              command: push
-#              containerRegistry: $(dockerRegistryServiceConnection)
-#              repository: $(imageRepository)
-#              tags: |
-#                latest
-#                $(tag)
+  - stage: Test
+    displayName: Test
+    jobs:
+      - job: Compile
+        displayName: Compile code
+        steps:
+          - script: |
+              sudo update-alternatives --set php /usr/bin/php$(phpVersion)
+              sudo update-alternatives --set phar /usr/bin/phar$(phpVersion)
+              sudo update-alternatives --set phpdbg /usr/bin/phpdbg$(phpVersion)
+              sudo update-alternatives --set php-cgi /usr/bin/php-cgi$(phpVersion)
+              sudo update-alternatives --set phar.phar /usr/bin/phar.phar$(phpVersion)
+              php -version
+            displayName: 'Use PHP version $(phpVersion)'
+          - script: composer install --no-interaction --prefer-dist
+            displayName: 'Composer install'
+      - job: Analyze
+        displayName: Analyze code
+        steps:
+          - script: composer -n lint
+            displayName: 'Lint php for syntax errors'
+          - script: composer -n code-sniff
+            displayName: 'Check coding standards'
+          - script: composer -n unit-test
+            displayName: 'Run unit tests'
+
+  - stage: Build
+    displayName: Build
+    dependsOn: Test
+    condition: and(succeeded('Test'), ne(variables['Build.SourceBranchName'], 'merge'))
+    jobs:
+      - job: Build
+        displayName: Build image
+        steps:
+          - task: Docker@2
+            displayName: Build
+            inputs:
+              command: build
+              containerRegistry: $(dockerRegistryServiceConnection)
+              repository: $(imageRepository)
+              dockerfile: $(dockerfilePath)
+              tags: |
+                latest
+                $(tag)
+              arguments: --label buildtype=nightly --build-arg GIT_BRANCH=$(Build.SourceBranchName)
+          - task: Docker@2
+            displayName: Push to registry
+            inputs:
+              command: push
+              containerRegistry: $(dockerRegistryServiceConnection)
+              repository: $(imageRepository)
+              tags: |
+                latest
+                $(tag)
 
   - stage: Manifest
     displayName: Manifest
@@ -154,45 +154,13 @@ stages:
                 echo "##vso[task.setvariable variable=ResourceGroupName;]-ctcms-df${siteInfo[1]}-app-rg"
               displayName: 'SITE: ${{ site }}'
 
-#            - task: AzureResourceManagerTemplateDeployment@3
-#              displayName: '-- Provision App Service'
-#              inputs:
-#                deploymentScope: 'Resource Group'
-#                azureResourceManagerConnection: '$(azureServiceConnection)'
-#                action: 'Create Or Update Resource Group'
-#                resourceGroupName: '$(siteEnvPrefixLocal)$(ResourceGroupName)'
-#                location: '$(location)'
-#                templateLocation: 'Linked artifact'
-#                csmFile: '$(templateFile)'
-#                overrideParameters: '-siteFarmId $(siteFarmId) -siteId $(siteId) -environment $(siteEnvPrefixLocal) -siteName $(siteName) -uniqueMod $(uniqueMod)'
-#                deploymentMode: 'Incremental'
-#                deploymentName: 'DeployPipelineTemplate-$(Build.BuildId)'
-
             - task: AzureWebAppContainer@1
               displayName: '-- Push latest container'
               inputs:
                 azureSubscription: $(azureServiceConnection)
                 appName: '$(siteEnvPrefixLocal)-ctcms-ct$(siteId)-app$(uniqueMod)'
                 resourceGroupName: '$(siteEnvPrefixLocal)-ctcms-df$(siteFarmId)-app-rg'
-                containers: '$(containerRegistry)/build/trialcourt/$(Build.SourceBranchName):latest'
-
-#            - task: AzureCLI@2
-#              displayName: '-- Create an SSH remote connection to the App Service'
-#              inputs:
-#                azureSubscription: $(azureServiceConnection)
-#                scriptType: bash
-#                scriptLocation: inlineScript
-#                inlineScript: |
-#                  az login --identity
-#                  az webapp ssh -n $(siteEnvPrefixLocal)-ctcms-ct$(siteId)-app --resource-group $(siteEnvPrefixLocal)-ctcms-df$(siteFarmId)-app-rg
-#                  df -h
-#                  cd /var/drupal_prj
-#                  ls -la
-#                  az webapp config set --resource-group $(siteEnvPrefixLocal)-ctcms-df$(siteFarmId)-app-rg -n $(siteEnvPrefixLocal)-ctcms-ct$(siteId)-app --remote-debugging-enabled=false
-#                  az webapp create-remote-connection --subscription 539516a7-6f4e-450d-b99e-be9dcc48a4c4 --resource-group $(siteEnvPrefixLocal)-ctcms-df$(siteFarmId)-app-rg -n $(siteEnvPrefixLocal)-ctcms-ct$(siteId)-app --port $(sshPort) &
-#                  mkdir -p ~/.ssh && touch ~/.ssh/config
-#                  echo -e "Host 127.0.0.1\n\tStrictHostKeyChecking no\n" >> ~/.ssh/config
-#                  ssh root:Docker!@127.0.0.1 -p $(sshPort) "df -H"
+                containers: '$(containerRegistry)/build/trialcourt/$(Build.SourceBranchName):$(tag)'
 
           - task: PublishBuildArtifacts@1
             inputs:
