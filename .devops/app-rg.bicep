@@ -64,7 +64,7 @@ resource appService1 'Microsoft.Web/sites@2020-12-01' = {
         }
         {
           name: 'DATABASE_NAME'
-          value: '${siteName}'
+          value: siteName
         }
         {
           name: 'DATABASE_PASSWORD'
@@ -136,7 +136,7 @@ resource appService1 'Microsoft.Web/sites@2020-12-01' = {
         }
         {
           name: 'SITE_MAP_ID'
-          value: '${siteName}'
+          value: siteName
         }
         {
           name: 'SITE_MAP_DOMAINS'
@@ -171,6 +171,16 @@ resource storageSetting 'Microsoft.Web/sites/config@2021-01-15' = {
     }
   }
 }
+
+/*
+module appconfigsettings './app-settings.bicep' = {
+  name: 'AppConfigSettings'
+  params: {
+    appName: appService
+    siteName: siteName
+  }
+}
+*/
 
 resource appService1_appServiceConfigRegionalVirtualNetworkIntegration1 'Microsoft.Web/sites/config@2018-11-01' = {
   parent: appService1
