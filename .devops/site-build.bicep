@@ -4,7 +4,7 @@ targetScope = 'subscription'
 param location1 string = 'West US 3'
 param subId string = subscription().subscriptionId
 param utcValue string = utcNow()
-param uniqueMod string = ''
+param uniqueMod string = '01'
 
 @allowed([
   '1'
