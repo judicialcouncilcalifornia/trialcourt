@@ -15,7 +15,8 @@ parameters:
   - name: sites
     type: object
     default:
-      - tehama|1|015
+      - alameda|1|200
+      - sc|1|201
 
 variables:
   dockerRegistryServiceConnection: '3f015a0b-e8e0-41a5-887c-d04efab1abd1'
@@ -24,7 +25,7 @@ variables:
   dockerfilePath: '$(Build.SourcesDirectory)/.devops/drupal-nginx-fpm/0.6-devops/Dockerfile'
   tag: 'build_$(Build.BuildId)-$(Build.SourceVersion)'
   location: 'West US 3'
-  templateFile: './.devops/app-service.bicep'
+  templateFile: './.devops/site-build.bicep'
 
   site: ''
   siteId: ''
@@ -35,7 +36,7 @@ variables:
 
   ${{ if eq(variables['Build.SourceBranchName'], 'master') }}:
     deploymentSlot: 'production'
-    azureServiceConnection: 'DevOps Web Service Non-Prod'
+    azureServiceConnection: 'POC Manual connection'
   ${{ else }}:
     deploymentSlot: 'production'
     azureServiceConnection: 'TODO'
@@ -65,7 +66,7 @@ stages:
             name: EnvironmentPrefix
           - script: echo "$(EnvironmentPrefix.siteEnvPrefix)"
             displayName: 'Display Prefix'
-            
+
       - job: ProcessSites
         displayName: Process sites
         dependsOn: ['ReadManifest']
@@ -90,7 +91,7 @@ stages:
             - task: AzureResourceManagerTemplateDeployment@3
               displayName: '-- Provision App Service'
               inputs:
-                deploymentScope: 'Resource Group'
+                deploymentScope: 'Subscription'
                 azureResourceManagerConnection: '$(azureServiceConnection)'
                 action: 'Create Or Update Resource Group'
                 resourceGroupName: '$(siteEnvPrefixLocal)$(ResourceGroupName)'
@@ -107,7 +108,7 @@ stages:
                 azureSubscription: $(azureServiceConnection)
                 appName: '$(siteEnvPrefixLocal)-ctcms-ct$(siteId)-app'
                 resourceGroupName: '$(siteEnvPrefixLocal)-ctcms-df$(siteFarmId)-app-rg'
-                containers: '$(containerRegistry)/build/trialcourt/$(Build.SourceBranchName):latest'
+                containers: '$(containerRegistry)/build/trialcourt/$(Build.SourceBranchName):$(tag)'
 
             - task: MysqlDeploymentOnMachineGroup@1
               displayName: '-- Create a database if not exists'
