@@ -32,6 +32,7 @@ variables:
   siteFarmId: ''
   siteEnvPrefix: ''
   ResourceGroupName: ''
+  uniqueMod: '01'
 
   ${{ if eq(variables['Build.SourceBranchName'], 'master') }}:
     deploymentSlot: 'production'
@@ -97,7 +98,7 @@ stages:
                 location: '$(location)'
                 templateLocation: 'Linked artifact'
                 csmFile: '$(templateFile)'
-                overrideParameters: '-siteFarmId $(siteFarmId) -siteId $(siteId) -env $(siteEnvPrefixLocal) -siteName $(siteName)'
+                overrideParameters: '-siteFarmId $(siteFarmId) -siteId $(siteId) -env $(siteEnvPrefixLocal) -siteName $(siteName) -uniqueMod $(uniqueMod)'
                 deploymentMode: 'Incremental'
                 deploymentName: 'DeployPipelineTemplate-$(Build.BuildId)'
 
@@ -105,7 +106,7 @@ stages:
               displayName: '-- Push latest container'
               inputs:
                 azureSubscription: $(azureServiceConnection)
-                appName: '$(siteEnvPrefixLocal)-ctcms-ct$(siteId)-app'
+                appName: '$(siteEnvPrefixLocal)-ctcms-ct$(siteId)-app$(uniqueMod)'
                 resourceGroupName: '$(siteEnvPrefixLocal)-ctcms-df$(siteFarmId)-app-rg'
                 containers: '$(containerRegistry)/build/trialcourt/$(Build.SourceBranchName):$(tag)'
 
