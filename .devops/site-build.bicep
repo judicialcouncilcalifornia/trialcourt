@@ -4,7 +4,7 @@ targetScope = 'subscription'
 param location1 string = 'West US 3'
 param subId string = subscription().subscriptionId
 param utcValue string = utcNow()
-param uniqueMod string = '42'
+param uniqueMod string = ''
 
 @allowed([
   '1'
@@ -22,7 +22,7 @@ param env string = 'nprd'
 param siteId string = '001'
 param siteName string = ''
 
-// Initialize Resource Groups 
+// Initialize Resource Groups
 var adminResourceGroup_name = '${env}-ctcms-admin-rg'
 var appDfResourceGroup_name = '${env}-ctcms-df${siteFarmId}-app-rg'
 var dataDfResourceGroup_name = '${env}-ctcms-df${siteFarmId}-data-rg'
@@ -49,7 +49,7 @@ resource netResourceGroup 'Microsoft.Resources/resourceGroups@2019-05-01' existi
 module dfappmod './app-rg.bicep'= {
   name: 'SiteApp-${utcValue}'
   params: {
-    env: env 
+    env: env
     siteId: siteId
     siteName: siteName
     uniqueMod: uniqueMod
@@ -63,7 +63,7 @@ module dfappmod './app-rg.bicep'= {
 module dfnetmod './net-rg.bicep'= {
   name: 'SiteNet-${utcValue}'
   params: {
-    env: env 
+    env: env
     siteId: siteId
     uniqueMod: uniqueMod
     cmLocation: location1
@@ -78,7 +78,7 @@ module dfnetmod './net-rg.bicep'= {
 module dfadmmod './adm-rg.bicep'= {
   name: 'SiteAdm-${utcValue}'
   params: {
-    env: env 
+    env: env
     siteId: siteId
     uniqueMod: uniqueMod
     cmLocation: location1
