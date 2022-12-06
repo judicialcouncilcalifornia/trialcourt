@@ -5,6 +5,7 @@ param siteName string
 param uniqueMod string
 param subscriptionId string = subscription().subscriptionId
 param cmLocation string = resourceGroup().location
+param umiId string
 
 var appService = '${env}-ctcms-ct${siteId}-app${uniqueMod}'
 var webServerfarm = '${env}-ctcms-df${siteFarmId}-asp'
@@ -33,7 +34,10 @@ name: siteStorageAccountName
 resource appService1 'Microsoft.Web/sites@2020-12-01' = {
   name: appService
   identity: {
-    type: 'SystemAssigned'
+    type: 'UserAssigned'
+    userAssignedIdentities: {
+      '${umiId}': {}
+    }
   }
   kind: 'app,linux,container'
   location: cmLocation
@@ -184,7 +188,7 @@ resource appServiceInsightsDiagnosticSetting1 'Microsoft.Insights/diagnosticSett
   }
 }
 
-
+/* - System Managed Identity - deprecated to use User MI 
 @description('Specifies the role definition ID (contrib) used in the role assignment.')
 var roleDefinitionID = 'b24988ac-6180-42a0-ab88-20f7382dd24c'
 
@@ -199,3 +203,5 @@ module ResourceGroupRoleAssignment './role-assign.bicep' = {
     RoleDefinitionId: roleDefinitionID
   }
 }
+
+*/
