@@ -24,12 +24,17 @@ var subnet1 = 'df${siteFarmId}-asp-sn'
 
 var networkPrivateEndpoint3_var = '${environment}-ctcms-ct${siteId}-app-pe'
 var resourceGroupApp = '${environment}-ctcms-df${siteFarmId}-app-rg'
-var resourceGroupNetRg = '${environment}-ctcms-net-rg'
+// var resourceGroupNetRg = '${environment}-ctcms-net-rg'
+var resourceGroupNetRg = '${environment}-ctcms-df${siteFarmId}-net-rg'
 
 var cDNProfileFrontDoor1 = '${environment}-ctcms-fd'
 var cDNProfileFrontDoorOriginGroup1 = 'df${siteFarmId}-ct${siteId}-fd-orggrp'
 var cDNProfileFrontDoorOriginGroupOrigin1 = 'df${siteFarmId}-ct${siteId}-fd-origin'
-var subscriptionId = '539516a7-6f4e-450d-b99e-be9dcc48a4c4'
+
+// Non-Prod
+// var subscriptionId = '539516a7-6f4e-450d-b99e-be9dcc48a4c4'
+// POC
+var subscriptionId = '981cd141-7390-4618-808e-7c57fcf96d93'
 
 var storageAccountName = '${environment}ctcmsdf${siteFarmId}sa'
 var shareName = 'courtsfileshare'
@@ -65,7 +70,7 @@ resource appService1 'Microsoft.Web/sites@2020-12-01' = {
         }
         {
           name: 'DATABASE_HOST'
-          value: 'supdevmdb01.mariadb.database.azure.com'
+          value: '@Microsoft.KeyVault(VaultName=nprd-ctcms-df1-kv-01;SecretName=DATABASEHOST)'
         }
         {
           name: 'DATABASE_NAME'
@@ -73,23 +78,23 @@ resource appService1 'Microsoft.Web/sites@2020-12-01' = {
         }
         {
           name: 'DATABASE_PASSWORD'
-          value: 'AdamTheGreat1!'
+          value: '@Microsoft.KeyVault(VaultName=nprd-ctcms-df1-kv-01;SecretName=DATABASEPASSWORD)'
         }
         {
           name: 'DATABASE_USER'
-          value: 'azuremdb@supdevmdb01'
+          value: '@Microsoft.KeyVault(VaultName=nprd-ctcms-df1-kv-01;SecretName=DATABASEUSER)'
         }
         {
           name: 'DOCKER_REGISTRY_SERVER_PASSWORD'
-          value: '5Q+HLzRMaHGF=weHScWHkwp65wtvZ3or'
+          value: '@Microsoft.KeyVault(VaultName=nprd-ctcms-df1-kv-01;SecretName=DOCKERREGISTRYSERVERPASSWORD)'
         }
         {
           name: 'DOCKER_REGISTRY_SERVER_URL'
-          value: 'https://devopswebcourtsnp.azurecr.io'
+          value: '@Microsoft.KeyVault(VaultName=nprd-ctcms-df1-kv-01;SecretName=DOCKERREGISTRYSERVERURL)'
         }
         {
           name: 'DOCKER_REGISTRY_SERVER_USERNAME'
-          value: 'devopswebcourtsnp'
+          value: '@Microsoft.KeyVault(VaultName=nprd-ctcms-df1-kv-01;SecretName=DOCKERREGISTRYSERVERUSERNAME)'
         }
         {
           name: 'GIT_BRANCH'
@@ -101,11 +106,11 @@ resource appService1 'Microsoft.Web/sites@2020-12-01' = {
         }
         {
           name: 'REDIS_HOST'
-          value: 'supdev.redis.cache.windows.net'
+          value: '@Microsoft.KeyVault(VaultName=nprd-ctcms-df1-kv-01;SecretName=REDISHOST)'
         }
         {
           name: 'REDIS_PASSWORD'
-          value: 'Ji1AizWN74MT4G0wRLMxOZICFsUVro93QAzCaJXe6nE='
+          value: '@Microsoft.KeyVault(VaultName=nprd-ctcms-df1-kv-01;SecretName=REDISPASSWORD)'
         }
         {
           name: 'REDIS_PORT'
@@ -158,6 +163,7 @@ resource appService1 'Microsoft.Web/sites@2020-12-01' = {
       minTlsVersion: '1.2'
       scmIpSecurityRestrictions: []
     }
-    virtualNetworkSubnetId: '/subscriptions/${subscription().subscriptionId}/resourceGroups/${resourceGroupNetRg}/providers/Microsoft.Network/virtualNetworks/${environment}-ctcms-df${siteFarmId}-vnet/subnets/df${siteFarmId}-asp-sn'
+    //virtualNetworkSubnetId: '/subscriptions/${subscription().subscriptionId}/resourceGroups/${resourceGroupNetRg}/providers/Microsoft.Network/virtualNetworks/${environment}-ctcms-df${siteFarmId}-vnet/subnets/df${siteFarmId}-asp-sn'
+    //virtualNetworkSubnetId: '/subscriptions/981cd141-7390-4618-808e-7c57fcf96d93/resourceGroups/nprd-ctcms-df1-net-rg/providers/Microsoft.Network/virtualNetworks/nprd-ctcms-df1-vnet/subnets/df1-asp-sn'
   }
 }

@@ -2,6 +2,14 @@
 
 // @codingStandardsIgnoreFile
 
+/**
+ * Set the default location for the 'private' directory.  Note
+ * that this location is protected when running on the Pantheon
+ * environment, but may be exposed if you migrate your site to
+ * another environment.
+ */
+$settings['file_private_path'] = 'sites/default/files/private/' . $_ENV['SITE_MAP_ID'];
+
 //  Store local configuration separately so it isn't tracked by git.
 $config['config_split.config_split.local']['status'] = TRUE;
 $config['config_split.config_split.stage']['status'] = TRUE;

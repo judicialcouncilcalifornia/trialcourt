@@ -1,5 +1,5 @@
 
-FROM devopswebcourtsnp.azurecr.io/source/nginx-fpm:php7.4.33
+FROM judicialcouncil/nginx-fpm:php7.4.33
 LABEL maintainer="Azure App Service Container Images <appsvc-images@microsoft.com>"
 LABEL maintainer="Ivan Bueno <ivan.bueno@jud.ca.gov>"
 # ========
