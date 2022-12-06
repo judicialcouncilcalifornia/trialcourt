@@ -64,7 +64,7 @@ resource appService1 'Microsoft.Web/sites@2020-12-01' = {
         }
         {
           name: 'DATABASE_HOST'
-          value: '@Microsoft.KeyVault(VaultName=nprd-ctcms-df1-kv-sr1;SecretName=DATABASEHOST)'
+          value: '@Microsoft.KeyVault(VaultName=${env}-ctcms-df${siteFarmId}-kv-${uniqueMod};SecretName=DATABASEHOST)'
         }
         {
           name: 'DATABASE_NAME'
@@ -72,23 +72,23 @@ resource appService1 'Microsoft.Web/sites@2020-12-01' = {
         }
         {
           name: 'DATABASE_PASSWORD'
-          value: '@Microsoft.KeyVault(VaultName=nprd-ctcms-df1-kv-sr1;SecretName=DATABASEPASSWORD)'
+          value: '@Microsoft.KeyVault(VaultName=${env}-ctcms-df${siteFarmId}-kv-${uniqueMod};SecretName=DATABASEPASSWORD)'
         }
         {
           name: 'DATABASE_USER'
-          value: '@Microsoft.KeyVault(VaultName=nprd-ctcms-df1-kv-sr1;SecretName=DATABASEUSER)'
+          value: '@Microsoft.KeyVault(VaultName=${env}-ctcms-df${siteFarmId}-kv-${uniqueMod};SecretName=DATABASEUSER)'
         }
         {
           name: 'DOCKER_REGISTRY_SERVER_PASSWORD'
-          value: '@Microsoft.KeyVault(VaultName=nprd-ctcms-df1-kv-sr1;SecretName=DOCKERREGISTRYSERVERPASSWORD)'
+          value: '@Microsoft.KeyVault(VaultName=${env}-ctcms-df${siteFarmId}-kv-${uniqueMod};SecretName=DOCKERREGISTRYSERVERPASSWORD)'
         }
         {
           name: 'DOCKER_REGISTRY_SERVER_URL'
-          value: '@Microsoft.KeyVault(VaultName=nprd-ctcms-df1-kv-sr1;SecretName=DOCKERREGISTRYSERVERURL)'
+          value: '@Microsoft.KeyVault(VaultName=${env}-ctcms-df${siteFarmId}-kv-${uniqueMod};SecretName=DOCKERREGISTRYSERVERURL)'
         }
         {
           name: 'DOCKER_REGISTRY_SERVER_USERNAME'
-          value: '@Microsoft.KeyVault(VaultName=nprd-ctcms-df1-kv-sr1;SecretName=DOCKERREGISTRYSERVERUSERNAME)'
+          value: '@Microsoft.KeyVault(VaultName=${env}-ctcms-df${siteFarmId}-kv-${uniqueMod};SecretName=DOCKERREGISTRYSERVERUSERNAME)'
         }
         {
           name: 'GIT_BRANCH'
@@ -100,11 +100,11 @@ resource appService1 'Microsoft.Web/sites@2020-12-01' = {
         }
         {
           name: 'REDIS_HOST'
-          value: '@Microsoft.KeyVault(VaultName=nprd-ctcms-df1-kv-sr1;SecretName=REDISHOST)'
+          value: '@Microsoft.KeyVault(VaultName=${env}-ctcms-df${siteFarmId}-kv-${uniqueMod};SecretName=REDISHOST)'
         }
         {
           name: 'REDIS_PASSWORD'
-          value: '@Microsoft.KeyVault(VaultName=nprd-ctcms-df1-kv-sr1;SecretName=REDISPASSWORD)'
+          value: '@Microsoft.KeyVault(VaultName=${env}-ctcms-df${siteFarmId}-kv-${uniqueMod};SecretName=REDISPASSWORD)'
         }
         {
           name: 'REDIS_PORT'

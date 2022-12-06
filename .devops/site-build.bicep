@@ -13,17 +13,17 @@ param siteFarmId string
   'uat'
   'prod'
 ])
-param env string = 'nprd'
+param env string
 
 @description('GUID of User Managed Identity')
-param umiId string = ''
+param umiId string
 
-param siteId string = '001'
-param siteName string = ''
+param siteId string
+param siteName string
 param location1 string = 'West US 3'
 param subId string = subscription().subscriptionId
 param utcValue string = utcNow()
-param uniqueMod string = '01'
+param uniqueMod string = ''
 
 // Initialize Resource Groups
 var adminResourceGroup_name = '${env}-ctcms-admin-rg'
