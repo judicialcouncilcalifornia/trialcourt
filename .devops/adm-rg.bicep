@@ -1,23 +1,8 @@
-//var appService1 = 'nprd-ctcms-ct1-app${uniqueMod}'
-
-//var resourceGroup3 = 'nprd-ctcms-${dfN}-admin-rg'
-//var appService1 = 'nprd-ctcms-ct1-app${uniqueMod}'
-//var networkPrivateEndpoint3_var = 'nprd-ctcms-ct1-app-pe'
-
-
-//var resourceGroup3 = 'nprd-ctcms-${dfN}-app-rg'
-//var appService1_var = 'nprd-ctcms-ct1-app${uniqueMod}'
-//var appServiceConfigRegionalVirtualNetworkIntegration1 = 'virtualNetwork'
-//var appServiceInsightsDiagnosticSetting1_var = 'nprd-ctcms-ct1-diag'
-//var resourceGroup2 = 'nprd-ctcms-${dfN}-net-rg'
-//var subnet1 = '${dfN}-asp-sn'
-//var dfVirtualNetwork1  'nprd-ctcms-${dfN}-vnet'
-
-param env string = 'nprd'
-param siteId string = '001'
-param uniqueMod string = '42'
+param env string
+param siteId string
+param uniqueMod string
 param cmLocation string = resourceGroup().location
-param siteFarmId string = '1'
+param siteFarmId string
 
 var appResourceGroup = '${env}-ctcms-df${siteFarmId}-app-rg'
 var appService = '${env}-ctcms-ct${siteId}-app${uniqueMod}'
@@ -27,7 +12,7 @@ var cDNProfileFrontDoorOriginGroupOrigin1 = 'df${siteFarmId}-ct${siteId}-fd-orig
 var envFrontDoorName = '${env}-ctcms-fd'
 var cDNProfileFrontDoorEndpoint1 = 'df${siteFarmId}-ct${siteId}-fd-endpoint'
 var cDNProfileFrontDoorEndpointsRoute1 = 'df${siteFarmId}-ct${siteId}-route'
-var fdWafPolicy = 'nprdwafpol1'
+var fdWafPolicy = '${env}wafpol1'
 
 
 
@@ -124,7 +109,7 @@ resource cDNProfileFrontDoor1_cDNProfileFrontDoorEndpoint1_cDNProfileFrontDoorEn
 
 resource fdOrigin 'Microsoft.Cdn/profiles/originGroups/origins@2021-06-01' = {
   parent: cDNProfileFrontDoor1_cDNProfileFrontDoorOriginGroup1
-  name: cDNProfileFrontDoorOriginGroupOrigin1 //'${envFrontDoor}/${cDNProfileFrontDoorOriginGroup1}/${cDNProfileFrontDoorOriginGroupOrigin1}'
+  name: cDNProfileFrontDoorOriginGroupOrigin1 
   properties: {
     enabledState: 'Enabled'
     enforceCertificateNameCheck: true
@@ -143,49 +128,3 @@ resource fdOrigin 'Microsoft.Cdn/profiles/originGroups/origins@2021-06-01' = {
     weight: 100
   }
 }
-
-
-
-
-
-/* - Archival of old code
-param cmLocation1 string = resourceGroup().location
-
-
-var appService1 = 'nprd-ctcms-ct003-app'
-var cDNProfileFrontDoor1 = 'nprd-ctcms-fd'
-var cDNProfileFrontDoorOriginGroup1 = 'df1-ct1-fd-orggrp'
-var cDNProfileFrontDoorOriginGroupOrigin1 = 'df1-ct1-fd-origin'
-
-var resourceGroup2 = 'nprd-ctcms-df1-app-rg'
-
-
-resource fdOrigin 'Microsoft.Cdn/profiles/originGroups/origins@2022-05-01-preview' = {
-  name: '${cDNProfileFrontDoor1}/${cDNProfileFrontDoorOriginGroup1}/${cDNProfileFrontDoorOriginGroupOrigin1}'
-  properties: {
-    enabledState: 'Enabled'
-    //enforceCertificateNameCheck: true
-    hostName: 'nprd-ctcms-ct003-app.azurewebsites.net'
-    originHostHeader: 'nprd-ctcms-ct003-app.azurewebsites.net'
-    httpPort: 80
-    httpsPort: 443
-    priority: 1
-    //sharedPrivateLinkResource: {
-      //groupId: 'sites'
-      //privateLink: '/subscriptions/539516a7-6f4e-450d-b99e-be9dcc48a4c4/resourceGroups/nprd-ctcms-df1-app-rg/providers/Microsoft.Web/sites/nprd-ctcms-ct003-app'
-      //requestMessage: 'AutomationRequest'
-    weight: 100
-    sharedPrivateLinkResource: {
-      privateLink: {
-        id: '/subscriptions/539516a7-6f4e-450d-b99e-be9dcc48a4c4/resourceGroups/nprd-ctcms-df1-app-rg/providers/Microsoft.Web/sites/nprd-ctcms-ct003-app'
-      }
-      groupId: 'sites'
-      privateLinkLocation: cmLocation1
-      requestMessage: 'Approve for FD'
-      //status: 'Approved'
-    }
-    }
-    //}
-  }
-//}
-*/

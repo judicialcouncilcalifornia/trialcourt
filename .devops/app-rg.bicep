@@ -5,12 +5,12 @@ param siteName string
 param uniqueMod string
 param subscriptionId string = subscription().subscriptionId
 param cmLocation string = resourceGroup().location
-param umiId string
+//param umiId string
 
 var appService = '${env}-ctcms-ct${siteId}-app${uniqueMod}'
 var webServerfarm = '${env}-ctcms-df${siteFarmId}-asp'
-var operationalInsightsWorkspace1 = 'nprd-ctcms-law'
-var admResourceGroup = 'nprd-ctcms-admin-rg'
+var operationalInsightsWorkspace1 = '${env}-ctcms-law'
+var admResourceGroup = '${env}-ctcms-admin-rg'
 var resourceGroupNet = '${env}-ctcms-df${siteFarmId}-net-rg'
 var dfVirtualNetwork = '${env}-ctcms-df${siteFarmId}-vnet'
 var aspsubnet = 'df${siteFarmId}-asp-sn'
@@ -18,7 +18,7 @@ var aspsubnet = 'df${siteFarmId}-asp-sn'
 var networkPrivateEndpoint3_var = '${env}-ctcms-ct${siteId}-app-pe'
 var resourceGroupApp = '${env}-ctcms-df${siteFarmId}-app-rg'
 var resourceGroupData = '${env}-ctcms-df${siteFarmId}-data-rg'
-var appServiceInsightsDiagnosticSetting1_var = 'nprd-ctcms-ct1-diag'
+var appServiceInsightsDiagnosticSetting1_var = '${env}-ctcms-ct${siteId}-diag'
 
 var siteStorageAccountName = '${env}ctcmsdf${siteFarmId}sa${uniqueMod}'
 var admStorageAccountName = '${env}ctcmsadmsa${uniqueMod}'
@@ -36,7 +36,7 @@ resource appService1 'Microsoft.Web/sites@2020-12-01' = {
   identity: {
     type: 'UserAssigned'
     userAssignedIdentities: {
-      '${umiId}': {}
+      '/subscriptions/${subscriptionId}/resourceGroups/${admResourceGroup}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/userMiId-${env}': {}
     }
   }
   kind: 'app,linux,container'
@@ -64,7 +64,7 @@ resource appService1 'Microsoft.Web/sites@2020-12-01' = {
         }
         {
           name: 'DATABASE_HOST'
-          value: '@Microsoft.KeyVault(VaultName=${env}-ctcms-df${siteFarmId}-kv-${uniqueMod};SecretName=DATABASEHOST)'
+          value: '@Microsoft.KeyVault(VaultName=${env}-ctcms-df${siteFarmId}-kv${uniqueMod};SecretName=DATABASEHOST)'
         }
         {
           name: 'DATABASE_NAME'
@@ -72,23 +72,23 @@ resource appService1 'Microsoft.Web/sites@2020-12-01' = {
         }
         {
           name: 'DATABASE_PASSWORD'
-          value: '@Microsoft.KeyVault(VaultName=${env}-ctcms-df${siteFarmId}-kv-${uniqueMod};SecretName=DATABASEPASSWORD)'
+          value: '@Microsoft.KeyVault(VaultName=${env}-ctcms-df${siteFarmId}-kv${uniqueMod};SecretName=DATABASEPASSWORD)'
         }
         {
           name: 'DATABASE_USER'
-          value: '@Microsoft.KeyVault(VaultName=${env}-ctcms-df${siteFarmId}-kv-${uniqueMod};SecretName=DATABASEUSER)'
+          value: '@Microsoft.KeyVault(VaultName=${env}-ctcms-df${siteFarmId}-kv${uniqueMod};SecretName=DATABASEUSER)'
         }
         {
           name: 'DOCKER_REGISTRY_SERVER_PASSWORD'
-          value: '@Microsoft.KeyVault(VaultName=${env}-ctcms-df${siteFarmId}-kv-${uniqueMod};SecretName=DOCKERREGISTRYSERVERPASSWORD)'
+          value: '@Microsoft.KeyVault(VaultName=${env}-ctcms-df${siteFarmId}-kv${uniqueMod};SecretName=DOCKERREGISTRYSERVERPASSWORD)'
         }
         {
           name: 'DOCKER_REGISTRY_SERVER_URL'
-          value: '@Microsoft.KeyVault(VaultName=${env}-ctcms-df${siteFarmId}-kv-${uniqueMod};SecretName=DOCKERREGISTRYSERVERURL)'
+          value: '@Microsoft.KeyVault(VaultName=${env}-ctcms-df${siteFarmId}-kv${uniqueMod};SecretName=DOCKERREGISTRYSERVERURL)'
         }
         {
           name: 'DOCKER_REGISTRY_SERVER_USERNAME'
-          value: '@Microsoft.KeyVault(VaultName=${env}-ctcms-df${siteFarmId}-kv-${uniqueMod};SecretName=DOCKERREGISTRYSERVERUSERNAME)'
+          value: '@Microsoft.KeyVault(VaultName=${env}-ctcms-df${siteFarmId}-kv${uniqueMod};SecretName=DOCKERREGISTRYSERVERUSERNAME)'
         }
         {
           name: 'GIT_BRANCH'
@@ -100,11 +100,11 @@ resource appService1 'Microsoft.Web/sites@2020-12-01' = {
         }
         {
           name: 'REDIS_HOST'
-          value: '@Microsoft.KeyVault(VaultName=${env}-ctcms-df${siteFarmId}-kv-${uniqueMod};SecretName=REDISHOST)'
+          value: '@Microsoft.KeyVault(VaultName=${env}-ctcms-df${siteFarmId}-kv${uniqueMod};SecretName=REDISHOST)'
         }
         {
           name: 'REDIS_PASSWORD'
-          value: '@Microsoft.KeyVault(VaultName=${env}-ctcms-df${siteFarmId}-kv-${uniqueMod};SecretName=REDISPASSWORD)'
+          value: '@Microsoft.KeyVault(VaultName=${env}-ctcms-df${siteFarmId}-kv${uniqueMod};SecretName=REDISPASSWORD)'
         }
         {
           name: 'REDIS_PORT'

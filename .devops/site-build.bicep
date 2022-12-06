@@ -15,15 +15,14 @@ param siteFarmId string
 ])
 param env string
 
-@description('GUID of User Managed Identity')
-param umiId string
-
 param siteId string
 param siteName string
+param uniqueMod string = ''
+
 param location1 string = 'West US 3'
 param subId string = subscription().subscriptionId
 param utcValue string = utcNow()
-param uniqueMod string = ''
+
 
 // Initialize Resource Groups
 var adminResourceGroup_name = '${env}-ctcms-admin-rg'
@@ -56,7 +55,7 @@ module dfappmod './app-rg.bicep'= {
     siteId: siteId
     siteName: siteName
     uniqueMod: uniqueMod
-    umiId: umiId
+    //umiId: umiId
     cmLocation: location1
     siteFarmId: siteFarmId
   }

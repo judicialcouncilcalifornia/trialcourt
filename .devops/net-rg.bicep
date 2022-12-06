@@ -1,8 +1,8 @@
-param env string = 'nprd'
-param siteId string = '001'
-param uniqueMod string = '42'
+param env string
+param siteId string
+param uniqueMod string
 param cmLocation string = resourceGroup().location
-param siteFarmId string = '1'
+param siteFarmId string
 
 var appPrivateEndpointName = '${env}-ctcms-ct${siteId}-app-pe'
 var dfVirtualNetwork1 = '${env}-ctcms-df${siteFarmId}-vnet'
