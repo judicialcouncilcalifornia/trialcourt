@@ -1,8 +1,8 @@
-param siteFarmId string = '1'
-param env string = 'nprd'
-param siteId string = '001'
-param siteName string = ''
-param uniqueMod string = '42'
+param siteFarmId string
+param env string
+param siteId string
+param siteName string
+param uniqueMod string
 param subscriptionId string = subscription().subscriptionId
 param cmLocation string = resourceGroup().location
 
@@ -157,7 +157,6 @@ resource appService1 'Microsoft.Web/sites@2020-12-01' = {
   }
 }
 
-
 resource storageSetting 'Microsoft.Web/sites/config@2021-01-15' = {
   parent: appService1
   name: 'azurestorageaccounts'
@@ -172,23 +171,6 @@ resource storageSetting 'Microsoft.Web/sites/config@2021-01-15' = {
   }
 }
 
-/*
-module appconfigsettings './app-settings.bicep' = {
-  name: 'AppConfigSettings'
-  params: {
-    appName: appService
-    siteName: siteName
-  }
-}
-*/
-
-resource appService1_appServiceConfigRegionalVirtualNetworkIntegration1 'Microsoft.Web/sites/config@2018-11-01' = {
-  parent: appService1
-  name: 'appsettings'
-  properties: {
-    subnetResourceId: resourceId(resourceGroupNet, 'Microsoft.Network/virtualNetworks/subnets', dfVirtualNetwork, aspsubnet)
-  }
-}
 
 resource appServiceInsightsDiagnosticSetting1 'Microsoft.Insights/diagnosticSettings@2017-05-01-preview' = {
   scope: appService1
