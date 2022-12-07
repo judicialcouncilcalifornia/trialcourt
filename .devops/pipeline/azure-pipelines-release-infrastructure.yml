@@ -1,0 +1,67 @@
+trigger:
+  - none
+
+pool:
+  vmImage: ubuntu-latest
+
+parameters:
+  - name: azureServiceConnection
+    type: string
+    default: ''
+  - name: siteEnvPrefixLocal
+    type: string
+    default: ''
+  - name: siteFarmId
+    type: string
+    default: ''
+  - name: siteId
+    type: string
+    default: ''
+  - name: uniqueMod
+    type: string
+    default: ''
+  - name: containerRegistry
+    type: string
+    default: ''
+  - name: tag
+    type: string
+    default: ''
+  - name: sourceBranchName
+    type: string
+    default: ''
+  - name: ResourceGroupName
+    type: string
+    default: ''
+  - name: location
+    type: string
+    default: ''
+  - name: siteName
+    type: string
+    default: ''
+  - name: BuildId
+    type: string
+    default: ''
+
+steps:
+  - template: /.devops/pipeline/_provision-app-service.yml
+    parameters:
+      azureServiceConnection: ${{parameters.azureServiceConnection}}
+      siteEnvPrefixLocal: ${{parameters.siteEnvPrefixLocal}}
+      ResourceGroupName: ${{parameters.ResourceGroupName}}
+      location: ${{parameters.location}}
+      siteFarmId: ${{parameters.siteFarmId}}
+      siteId: ${{parameters.siteId}}
+      siteName: ${{parameters.siteName}}
+      uniqueMod: ${{parameters.uniqueMod}}
+      BuildId: ${{parameters.Build.BuildId}}
+
+  - template: /.devops/pipeline/_deploy-container.yml
+    parameters:
+      azureServiceConnection: ${{parameters.azureServiceConnection}}
+      siteEnvPrefixLocal: ${{parameters.siteEnvPrefixLocal}}
+      siteId: ${{parameters.siteId}}
+      uniqueMod: ${{parameters.uniqueMod}}
+      siteFarmId: ${{parameters.siteFarmId}}
+      containerRegistry: ${{parameters.containerRegistry}}
+      sourceBranchName: ${{parameters.Build.SourceBranchName}}
+      tag: 'latest'
