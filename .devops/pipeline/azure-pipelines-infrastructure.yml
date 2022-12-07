@@ -97,7 +97,7 @@ stages:
                 location: '$(location)'
                 templateLocation: 'Linked artifact'
                 csmFile: '$(templateFile)'
-                overrideParameters: '-siteFarmId $(siteFarmId) -siteId $(siteId) -env $(siteEnvPrefixLocal) -siteName $(siteName) -uniqueMod $(uniqueMod)'
+                overrideParameters: '-siteFarmId $(siteFarmId) -siteId $(siteId) -env uat -siteName $(siteName) -uniqueMod $(uniqueMod)'
                 deploymentMode: 'Incremental'
                 deploymentName: 'DeployPipelineTemplate-$(Build.BuildId)'
 
