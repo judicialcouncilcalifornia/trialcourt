@@ -148,7 +148,7 @@ resource appService1 'Microsoft.Web/sites@2020-12-01' = {
           value: '${appService}.azurewebsites.net'
         }
       ]
-      linuxFxVersion: 'DOCKER|mcr.microsoft.com/appsvc/staticsite:latest'
+      linuxFxVersion: 'DOCKER|devopswebcourtsnp.azurecr.io/build/trialcourt/master:latest'
       connectionStrings: []
       defaultDocuments: []
       ftpsState: 'Disabled'
