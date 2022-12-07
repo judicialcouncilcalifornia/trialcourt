@@ -6,7 +6,6 @@ trigger:
       - master
   paths:
     exclude:
-      - .devops/pipeline/azure-pipelines-infrastructure.yml
       - .devops/adm-rg.bicep
       - .devops/app-rg.bicep
       - .devops/site-build.bicep
@@ -14,6 +13,8 @@ trigger:
       - .devops/container/drupal-nginx-fpm/0.6
       - .devops/container/nginx-fpm
       - .devops/pipeline/_provision-app-service.yml
+      - .devops/pipeline/azure-pipelines-infrastructure.yml
+      - .devops/pipeline/azure-pipelines-release-infrastructure.yml
 
 resources:
   - repo: self
@@ -27,11 +28,13 @@ parameters:
   - name: sites
     type: object
     default:
-      - orange|3|300
+      - nevada|1|400
 
 variables:
   imageRepository: 'build/trialcourt/$(Build.SourceBranchName)'
   dockerfilePath: '$(Build.SourcesDirectory)/.devops/container/drupal-nginx-fpm/0.6-devops/Dockerfile'
+  dockerRegistryServiceConnection: 'Global Container Registry'
+  containerRegistry: 'globalctcmscr.azurecr.io'
   tag: 'build_$(Build.BuildId)-$(Build.SourceVersion)'
   phpVersion: 7.4
   sshPort: 9837
@@ -45,16 +48,10 @@ variables:
 
   ${{ if eq(variables['Build.SourceBranchName'], 'master') }}:
     azureServiceConnection: 'POC Manual connection'
-    dockerRegistryServiceConnection: 'UAT Container Registry'
-    containerRegistry: 'uatctcmscr.azurecr.io'
   ${{ elseif eq(variables['Build.SourceBranchName'], 'stage') }}:
     azureServiceConnection: 'POC Manual connection'
-    dockerRegistryServiceConnection: 'UAT Container Registry'
-    containerRegistry: 'uatctcmscr.azurecr.io'
   ${{ else }}:
     azureServiceConnection: 'TODO'
-    dockerRegistryServiceConnection: 'UAT Container Registry'
-    containerRegistry: 'uatctcmscr.azurecr.io'
 
 stages:
 
@@ -122,7 +119,7 @@ stages:
           - script: |
               case $(Build.SourceBranchName) in
                 master)
-                  echo "##vso[task.setvariable variable=siteEnvPrefix;isOutput=true;]uat"
+                  echo "##vso[task.setvariable variable=siteEnvPrefix;isOutput=true;]int"
                   ;;
                 stage)
                   echo "##vso[task.setvariable variable=siteEnvPrefix;isOutput=true;]uat"
@@ -149,7 +146,7 @@ stages:
               rm -rf $(Build.ArtifactStagingDirectory)/build-image.txt
               echo $(tag) > $(Build.ArtifactStagingDirectory)/build-image.txt
 
-              cp -r $(Build.SourcesDirectory)/scripts/trigger-release-build-pipeline.ps1 $(Build.ArtifactStagingDirectory)
+              cp -r $(Build.SourcesDirectory)/.devops/scripts/trigger-release-build-pipeline.ps1 $(Build.ArtifactStagingDirectory)
             displayName: 'Initialize drop files'
 
           - ${{ each site in parameters.sites }}:

@@ -5,7 +5,7 @@ parameters:
   - name: siteEnvPrefixLocal
     type: string
     default: ''
-  - name: ResourceGroupName
+  - name: resourceGroupName
     type: string
     default: ''
   - name: location
@@ -23,7 +23,7 @@ parameters:
   - name: uniqueMod
     type: string
     default: ''
-  - name: BuildId
+  - name: buildId
     type: string
     default: ''
 
@@ -34,10 +34,10 @@ steps:
       deploymentScope: 'Subscription'
       azureResourceManagerConnection: '${{parameters.azureServiceConnection}}'
       action: 'Create Or Update Resource Group'
-      resourceGroupName: '${{parameters.siteEnvPrefixLocal}}${{parameters.ResourceGroupName}}'
+      resourceGroupName: '${{parameters.siteEnvPrefixLocal}}${{parameters.resourceGroupName}}'
       location: '${{parameters.location}}'
       templateLocation: 'Linked artifact'
       csmFile: './.devops/site-build.bicep'
       overrideParameters: '-siteFarmId ${{parameters.siteFarmId}} -siteId ${{parameters.siteId}} -env ${{parameters.siteEnvPrefixLocal}} -siteName ${{parameters.siteName}} -uniqueMod ${{parameters.uniqueMod}}'
       deploymentMode: 'Incremental'
-      deploymentName: 'DeployPipelineTemplate-${{parameters.BuildId}}'
+      deploymentName: 'DeployPipelineTemplate-${{parameters.buildId}}'

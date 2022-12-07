@@ -4,13 +4,14 @@ trigger:
       - master
   paths:
     include:
-      - .devops/pipeline/azure-pipelines-infrastructure.yml
       - .devops/adm-rg.bicep
       - .devops/app-rg.bicep
       - .devops/site-build.bicep
       - .devops/role-assign.bicep
       - .devops/pipeline/_deploy-container.yml
       - .devops/pipeline/_provision-app-service.yml
+      - .devops/pipeline/azure-pipelines-infrastructure.yml
+      - .devops/pipeline/azure-pipelines-release-infrastructure.yml
 
 resources:
   - repo: self
@@ -24,11 +25,12 @@ parameters:
   - name: sites
     type: object
     default:
-      - orange|3|300
+      - nevada|1|400
 
 variables:
   imageRepository: 'build/trialcourt/$(Build.SourceBranchName)'
   dockerfilePath: '$(Build.SourcesDirectory)/.devops/drupal-nginx-fpm/0.6-devops/Dockerfile'
+  containerRegistry: 'globalctcmscr.azurecr.io'
   tag: 'build_$(Build.BuildId)-$(Build.SourceVersion)'
   location: 'West US 3'
   site: ''
@@ -37,16 +39,13 @@ variables:
   siteFarmId: ''
   siteEnvPrefix: ''
   ResourceGroupName: ''
-  uniqueMod: '01'
+  uniqueMod: ''
 
   ${{ if eq(variables['Build.SourceBranchName'], 'master') }}:
-    containerRegistry: 'uatctcmscr.azurecr.io'
     azureServiceConnection: 'POC Manual connection'
   ${{ elseif eq(variables['Build.SourceBranchName'], 'stage') }}:
-    containerRegistry: 'uatctcmscr.azurecr.io'
     azureServiceConnection: 'POC Manual connection'
   ${{ else }}:
-    containerRegistry: 'uatctcmscr.azurecr.io'
     azureServiceConnection: 'TODO'
 
 stages:
@@ -60,7 +59,7 @@ stages:
           - script: |
               case $(Build.SourceBranchName) in
                 master)
-                  echo "##vso[task.setvariable variable=siteEnvPrefix;isOutput=true;]uat"
+                  echo "##vso[task.setvariable variable=siteEnvPrefix;isOutput=true;]int"
                   ;;
                 stage)
                   echo "##vso[task.setvariable variable=siteEnvPrefix;isOutput=true;]uat"
@@ -87,7 +86,7 @@ stages:
               rm -rf $(Build.ArtifactStagingDirectory)/build-image.txt
               echo $(tag) > $(Build.ArtifactStagingDirectory)/build-image.txt
 
-              cp -r $(Build.SourcesDirectory)/scripts/trigger-release-infrastructure-pipeline.ps1 $(Build.ArtifactStagingDirectory)
+              cp -r $(Build.SourcesDirectory)/.devops/scripts/trigger-release-infrastructure-pipeline.ps1 $(Build.ArtifactStagingDirectory)
             displayName: 'Initialize drop files'
 
           - ${{ each site in parameters.sites }}:
@@ -109,13 +108,13 @@ stages:
               parameters:
                 azureServiceConnection: $(azureServiceConnection)
                 siteEnvPrefixLocal: $(siteEnvPrefixLocal)
-                ResourceGroupName: $(ResourceGroupName)
+                resourceGroupName: $(ResourceGroupName)
                 location: $(location)
                 siteFarmId: $(siteFarmId)
                 siteId: $(siteId)
                 siteName: $(siteName)
                 uniqueMod: $(uniqueMod)
-                BuildId: $(Build.BuildId)
+                buildId: $(Build.BuildId)
 
             - template: /.devops/pipeline/_deploy-container.yml
               parameters:

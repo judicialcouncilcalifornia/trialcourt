@@ -29,7 +29,7 @@ parameters:
   - name: sourceBranchName
     type: string
     default: ''
-  - name: ResourceGroupName
+  - name: resourceGroupName
     type: string
     default: ''
   - name: location
@@ -38,7 +38,7 @@ parameters:
   - name: siteName
     type: string
     default: ''
-  - name: BuildId
+  - name: buildId
     type: string
     default: ''
 
@@ -47,13 +47,13 @@ steps:
     parameters:
       azureServiceConnection: ${{parameters.azureServiceConnection}}
       siteEnvPrefixLocal: ${{parameters.siteEnvPrefixLocal}}
-      ResourceGroupName: ${{parameters.ResourceGroupName}}
+      ResourceGroupName: ${{parameters.resourceGroupName}}
       location: ${{parameters.location}}
       siteFarmId: ${{parameters.siteFarmId}}
       siteId: ${{parameters.siteId}}
       siteName: ${{parameters.siteName}}
       uniqueMod: ${{parameters.uniqueMod}}
-      BuildId: ${{parameters.Build.BuildId}}
+      BuildId: ${{parameters.buildId}}
 
   - template: /.devops/pipeline/_deploy-container.yml
     parameters:
@@ -63,5 +63,5 @@ steps:
       uniqueMod: ${{parameters.uniqueMod}}
       siteFarmId: ${{parameters.siteFarmId}}
       containerRegistry: ${{parameters.containerRegistry}}
-      sourceBranchName: ${{parameters.Build.SourceBranchName}}
+      sourceBranchName: ${{parameters.sourceBranchName}}
       tag: 'latest'

@@ -39,5 +39,5 @@ steps:
       uniqueMod: ${{parameters.uniqueMod}}
       siteFarmId: ${{parameters.siteFarmId}}
       containerRegistry: ${{parameters.containerRegistry}}
-      sourceBranchName: ${{parameters.Build.SourceBranchName}}
+      sourceBranchName: ${{parameters.sourceBranchName}}
       tag: ${{parameters.tag}}
