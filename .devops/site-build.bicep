@@ -13,7 +13,7 @@ param siteFarmId string
   'uat'
   'prod'
 ])
-param env string
+param env string = 'uat'
 
 param siteId string
 param siteName string
