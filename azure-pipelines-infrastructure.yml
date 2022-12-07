@@ -108,7 +108,7 @@ stages:
                 azureSubscription: $(azureServiceConnection)
                 appName: '$(siteEnvPrefixLocal)-ctcms-ct$(siteId)-app$(uniqueMod)'
                 resourceGroupName: '$(siteEnvPrefixLocal)-ctcms-df$(siteFarmId)-app-rg'
-                containers: '$(containerRegistry)/build/trialcourt/$(Build.SourceBranchName):$(tag)'
+                containers: '$(containerRegistry)/build/trialcourt/$(Build.SourceBranchName):latest'
 
             - task: MysqlDeploymentOnMachineGroup@1
               displayName: '-- Create a database if not exists'
