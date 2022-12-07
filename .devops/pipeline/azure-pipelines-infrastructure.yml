@@ -32,13 +32,13 @@ variables:
   uniqueMod: '01'
 
   ${{ if eq(variables['Build.SourceBranchName'], 'master') }}:
-    containerRegistry: 'devopswebcourtsnp.azurecr.io'
+    containerRegistry: 'uatctcmscr.azurecr.io'
     azureServiceConnection: 'POC Manual connection'
   ${{ elseif eq(variables['Build.SourceBranchName'], 'stage') }}:
-    containerRegistry: 'devopswebcourtsnp.azurecr.io'
+    containerRegistry: 'uatctcmscr.azurecr.io'
     azureServiceConnection: 'POC Manual connection'
   ${{ else }}:
-    containerRegistry: 'devopswebcourtsnp.azurecr.io'
+    containerRegistry: 'uatctcmscr.azurecr.io'
     azureServiceConnection: 'TODO'
 
 stages:
