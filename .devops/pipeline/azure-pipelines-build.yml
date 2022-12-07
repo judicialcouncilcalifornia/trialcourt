@@ -15,7 +15,7 @@ parameters:
   - name: sites
     type: object
     default:
-      - slo2|1|203
+      - orange|3|300
 
 variables:
   imageRepository: 'build/trialcourt/$(Build.SourceBranchName)'
@@ -34,15 +34,15 @@ variables:
   ${{ if eq(variables['Build.SourceBranchName'], 'master') }}:
     azureServiceConnection: 'POC Manual connection'
     dockerRegistryServiceConnection: 'POC Container Registry'
-    containerRegistry: 'nprdctcmscr01.azurecr.io'
+    containerRegistry: 'uatctcmscr.azurecr.io'
   ${{ elseif eq(variables['Build.SourceBranchName'], 'stage') }}:
     azureServiceConnection: 'POC Manual connection'
     dockerRegistryServiceConnection: 'POC Container Registry'
-    containerRegistry: 'nprdctcmscr01.azurecr.io'
+    containerRegistry: 'uatctcmscr.azurecr.io'
   ${{ else }}:
     azureServiceConnection: 'TODO'
     dockerRegistryServiceConnection: '3f015a0b-e8e0-41a5-887c-d04efab1abd1'
-    containerRegistry: 'nprdctcmscr01.azurecr.io'
+    containerRegistry: 'uatctcmscr.azurecr.io'
 
 stages:
 
@@ -110,7 +110,7 @@ stages:
           - script: |
               case $(Build.SourceBranchName) in
                 master)
-                  echo "##vso[task.setvariable variable=siteEnvPrefix;isOutput=true;]nprd"
+                  echo "##vso[task.setvariable variable=siteEnvPrefix;isOutput=true;]uat"
                   ;;
                 stage)
                   echo "##vso[task.setvariable variable=siteEnvPrefix;isOutput=true;]uat"
