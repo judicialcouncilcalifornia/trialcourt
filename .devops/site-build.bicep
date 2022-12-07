@@ -9,11 +9,11 @@ targetScope = 'subscription'
 param siteFarmId string
 
 @allowed([
-  'int'
+  'nprd'
   'uat'
   'prod'
 ])
-param env string = 'uat'
+param env string
 
 param siteId string
 param siteName string

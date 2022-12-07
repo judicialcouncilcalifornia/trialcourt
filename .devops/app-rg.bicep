@@ -19,6 +19,7 @@ var networkPrivateEndpoint3_var = '${env}-ctcms-ct${siteId}-app-pe'
 var resourceGroupApp = '${env}-ctcms-df${siteFarmId}-app-rg'
 var resourceGroupData = '${env}-ctcms-df${siteFarmId}-data-rg'
 var appServiceInsightsDiagnosticSetting1_var = '${env}-ctcms-ct${siteId}-diag'
+var appInsights_Name = '${env}-ctcms-appi'
 
 var siteStorageAccountName = '${env}ctcmsdf${siteFarmId}sa${uniqueMod}'
 var admStorageAccountName = '${env}ctcmsadmsa${uniqueMod}'
@@ -27,8 +28,13 @@ var mountPath = '/storage/files'
 
 
 resource siteStorageAccount 'Microsoft.Storage/storageAccounts@2019-06-01' existing = {
-scope: resourceGroup('${env}-ctcms-df${siteFarmId}-data-rg')
+scope: resourceGroup(resourceGroupData)
 name: siteStorageAccountName
+}
+
+resource appInsights 'Microsoft.Insights/components@2020-02-02' existing = {
+  scope: resourceGroup(admResourceGroup)
+  name: appInsights_Name
 }
 
 resource appService1 'Microsoft.Web/sites@2020-12-01' = {
@@ -53,11 +59,11 @@ resource appService1 'Microsoft.Web/sites@2020-12-01' = {
       appSettings: [
         {
           name: 'APPINSIGHTS_INSTRUMENTATIONKEY'
-          value: 'c0f63aa2-5037-4ac4-8aab-af33114aeeaa'
+          value: appInsights.properties.InstrumentationKey
         }
         {
           name: 'APPLICATIONINSIGHTS_CONNECTION_STRING'
-          value: 'InstrumentationKey=c0f63aa2-5037-4ac4-8aab-af33114aeeaa;IngestionEndpoint=https://westus-0.in.applicationinsights.azure.com/;LiveEndpoint=https://westus.livediagnostics.monitor.azure.com/'
+          value: appInsights.properties.ConnectionString
         }
         {
           name: 'ApplicationInsightsAgent_EXTENSION_VERSION'
@@ -189,20 +195,3 @@ resource appServiceInsightsDiagnosticSetting1 'Microsoft.Insights/diagnosticSett
   }
 }
 
-/* - System Managed Identity - deprecated to use User MI 
-@description('Specifies the role definition ID (contrib) used in the role assignment.')
-var roleDefinitionID = 'b24988ac-6180-42a0-ab88-20f7382dd24c'
-
-@description('Specifies the principal ID assigned to the role.')
-var principalId = appService1.identity.principalId
-
-module ResourceGroupRoleAssignment './role-assign.bicep' = {
-  name: 'ResourceGroupRoleAssignment'
-  scope: resourceGroup(resourceGroupData)
-  params: {
-    PrincipalId: principalId
-    RoleDefinitionId: roleDefinitionID
-  }
-}
-
-*/
