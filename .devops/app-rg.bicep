@@ -5,7 +5,6 @@ param siteName string
 param uniqueMod string
 param subscriptionId string = subscription().subscriptionId
 param cmLocation string = resourceGroup().location
-//param umiId string
 
 var appService = '${env}-ctcms-ct${siteId}-app${uniqueMod}'
 var webServerfarm = '${env}-ctcms-df${siteFarmId}-asp'
@@ -14,6 +13,7 @@ var admResourceGroup = '${env}-ctcms-admin-rg'
 var resourceGroupNet = '${env}-ctcms-df${siteFarmId}-net-rg'
 var dfVirtualNetwork = '${env}-ctcms-df${siteFarmId}-vnet'
 var aspsubnet = 'df${siteFarmId}-asp-sn'
+var umiId = '/subscriptions/${subscriptionId}/resourceGroups/${admResourceGroup}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/userMiId-${env}'
 
 var networkPrivateEndpoint3_var = '${env}-ctcms-ct${siteId}-app-pe'
 var resourceGroupApp = '${env}-ctcms-df${siteFarmId}-app-rg'
@@ -150,6 +150,7 @@ resource appService1 'Microsoft.Web/sites@2020-12-01' = {
       linuxFxVersion: 'DOCKER|mcr.microsoft.com/appsvc/staticsite:latest'
       connectionStrings: []
       defaultDocuments: []
+      keyVaultReferenceIdentity: umiId
       ftpsState: 'Disabled'
       handlerMappings: []
       ipSecurityRestrictions: []
