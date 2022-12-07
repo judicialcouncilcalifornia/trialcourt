@@ -1,7 +1,18 @@
 trigger:
-  - develop
-  - stage
-  - master
+  branches:
+    include:
+      - develop
+      - stage
+      - master
+  paths:
+    exclude:
+      - .devops/pipeline/azure-pipelines-infrastructure.yml
+      - .devops/adm-rg.bicep
+      - .devops/app-rg.bicep
+      - .devops/site-build.bicep
+      - .devops/role-assign.bicep
+      - .devops/container/drupal-nginx-fpm/0.6
+      - .devops/container/nginx-fpm
 
 resources:
   - repo: self
@@ -154,13 +165,16 @@ stages:
                 echo "##vso[task.setvariable variable=ResourceGroupName;]-ctcms-df${siteInfo[1]}-app-rg"
               displayName: 'SITE: ${{ site }}'
 
-            - task: AzureWebAppContainer@1
-              displayName: '-- Push latest container'
-              inputs:
-                azureSubscription: $(azureServiceConnection)
-                appName: '$(siteEnvPrefixLocal)-ctcms-ct$(siteId)-app$(uniqueMod)'
-                resourceGroupName: '$(siteEnvPrefixLocal)-ctcms-df$(siteFarmId)-app-rg'
-                containers: '$(containerRegistry)/build/trialcourt/$(Build.SourceBranchName):$(tag)'
+            - template: /.devops/pipeline/_deploy-container.yml
+              parameters:
+                azureServiceConnection: $(azureServiceConnection)
+                siteEnvPrefixLocal: $(siteEnvPrefixLocal)
+                siteId: $(siteId)
+                uniqueMod: $(uniqueMod)
+                siteFarmId: $(siteFarmId)
+                containerRegistry: $(containerRegistry)
+                sourceBranchName: $(Build.SourceBranchName)
+                imageTag: $(tag)
 
           - task: PublishBuildArtifacts@1
             inputs:
