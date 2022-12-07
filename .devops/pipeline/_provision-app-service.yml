@@ -38,6 +38,6 @@ steps:
       location: '${{parameters.location}}'
       templateLocation: 'Linked artifact'
       csmFile: './.devops/site-build.bicep'
-      overrideParameters: '-siteFarmId ${{parameters.siteFarmId}} -siteId ${{parameters.siteId}} -siteName ${{parameters.siteName}} -uniqueMod ${{parameters.uniqueMod}}'
+      overrideParameters: '-siteFarmId ${{parameters.siteFarmId}} -siteId ${{parameters.siteId}} -env ${{parameters.siteEnvPrefixLocal}} -siteName ${{parameters.siteName}} -uniqueMod ${{parameters.uniqueMod}}'
       deploymentMode: 'Incremental'
       deploymentName: 'DeployPipelineTemplate-${{parameters.BuildId}}'

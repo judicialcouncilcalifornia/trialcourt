@@ -80,6 +80,16 @@ stages:
         variables:
           siteEnvPrefixLocal: $[ dependencies.ReadManifest.outputs['EnvironmentPrefix.siteEnvPrefix'] ]
         steps:
+          - script: |
+              rm -rf $(Build.ArtifactStagingDirectory)/manifest.txt
+              touch $(Build.ArtifactStagingDirectory)/manifest.txt
+
+              rm -rf $(Build.ArtifactStagingDirectory)/build-image.txt
+              echo $(tag) > $(Build.ArtifactStagingDirectory)/build-image.txt
+
+              cp -r $(Build.SourcesDirectory)/scripts/trigger-release-infrastructure-pipeline.ps1 $(Build.ArtifactStagingDirectory)
+            displayName: 'Initialize drop files'
+
           - ${{ each site in parameters.sites }}:
             - script: |
                 IFS='|'

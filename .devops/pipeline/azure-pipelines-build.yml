@@ -148,6 +148,8 @@ stages:
 
               rm -rf $(Build.ArtifactStagingDirectory)/build-image.txt
               echo $(tag) > $(Build.ArtifactStagingDirectory)/build-image.txt
+
+              cp -r $(Build.SourcesDirectory)/scripts/trigger-release-build-pipeline.ps1 $(Build.ArtifactStagingDirectory)
             displayName: 'Initialize drop files'
 
           - ${{ each site in parameters.sites }}:
