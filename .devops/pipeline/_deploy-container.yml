@@ -28,7 +28,7 @@ steps:
   - task: AzureWebAppContainer@1
     displayName: '-- Push latest container'
     inputs:
-      azureSubscription: $(parameters.azureServiceConnection)
-      appName: '$(parameters.siteEnvPrefixLocal)-ctcms-ct$(parameters.siteId)-app$(parameters.uniqueMod)'
-      resourceGroupName: '$(parameters.siteEnvPrefixLocal)-ctcms-df$(parameters.siteFarmId)-app-rg'
-      containers: '$(parameters.containerRegistry)/build/trialcourt/$(parameters.sourceBranchName):$(parameters.tag)'
+      azureSubscription: ${{parameters.azureServiceConnection}}
+      appName: '${{parameters.siteEnvPrefixLocal}}-ctcms-ct${{parameters.siteId}}-app${{parameters.uniqueMod}}'
+      resourceGroupName: '${{parameters.siteEnvPrefixLocal}}-ctcms-df${{parameters.siteFarmId}}-app-rg'
+      containers: '${{parameters.containerRegistry}}/build/trialcourt/${{parameters.sourceBranchName}}:${{parameters.tag}}'
