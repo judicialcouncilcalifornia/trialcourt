@@ -15,7 +15,7 @@ parameters:
   - name: sites
     type: object
     default:
-      - slo2|1|203
+      - orange|3|300
 
 variables:
   imageRepository: 'build/trialcourt/$(Build.SourceBranchName)'
@@ -52,7 +52,7 @@ stages:
           - script: |
               case $(Build.SourceBranchName) in
                 master)
-                  echo "##vso[task.setvariable variable=siteEnvPrefix;isOutput=true;]nprd"
+                  echo "##vso[task.setvariable variable=siteEnvPrefix;isOutput=true;]uat"
                   ;;
                 stage)
                   echo "##vso[task.setvariable variable=siteEnvPrefix;isOutput=true;]uat"
