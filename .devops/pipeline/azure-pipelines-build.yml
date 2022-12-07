@@ -1,7 +1,19 @@
 trigger:
-  - develop
-  - stage
-  - master
+  branches:
+    include:
+      - develop
+      - stage
+      - master
+  paths:
+    exclude:
+      - .devops/pipeline/azure-pipelines-infrastructure.yml
+      - .devops/adm-rg.bicep
+      - .devops/app-rg.bicep
+      - .devops/site-build.bicep
+      - .devops/role-assign.bicep
+      - .devops/container/drupal-nginx-fpm/0.6
+      - .devops/container/nginx-fpm
+      - .devops/pipeline/_provision-app-service.yml
 
 resources:
   - repo: self
@@ -33,15 +45,15 @@ variables:
 
   ${{ if eq(variables['Build.SourceBranchName'], 'master') }}:
     azureServiceConnection: 'POC Manual connection'
-    dockerRegistryServiceConnection: 'POC Container Registry'
+    dockerRegistryServiceConnection: 'UAT Container Registry'
     containerRegistry: 'uatctcmscr.azurecr.io'
   ${{ elseif eq(variables['Build.SourceBranchName'], 'stage') }}:
     azureServiceConnection: 'POC Manual connection'
-    dockerRegistryServiceConnection: 'POC Container Registry'
+    dockerRegistryServiceConnection: 'UAT Container Registry'
     containerRegistry: 'uatctcmscr.azurecr.io'
   ${{ else }}:
     azureServiceConnection: 'TODO'
-    dockerRegistryServiceConnection: '3f015a0b-e8e0-41a5-887c-d04efab1abd1'
+    dockerRegistryServiceConnection: 'UAT Container Registry'
     containerRegistry: 'uatctcmscr.azurecr.io'
 
 stages:
@@ -154,13 +166,16 @@ stages:
                 echo "##vso[task.setvariable variable=ResourceGroupName;]-ctcms-df${siteInfo[1]}-app-rg"
               displayName: 'SITE: ${{ site }}'
 
-            - task: AzureWebAppContainer@1
-              displayName: '-- Push latest container'
-              inputs:
-                azureSubscription: $(azureServiceConnection)
-                appName: '$(siteEnvPrefixLocal)-ctcms-ct$(siteId)-app$(uniqueMod)'
-                resourceGroupName: '$(siteEnvPrefixLocal)-ctcms-df$(siteFarmId)-app-rg'
-                containers: '$(containerRegistry)/build/trialcourt/$(Build.SourceBranchName):$(tag)'
+            - template: /.devops/pipeline/_deploy-container.yml
+              parameters:
+                azureServiceConnection: $(azureServiceConnection)
+                siteEnvPrefixLocal: $(siteEnvPrefixLocal)
+                siteId: $(siteId)
+                uniqueMod: $(uniqueMod)
+                siteFarmId: $(siteFarmId)
+                containerRegistry: $(containerRegistry)
+                sourceBranchName: $(Build.SourceBranchName)
+                tag: $(tag)
 
           - task: PublishBuildArtifacts@1
             inputs:
