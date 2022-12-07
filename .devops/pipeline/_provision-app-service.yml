@@ -1,0 +1,43 @@
+parameters:
+  - name: azureServiceConnection
+    type: string
+    default: ''
+  - name: siteEnvPrefixLocal
+    type: string
+    default: ''
+  - name: ResourceGroupName
+    type: string
+    default: ''
+  - name: location
+    type: string
+    default: ''
+  - name: siteFarmId
+    type: string
+    default: ''
+  - name: siteId
+    type: string
+    default: ''
+  - name: siteName
+    type: string
+    default: ''
+  - name: uniqueMod
+    type: string
+    default: ''
+  - name: BuildId
+    type: string
+    default: ''
+
+steps:
+  - task: AzureResourceManagerTemplateDeployment@3
+    displayName: '-- Provision App Service'
+    inputs:
+      deploymentScope: 'Subscription'
+      azureResourceManagerConnection: '$(parameters.azureServiceConnection)'
+      action: 'Create Or Update Resource Group'
+      resourceGroupName: '$(parameters.siteEnvPrefixLocal)$(parameters.ResourceGroupName)'
+      location: '$(parameters.location)'
+      templateLocation: 'Linked artifact'
+      csmFile: './.devops/site-build.bicep'
+      overrideParameters: '-siteFarmId $(parameters.siteFarmId) -siteId $(parameters.siteId) -siteName $(parameters.siteName) -uniqueMod $(parameters.uniqueMod)'
+      deploymentMode: 'Incremental'
+      deploymentName: 'DeployPipelineTemplate-$(parameters.BuildId)'
