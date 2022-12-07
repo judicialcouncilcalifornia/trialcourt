@@ -9,11 +9,11 @@ targetScope = 'subscription'
 param siteFarmId string
 
 @allowed([
-  'nprd'
+  'int'
   'uat'
   'prod'
 ])
-param env string
+param env string = 'uat'
 
 param siteId string
 param siteName string
@@ -55,7 +55,6 @@ module dfappmod './app-rg.bicep'= {
     siteId: siteId
     siteName: siteName
     uniqueMod: uniqueMod
-    //umiId: umiId
     cmLocation: location1
     siteFarmId: siteFarmId
   }

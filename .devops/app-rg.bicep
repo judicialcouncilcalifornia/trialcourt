@@ -43,6 +43,7 @@ resource appService1 'Microsoft.Web/sites@2020-12-01' = {
   location: cmLocation
   properties: {
     enabled: true
+    keyVaultReferenceIdentity: umiId
     httpsOnly: true
     redundancyMode: 'None'
     reserved: true
@@ -150,7 +151,6 @@ resource appService1 'Microsoft.Web/sites@2020-12-01' = {
       linuxFxVersion: 'DOCKER|mcr.microsoft.com/appsvc/staticsite:latest'
       connectionStrings: []
       defaultDocuments: []
-      keyVaultReferenceIdentity: umiId
       ftpsState: 'Disabled'
       handlerMappings: []
       ipSecurityRestrictions: []
