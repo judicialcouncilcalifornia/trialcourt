@@ -13,6 +13,7 @@ trigger:
       - .devops/role-assign.bicep
       - .devops/container/drupal-nginx-fpm/0.6
       - .devops/container/nginx-fpm
+      - .devops/pipeline/_provision-app-service.yml
 
 resources:
   - repo: self

@@ -9,6 +9,8 @@ trigger:
       - .devops/app-rg.bicep
       - .devops/site-build.bicep
       - .devops/role-assign.bicep
+      - .devops/pipeline/_deploy-container.yml
+      - .devops/pipeline/_provision-app-service.yml
 
 resources:
   - repo: self
