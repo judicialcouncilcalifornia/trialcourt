@@ -29,7 +29,7 @@ variables:
   siteFarmId: ''
   siteEnvPrefix: ''
   ResourceGroupName: ''
-  uniqueMod: '01'
+  uniqueMod: ''
 
   ${{ if eq(variables['Build.SourceBranchName'], 'master') }}:
     azureServiceConnection: 'POC Manual connection'
