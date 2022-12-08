@@ -116,6 +116,7 @@ resource fdOrigin 'Microsoft.Cdn/profiles/originGroups/origins@2021-06-01' = {
     hostName: '${env}-ctcms-ct${siteId}-app${uniqueMod}.azurewebsites.net'
     httpPort: 80
     httpsPort: 443
+    originHostHeader: '${env}-ctcms-ct${siteId}-app${uniqueMod}.azurewebsites.net'
     priority: 1
     sharedPrivateLinkResource: {
       groupId: 'sites'
