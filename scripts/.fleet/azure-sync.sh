@@ -20,7 +20,7 @@ do_command() {
 
   df1=("stanislaus" "butte" "humboldt" "merced" "siskiyou" "nccourt" "tehama" "sierra" "sanbenito" "glenn" "store-front" "supremecourt" "fresno" "newsroom")
   df2=("slo2" "sc" "napa" "madera" "mendocino" "inyo" "mariposa" "alpine" "tuolumne" "deprep" "alameda" "kern" "tularesuperiorcourt")
-  df3=( "eldorado" "imperial" "kings" "sutter" "mono" "colusa" "modoc" "yuba" "trinity" "srl")
+  df3=( "eldorado" "imperial" "kings" "sutter" "mono" "colusa" "modoc" "yuba" "trinity" "srl" "elcondado")
 
   if [ $farm == 'df1'  ]; then
     sites_processing=("${df1[@]}")
@@ -32,7 +32,7 @@ do_command() {
 
   for site in "${sites_processing[@]}"; do
     site="jcc-${site}.${env}"
-    echo -e "${Y}Grabbing ${element} from ${RE}${site} $@" &
+    echo -e "${Y}Grabbing ${element} from ${RE}${site} $@"
     terminus backup:get ${site} --element=${element} --to=${location} $@ &
 
     PIDS+=" $!"
@@ -51,13 +51,13 @@ do_command() {
   PIDS=""
   if [ $element == 'db'  ]; then
     echo -e "\n${RE}Unzipping db files in ${location}${RE} $@"
-    #gunzip ${location}/*
+    gunzip ${location}/*
     ls -lah  ${location}
 
     for site in "${sites_processing[@]}"; do
       echo -e "\n${Y}Creating database for ${site}${RE} $@"
       mysql -h${azureenv}-ctcms-${farm}-mdb.mariadb.database.azure.com -uAzureMDB@${azureenv}-ctcms-${farm}-mdb -p${pass} -e "CREATE DATABASE IF NOT EXISTS ${site}"
-      echo -e "${R}Importing ${site} database${RE} $@" &
+      echo -e "${R}Importing ${site} database${RE} $@"
       mysql -h${azureenv}-ctcms-${farm}-mdb.mariadb.database.azure.com -uAzureMDB@${azureenv}-ctcms-${farm}-mdb -p${pass} ${site} < ${location}/jcc-${site}*.sql &
 
       PIDS+=" $!"
