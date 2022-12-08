@@ -91,9 +91,9 @@ variables:
   uniqueMod: ''
 
   ${{ if eq(variables['Build.SourceBranchName'], 'master') }}:
-    azureServiceConnection: 'POC Manual connection'
+    azureServiceConnection: 'INT resource Manager'
   ${{ elseif eq(variables['Build.SourceBranchName'], 'stage') }}:
-    azureServiceConnection: 'POC Manual connection'
+    azureServiceConnection: 'INT resource Manager'
   ${{ else }}:
     azureServiceConnection: 'TODO'
 
