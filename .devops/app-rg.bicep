@@ -160,6 +160,7 @@ resource appService1 'Microsoft.Web/sites@2020-12-01' = {
       ftpsState: 'Disabled'
       handlerMappings: []
       ipSecurityRestrictions: []
+      vnetRouteAllEnabled: true
       loadBalancing: 'LeastResponseTime'
       minTlsVersion: '1.2'
       scmIpSecurityRestrictions: []
