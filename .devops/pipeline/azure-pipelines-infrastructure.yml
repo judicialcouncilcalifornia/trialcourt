@@ -25,7 +25,6 @@ parameters:
   - name: sites
     type: object
     default:
-      - mono|1|401
       - butte|1|402
 
 variables:
