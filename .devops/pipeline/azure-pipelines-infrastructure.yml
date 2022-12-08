@@ -26,7 +26,7 @@ parameters:
     type: object
     default:
       - mono|1|401
-      - nevada|1|400
+      - butte|1|402
 
 variables:
   imageRepository: 'build/trialcourt/$(Build.SourceBranchName)'
