@@ -3,7 +3,7 @@
 show_help() {
   name="azure-sync"
   description="Grab db and files from Pantheon and import them to Azure."
-  usage="scripts/fleet azure-sync [env] [element] [directory]"
+  usage="scripts/fleet azure-sync [env] [element] [directory] [farm] [azureenv] [pass]"
   # Use this exact template in all show_help functions for consistentency.
   . ${BASEDIR}/scripts/.fleet/templates/show_help.sh
 }
@@ -12,40 +12,65 @@ do_command() {
   PIDS=""
   declare -a sitemap
 
-  rm -rf ${dir}
-  mkdir -p ${dir}
+  echo -e "${G}Syncing ${element} to ${azureenv}.${farm}${RE} $@"
 
-  for site in $sites
-    do
-      site="jcc-${site}.${env}"
-      echo -e "\n${Y}Grabbing ${element} from ${RE}${site} $@"
-      terminus backup:get ${site} --element=${element} --to=${dir} $@ &
+  location=${dir}/${farm}
+  rm -rf ${location}
+  mkdir -p ${location}
+
+  df1=("stanislaus" "butte" "humboldt" "merced" "siskiyou" "nccourt" "tehama" "sierra" "sanbenito" "glenn" "store-front" "supremecourt" "fresno" "newsroom")
+  df2=("slo2" "sc" "napa" "madera" "mendocino" "inyo" "mariposa" "alpine" "tuolumne" "deprep" "alameda" "kern" "tularesuperiorcourt")
+  df3=( "eldorado" "imperial" "kings" "sutter" "mono" "colusa" "modoc" "yuba" "trinity" "srl")
+
+  if [ $farm == 'df1'  ]; then
+    sites_processing=("${df1[@]}")
+  elif [ $farm == 'df2'  ]; then
+    sites_processing=("${df2[@]}")
+  elif [ $farm == 'df3'  ]; then
+    sites_processing=("${df3[@]}")
+  fi
+
+  for site in "${sites_processing[@]}"; do
+    site="jcc-${site}.${env}"
+    echo -e "${Y}Grabbing ${element} from ${RE}${site} $@" &
+    terminus backup:get ${site} --element=${element} --to=${location} $@ &
+
+    PIDS+=" $!"
+    sitemap["$!"]="${site}"
+
+    sleep 3
+  done
+  for p in $PIDS; do
+    if wait $p; then
+      echo -e "${G}${sitemap["$p"]} download succeeded"
+    else
+      echo -e "${R}${sitemap["$p"]} download failed"
+    fi
+  done
+
+  PIDS=""
+  if [ $element == 'db'  ]; then
+    echo -e "\n${RE}Unzipping db files in ${location}${RE} $@"
+    #gunzip ${location}/*
+    ls -lah  ${location}
+
+    for site in "${sites_processing[@]}"; do
+      echo -e "\n${Y}Creating database for ${site}${RE} $@"
+      mysql -h${azureenv}-ctcms-${farm}-mdb.mariadb.database.azure.com -uAzureMDB@${azureenv}-ctcms-${farm}-mdb -p${pass} -e "CREATE DATABASE IF NOT EXISTS ${site}"
+      echo -e "${R}Importing ${site} database${RE} $@" &
+      mysql -h${azureenv}-ctcms-${farm}-mdb.mariadb.database.azure.com -uAzureMDB@${azureenv}-ctcms-${farm}-mdb -p${pass} ${site} < ${location}/jcc-${site}*.sql &
 
       PIDS+=" $!"
       sitemap["$!"]="${site}"
 
-      sleep 3 
+      sleep 20
     done
-
-  for p in $PIDS; do
-    if wait $p; then
-      echo "${sitemap["$p"]} succeeded"
-    else
-      echo "${sitemap["$p"]} failed"
-    fi
-  done
-
-  if [ $element == 'db'  ]
-  then
-    echo -e "\n${Y}Unzipping db files in ${dir}${RE} $@"
-    gunzip ${dir}/*
-
-    for site in $sites; do
-      #mysql -hsupdevmdb01.mariadb.database.azure.com -uazuremdb@supdevmdb01 -pAdamTheGreat1! -e "DROP DATABASE ${site}"
-      echo -e "\n${Y}Creating database for ${site}${RE} $@"
-      mysql -hsupdevmdb01.mariadb.database.azure.com -uazuremdb@supdevmdb01 -pAdamTheGreat1! -e "CREATE DATABASE IF NOT EXISTS ${site}"
-      echo -e "\n${R}Importing ${site} database${RE} $@"
-      mysql -hsupdevmdb01.mariadb.database.azure.com -uazuremdb@supdevmdb01 -pAdamTheGreat1! ${site} < ${dir}/jcc-${site}*.sql
+    for p in $PIDS; do
+      if wait $p; then
+      echo -e "${G}${sitemap["$p"]} import succeeded"
+      else
+      echo -e "${R}${sitemap["$p"]} import failed"
+      fi
     done
   fi
 }
@@ -64,7 +89,10 @@ case $1 in
     env=$1
     element=$2
     dir=$3
-    shift 3
+    farm=$4
+    azureenv=$5
+    pass=$6
+    shift 6
     echo $@
     do_command $@
     ;;
