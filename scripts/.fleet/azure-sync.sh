@@ -18,9 +18,9 @@ do_command() {
   rm -rf ${location}
   mkdir -p ${location}
 
-  df1=("stanislaus" "butte" "humboldt" "merced" "siskiyou" "nccourt" "tehama" "sierra" "sanbenito" "glenn" "store-front" "supremecourt" "fresno" "newsroom")
-  df2=("slo2" "sc" "napa" "madera" "mendocino" "inyo" "mariposa" "alpine" "tuolumne" "deprep" "alameda" "kern" "tularesuperiorcourt")
-  df3=( "eldorado" "imperial" "kings" "sutter" "mono" "colusa" "modoc" "yuba" "trinity" "srl" "elcondado")
+  df1=("sacramento" "stanislaus" "butte" "humboldt" "merced" "siskiyou" "nccourt" "tehama" "sierra" "sanbenito" "glenn" "store-front" "supremecourt" "fresno" "newsroom")
+  df2=("sf" "santabarbara" "riverside" "partners" "oc" "monterey" "slo2" "sc" "napa" "madera" "mendocino" "inyo" "mariposa" "alpine" "tuolumne" "deprep" "alameda" "kern" "tularesuperiorcourt")
+  df3=("sonoma" "eldorado" "imperial" "kings" "sutter" "mono" "colusa" "modoc" "yuba" "trinity" "srl" "elcondado" "idm" "amdr" "lake")
 
   if [ $farm == 'df1'  ]; then
     sites_processing=("${df1[@]}")
