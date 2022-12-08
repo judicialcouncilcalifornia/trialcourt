@@ -25,7 +25,56 @@ parameters:
   - name: sites
     type: object
     default:
-      - butte|1|402
+      - sacramento|1|100
+      - stanislaus|1|101
+      - butte|1|102
+      - humboldt|1|103
+      - merced|1|104
+      - siskiyou|1|105
+      - nccourt|1|106
+      - tehama|1|107
+      - sierra|1|108
+      - sanbenito|1|109
+      - glenn|1|110
+      - store-front|1|111
+      - supremecourt|1|112
+      - fresno|1|113
+      - newsroom|1|114
+#sf|2|100
+#santabarbara|2|101
+#riverside|2|102
+#partners|2|103
+#oc|2|104
+#monterey|2|105
+#slo2|2|106
+#sc|2|107
+#napa|2|108
+#madera|2|109
+#mendocino|2|110
+#inyo|2|111
+#mariposa|2|112
+#alpine|2|113
+#tuolumne|2|114
+#deprep|2|115
+#alameda|2|116
+#kern|2|117
+#tularesuperiorcourt|2|118
+#
+##sonoma|3|100
+#eldorado|3|101
+#imperial|3|102
+#kings|3|103
+#sutter|3|104
+#mono|3|105
+#colusa|3|106
+#modoc|3|107
+#yuba|3|108
+#trinity|3|109
+#srl|3|110
+#elcondado|3|111
+#idm|3|112
+#amdr|3|113
+#lake|3|114
 
 variables:
   imageRepository: 'build/trialcourt/$(Build.SourceBranchName)'
