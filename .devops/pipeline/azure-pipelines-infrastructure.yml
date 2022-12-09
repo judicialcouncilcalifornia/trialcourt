@@ -25,13 +25,13 @@ parameters:
   - name: sites
     type: object
     default:
-      - sacramento|1|100
       - stanislaus|1|101
       - butte|1|102
-      - humboldt|1|103
-      - merced|1|104
-      - siskiyou|1|105
-      - nccourt|1|106
+#      - humboldt|1|103
+#      - merced|1|104
+#      - siskiyou|1|105
+#      - nccourt|1|106
+#      - sacramento|1|100
 #  - name: sites_1
 #    type: object
 #    default:
