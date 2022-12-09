@@ -27,7 +27,7 @@ parameters:
     default:
       - sacramento|1|100
       - stanislaus|1|101
-      - butte|1|202
+      - butte|1|102
       - humboldt|1|103
       - merced|1|104
       - siskiyou|1|105
@@ -39,25 +39,26 @@ parameters:
       - sierra|1|108
       - sanbenito|1|109
       - glenn|1|110
-      - supremecourt|1|112
-      - fresno|1|113
-      - newsroom|1|114
+      - supremecourt|1|111
+      - fresno|1|112
+      - newsroom|1|113
   - name: sites_2
     type: object
     default:
       - sf|2|200
       - santabarbara|2|201
-      - riverside|2|203
-      - partners|2|204
-      - oc|2|205
+      - riverside|2|202
+      - partners|2|203
+      - oc|2|204
+      - mendocino|2|205
       - monterey|2|206
       - slo2|2|207
       - sc|2|208
       - madera|2|209
-      - mendocino|2|210
   - name: sites_3
     type: object
     default:
+      - napa|2|210
       - inyo|2|211
       - mariposa|2|212
       - alpine|2|213
@@ -69,7 +70,6 @@ parameters:
     type: object
     default:
       - tularesuperiorcourt|2|218
-      - napa|2|219
       - sonoma|3|300
       - eldorado|3|301
       - imperial|3|302
