@@ -2,32 +2,30 @@ targetScope = 'subscription'
 
 // Parameters for deployment here
 @allowed([
-  '1'
-  '2'
-  '3'
-])
-param siteFarmId string
-
-@allowed([
   'int'
   'uat'
   'prod'
 ])
 param env string
 
+@allowed([
+  '1'
+  '2'
+  '3'
+])
+param siteFarmId string
+
 param siteId string
 param siteName string
-param uniqueMod string = ''
+param uniqueMod string = '1'
 
 param location1 string = 'West US 3'
-param subId string = subscription().subscriptionId
 param utcValue string = utcNow()
 
 
 // Initialize Resource Groups
 var adminResourceGroup_name = '${env}-ctcms-admin-rg'
 var appDfResourceGroup_name = '${env}-ctcms-df${siteFarmId}-app-rg'
-var dataDfResourceGroup_name = '${env}-ctcms-df${siteFarmId}-data-rg'
 var netDfResourceGroup_name = '${env}-ctcms-df${siteFarmId}-net-rg'
 
 resource adminResourceGroup 'Microsoft.Resources/resourceGroups@2019-05-01' existing = {
@@ -36,10 +34,6 @@ resource adminResourceGroup 'Microsoft.Resources/resourceGroups@2019-05-01' exis
 
 resource appDfResourceGroup 'Microsoft.Resources/resourceGroups@2019-05-01' existing = {
   name: appDfResourceGroup_name
-}
-
-resource dataDfResourceGroup 'Microsoft.Resources/resourceGroups@2019-05-01' existing = {
-  name: dataDfResourceGroup_name
 }
 
 resource netResourceGroup 'Microsoft.Resources/resourceGroups@2019-05-01' existing = {
