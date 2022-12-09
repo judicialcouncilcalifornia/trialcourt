@@ -40,4 +40,4 @@ steps:
       csmFile: './.devops/site-build.bicep'
       overrideParameters: '-siteFarmId ${{parameters.siteFarmId}} -siteId ${{parameters.siteId}} -env ${{parameters.siteEnvPrefixLocal}} -siteName ${{parameters.siteName}} -uniqueMod ${{parameters.uniqueMod}}'
       deploymentMode: 'Incremental'
-      deploymentName: 'DeployPipelineTemplate-${{parameters.buildId}}'
+      deploymentName: 'DeployPipelineTemplate-${{parameters.siteId}}-${{parameters.buildId}}'
