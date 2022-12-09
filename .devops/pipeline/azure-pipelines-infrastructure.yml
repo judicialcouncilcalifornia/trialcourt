@@ -25,7 +25,7 @@ parameters:
   - name: sites
     type: object
     default:
-      - sf|2|100
+      - sf|2|200
       - santabarbara|2|201
       - riverside|2|203
       - partners|2|204
