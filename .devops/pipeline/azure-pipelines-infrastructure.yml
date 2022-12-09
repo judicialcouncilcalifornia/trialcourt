@@ -173,7 +173,7 @@ stages:
                 resourceGroupName: $(ResourceGroupName)
                 location: $(location)
                 siteFarmId: $(siteFarmId)
-                siteId: $(siteId)
+                siteId:  '$(siteEnvPrefixLocal)$(siteId)'
                 siteName: $(siteName)
                 uniqueMod: $(uniqueMod)
                 buildId: $(Build.BuildId)
