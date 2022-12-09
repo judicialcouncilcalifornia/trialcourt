@@ -25,17 +25,17 @@ parameters:
   - name: sites
     type: object
     default:
-      - stanislaus|1|101
-      - butte|1|102
+      - sacramento|1|100
+      - tehama|1|107
+#      - stanislaus|1|101
+#      - butte|1|102
 #      - humboldt|1|103
 #      - merced|1|104
 #      - siskiyou|1|105
 #      - nccourt|1|106
-#      - sacramento|1|100
 #  - name: sites_1
 #    type: object
 #    default:
-#      - tehama|1|107
 #      - sierra|1|108
 #      - sanbenito|1|109
 #      - glenn|1|110
