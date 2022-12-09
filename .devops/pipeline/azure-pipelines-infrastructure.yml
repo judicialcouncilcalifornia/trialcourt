@@ -27,7 +27,7 @@ parameters:
     default:
       - sacramento|1|100
       - stanislaus|1|101
-      - butte|1|102
+      - butte|1|202
       - humboldt|1|103
       - merced|1|104
       - siskiyou|1|105
