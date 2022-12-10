@@ -75,12 +75,14 @@ parameters:
   - name: sites_5
     type: object
     default:
+       - sacramento|1|100
+       - merced|1|104
 #      - deprep|2|215
 #      - alameda|2|216
 #      - kern|2|217
 #      - sc|2|208
 #      - madera|2|209
-      - modoc|3|307
+#      - modoc|3|307
 #      - yuba|3|308
 #      - trinity|3|309
 #      - srl|3|310
