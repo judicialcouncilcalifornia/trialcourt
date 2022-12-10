@@ -32,47 +32,42 @@ parameters:
       - merced|1|104
       - siskiyou|1|105
       - nccourt|1|106
-      - tehama|1|107
   - name: sites_1
-    type: object
-    default:
-      - sierra|1|108
-      - sanbenito|1|109
-      - glenn|1|110
-      - supremecourt|1|111
-      - fresno|1|112
-      - newsroom|1|113
-  - name: sites_2
     type: object
     default:
       - sf|2|200
       - santabarbara|2|201
+      - tehama|1|107
+      - monterey|2|206
+#      - sierra|1|108
+#      - sanbenito|1|109
+#      - glenn|1|110
+#      - supremecourt|1|111
+#      - fresno|1|112
+#      - newsroom|1|113
+  - name: sites_2
+    type: object
+    default:
       - riverside|2|202
       - partners|2|203
       - oc|2|204
       - mendocino|2|205
-      - monterey|2|206
-      - slo2|2|207
-      - sc|2|208
-      - madera|2|209
   - name: sites_3
     type: object
     default:
-      - napa|2|210
+#      - napa|2|210
       - inyo|2|211
       - mariposa|2|212
       - alpine|2|213
       - tuolumne|2|214
-      - deprep|2|215
-      - alameda|2|216
-      - kern|2|217
+      - slo2|2|207
   - name: sites_4
     type: object
     default:
-      - tularesuperiorcourt|2|218
-      - sonoma|3|300
-      - eldorado|3|301
-      - imperial|3|302
+#      - tularesuperiorcourt|2|218
+#      - sonoma|3|300
+#      - eldorado|3|301
+#      - imperial|3|302
       - kings|3|303
       - sutter|3|304
       - mono|3|305
@@ -80,14 +75,19 @@ parameters:
   - name: sites_5
     type: object
     default:
-      - modoc|3|307
-      - yuba|3|308
-      - trinity|3|309
-      - srl|3|310
-      - elcondado|3|311
-      - idm|3|312
-      - amdr|3|313
-      - lake|3|314
+      - deprep|2|215
+      - alameda|2|216
+      - kern|2|217
+      - sc|2|208
+      - madera|2|209
+#      - modoc|3|307
+#      - yuba|3|308
+#      - trinity|3|309
+#      - srl|3|310
+#      - elcondado|3|311
+#      - idm|3|312
+#      - amdr|3|313
+#      - lake|3|314
 
 variables:
   imageRepository: 'build/trialcourt/$(Build.SourceBranchName)'

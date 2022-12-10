@@ -43,7 +43,7 @@ resource netResourceGroup 'Microsoft.Resources/resourceGroups@2019-05-01' existi
 // Module Deployments start here
 
 module dfappmod './app-rg.bicep'= {
-  name: 'SiteApp-${utcValue}'
+  name: 'SiteApp-${siteId}-${utcValue}'
   params: {
     env: env
     siteId: siteId
@@ -57,7 +57,7 @@ module dfappmod './app-rg.bicep'= {
 
 
 module dfnetmod './net-rg.bicep'= {
-  name: 'SiteNet-${utcValue}'
+  name: 'SiteNet-${siteId}-${utcValue}'
   params: {
     env: env
     siteId: siteId
@@ -72,7 +72,7 @@ module dfnetmod './net-rg.bicep'= {
 }
 
 module dfadmmod './adm-rg.bicep'= {
-  name: 'SiteAdm-${utcValue}'
+  name: 'SiteAdm-${siteId}-${utcValue}'
   params: {
     env: env
     siteId: siteId
