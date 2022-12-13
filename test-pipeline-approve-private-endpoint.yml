@@ -32,15 +32,15 @@ pool:
   vmImage: ubuntu-latest
 
 steps:
-  - script: |
-      echo "azureServiceConnection: ${{parameters.azureServiceConnection}}"
-      echo "siteEnvPrefixLocal: ${{parameters.siteEnvPrefixLocal}}"
-      echo "siteFarmId: ${{parameters.siteFarmId}}"
-      echo "siteId: ${{parameters.siteId}}"
-      echo "uniqueMod: ${{parameters.uniqueMod}}"
-      echo "subscriptionId : ${{parameters.subscriptionId}}"
-      echo "az network private-endpoint-connection approve --id  /subscriptions/${{parameters.subscriptionId}}/resourceGroups/${{parameters.siteEnvPrefixLocal}}-ctcms-df${{parameters.siteFarmId}}-app-rg/providers/Microsoft.Web/sites/${{parameters.siteEnvPrefixLocal}}-ctcms-ct${{parameters.siteEnvPrefixLocal}}${{parameters.siteId}}-app${{parameters.uniqueMod}}/privateEndpointConnections/${{parameters.siteEnvPrefixLocal}}-ctcms-ct${{parameters.siteId}}-app-pe --description Approved"
-    displayName: 'Display Params and Vars'
+  # - script: |
+  #     echo "azureServiceConnection: ${{parameters.azureServiceConnection}}"
+  #     echo "siteEnvPrefixLocal: ${{parameters.siteEnvPrefixLocal}}"
+  #     echo "siteFarmId: ${{parameters.siteFarmId}}"
+  #     echo "siteId: ${{parameters.siteId}}"
+  #     echo "uniqueMod: ${{parameters.uniqueMod}}"
+  #     echo "subscriptionId : ${{parameters.subscriptionId}}"
+  #     echo "az network private-endpoint-connection approve --id  /subscriptions/${{parameters.subscriptionId}}/resourceGroups/${{parameters.siteEnvPrefixLocal}}-ctcms-df${{parameters.siteFarmId}}-app-rg/providers/Microsoft.Web/sites/${{parameters.siteEnvPrefixLocal}}-ctcms-ct${{parameters.siteEnvPrefixLocal}}${{parameters.siteId}}-app${{parameters.uniqueMod}}/privateEndpointConnections/${{parameters.siteEnvPrefixLocal}}-ctcms-ct${{parameters.siteId}}-app-pe --description Approved"
+  #   displayName: 'Display Params and Vars'
   - task: AzureCLI@2
     displayName: '-- Show Subscription Info'
     inputs:
@@ -49,7 +49,8 @@ steps:
       scriptLocation: 'inlineScript'
       inlineScript: |
         $subs = az account show | ConvertFrom-Json
-        $subs | FT
+        # $subs | FT
+        echo "Subs Id: $subs.id"
   # - task: AzureCLI@2
   #   displayName: '-- List Private Endpoint Connections'
   #   inputs:
