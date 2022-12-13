@@ -45,14 +45,14 @@ steps:
     displayName: '-- List Private Endpoint Connections'
     inputs:
       azureSubscription: '${{parameters.azureServiceConnection}}'
-      scriptType: 'ps'
+      scriptType: 'pscore'
       scriptLocation: 'inlineScript'
       inlineScript: 'az network private-endpoint-connection list --id /subscriptions/${{parameters.subscriptionId}}/resourceGroups/${{parameters.siteEnvPrefixLocal}}-ctcms-df${{parameters.siteFarmId}}-app-rg/providers/Microsoft.Web/sites/${{parameters.siteEnvPrefixLocal}}-ctms-ct${{parameters.siteId}}-app${{parameters.uniqueMod}}'
   - task: AzureCLI@2
     displayName: '-- Approve Private Endpoint Connection'
     inputs:
       azureSubscription: '${{parameters.azureServiceConnection}}'
-      scriptType: 'ps'
+      scriptType: 'pscore'
       scriptLocation: 'inlineScript'
       #              az network private-endpoint-connection approve --id  [seeBelow]                                                                                                                                                                                                                                                                                                                                                   --description "Approved"
       #                                                                   /subscriptions/${subscriptionId}                   /resourceGroups/${env}-ctcms-df${siteFarmId}-app-rg                                         /providers/Microsoft.Web/sites/${env}-ctcms-ct${siteId}-app${uniqueMod}                                  /privateEndpointConnections/YOUR PRIVATE ENDPOINT CONNECTION NAME
