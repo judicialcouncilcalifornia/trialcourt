@@ -1,11 +1,3 @@
-# Docker image, Azure Container Registry, and Azure Web App
-# 1. Test the code
-#    a. On Pull Requests, and
-#    b. Commits to develop, stage, master
-# 2. Build a Docker image, push it to an Azure Container Registry.
-#    a. On commits to develop, stage, master
-# 3. Deploy it to an Azure Web App.
-# https://docs.microsoft.com/azure/devops/pipelines/languages/docker
 
 trigger:
   - develop

@@ -41,3 +41,32 @@ steps:
       overrideParameters: '-siteFarmId ${{parameters.siteFarmId}} -siteId ${{parameters.siteId}} -env ${{parameters.siteEnvPrefixLocal}} -siteName ${{parameters.siteName}} -uniqueMod ${{parameters.uniqueMod}}'
       deploymentMode: 'Incremental'
       deploymentName: 'DeployPipelineTemplate-${{parameters.siteEnvPrefixLocal}}-${{parameters.siteId}}-${{parameters.buildId}}'
+  - task: AzureCLI@2
+    displayName: '-- Approve Private Endpoint'
+    inputs:
+      azureSubscription: '${{parameters.azureServiceConnection}}'
+      scriptType: 'pscore'
+      scriptLocation: 'inlineScript'
+      inlineScript: |
+        $subscriptionInfo = az account show | ConvertFrom-Json
+        $privateEndpoints = az network private-endpoint-connection list --id /subscriptions/$($subscriptionInfo.id)/resourceGroups/${{parameters.siteEnvPrefixLocal}}-ctcms-df${{parameters.siteFarmId}}-app-rg/providers/Microsoft.Web/sites/${{parameters.siteEnvPrefixLocal}}-ctcms-ct${{parameters.siteId}}-app${{parameters.uniqueMod}} | ConvertFrom-Json
+        foreach ($privateEndpoint in $privateEndpoints) {
+          if ($privateEndpoint.properties.privateLinkServiceConnectionState.status -ne "Approved") {
+            $attempts=5
+            $sleepInSeconds=15
+            do {
+              try {
+                az network private-endpoint-connection approve --id  $($privateEndpoint.id) --description "Approved"
+                $attempts=0
+              }
+              catch [Exception] {
+                Write-Host $_.Exception.Message
+              }            
+              $attempts--
+              if ($attempts -gt 0) {
+                sleep $sleepInSeconds
+              }
+            } while ($attempts -gt 0)
+            break;
+          }
+        }
