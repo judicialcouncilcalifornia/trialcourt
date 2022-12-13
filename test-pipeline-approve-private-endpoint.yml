@@ -24,9 +24,9 @@ parameters:
   - name: uniqueMod
     type: string
     default: '1'
-
-variables:
-  subscriptionId: subscription().subscriptionId
+  - name: subscriptionId
+    type: string
+    default: '644d49f0-338a-44f4-b84c-b06a4fa253ad'
 
 pool:
   vmImage: ubuntu-latest
@@ -38,8 +38,8 @@ steps:
       echo "siteFarmId: ${{parameters.siteFarmId}}"
       echo "siteId: ${{parameters.siteId}}"
       echo "uniqueMod: ${{parameters.uniqueMod}}"
-      echo "subscriptionId : $(subscriptionId)"
-      echo "az network private-endpoint-connection approve --id  /subscriptions/$(subscriptionId)/resourceGroups/${{parameters.siteEnvPrefixLocal}}-ctcms-df${{parameters.siteFarmId}}-app-rg/providers/Microsoft.Web/sites/${{parameters.siteEnvPrefixLocal}}-ctms-ct${{parameters.siteId}}-app${{parameters.uniqueMod}}/privateEndpointConnections/${{parameters.siteEnvPrefixLocal}}-ctcms-ct${{parameters.siteId}}-app-pe --description Approved"
+      echo "subscriptionId : ${{parameters.subscriptionId}}"
+      echo "az network private-endpoint-connection approve --id  /subscriptions/${{parameters.subscriptionId}}/resourceGroups/${{parameters.siteEnvPrefixLocal}}-ctcms-df${{parameters.siteFarmId}}-app-rg/providers/Microsoft.Web/sites/${{parameters.siteEnvPrefixLocal}}-ctms-ct${{parameters.siteId}}-app${{parameters.uniqueMod}}/privateEndpointConnections/${{parameters.siteEnvPrefixLocal}}-ctcms-ct${{parameters.siteId}}-app-pe --description Approved"
     displayName: 'Display Params and Vars'
   - task: AzureCLI@2
     displayName: '-- List Private Endpoint Connections'
@@ -47,7 +47,7 @@ steps:
       azureSubscription: '${{parameters.azureServiceConnection}}'
       scriptType: 'ps'
       scriptLocation: 'inlineScript'
-      inlineScript: 'az network private-endpoint-connection list --id /subscriptions/$(subscriptionId)/resourceGroups/${{parameters.siteEnvPrefixLocal}}-ctcms-df${{parameters.siteFarmId}}-app-rg/providers/Microsoft.Web/sites/${{parameters.siteEnvPrefixLocal}}-ctms-ct${{parameters.siteId}}-app${{parameters.uniqueMod}}'
+      inlineScript: 'az network private-endpoint-connection list --id /subscriptions/${{parameters.subscriptionId}}/resourceGroups/${{parameters.siteEnvPrefixLocal}}-ctcms-df${{parameters.siteFarmId}}-app-rg/providers/Microsoft.Web/sites/${{parameters.siteEnvPrefixLocal}}-ctms-ct${{parameters.siteId}}-app${{parameters.uniqueMod}}'
   - task: AzureCLI@2
     displayName: '-- Approve Private Endpoint Connection'
     inputs:
@@ -57,4 +57,4 @@ steps:
       #              az network private-endpoint-connection approve --id  [seeBelow]                                                                                                                                                                                                                                                                                                                                                   --description "Approved"
       #                                                                   /subscriptions/${subscriptionId}                   /resourceGroups/${env}-ctcms-df${siteFarmId}-app-rg                                         /providers/Microsoft.Web/sites/${env}-ctcms-ct${siteId}-app${uniqueMod}                                  /privateEndpointConnections/YOUR PRIVATE ENDPOINT CONNECTION NAME
       #                                                                                                                                                                                                                                                                                                                                                       ${env}-ctcms-ct${siteId}-app-pe
-      inlineScript: 'az network private-endpoint-connection approve --id  /subscriptions/$(subscriptionId)/resourceGroups/${{parameters.siteEnvPrefixLocal}}-ctcms-df${{parameters.siteFarmId}}-app-rg/providers/Microsoft.Web/sites/${{parameters.siteEnvPrefixLocal}}-ctms-ct${{parameters.siteId}}-app${{parameters.uniqueMod}}/privateEndpointConnections/${{parameters.siteEnvPrefixLocal}}-ctcms-ct${{parameters.siteId}}-app-pe --description "Approved"'
+      inlineScript: 'az network private-endpoint-connection approve --id  /subscriptions/${{parameters.subscriptionId}}/resourceGroups/${{parameters.siteEnvPrefixLocal}}-ctcms-df${{parameters.siteFarmId}}-app-rg/providers/Microsoft.Web/sites/${{parameters.siteEnvPrefixLocal}}-ctms-ct${{parameters.siteId}}-app${{parameters.uniqueMod}}/privateEndpointConnections/${{parameters.siteEnvPrefixLocal}}-ctcms-ct${{parameters.siteId}}-app-pe --description "Approved"'
