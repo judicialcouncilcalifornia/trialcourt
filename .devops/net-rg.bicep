@@ -4,45 +4,45 @@ param uniqueMod string
 param cmLocation string = resourceGroup().location
 param siteFarmId string
 
-var dfVnet_name = '${env}-ctcms-df${siteFarmId}-vnet'
-var dfAppSn_name = 'df${siteFarmId}-app-sn'
-var dfDataResourceGroup = '${env}-ctcms-df${siteFarmId}-app-rg'
+var appPrivateEndpointName = '${env}-ctcms-ct${siteId}-app-pe'
+var dfVirtualNetwork1 = '${env}-ctcms-df${siteFarmId}-vnet'
+var appSubnet = 'df${siteFarmId}-app-sn'
+var appResourceGroup = '${env}-ctcms-df${siteFarmId}-app-rg'
 var appService = '${env}-ctcms-ct${siteId}-app${uniqueMod}'
 var appDns = 'privatelink.azurewebsites.net'
-var dfAppPe_name = '${appService}-pe'
-var dfAppPeDns_config = '${appService}-pe-dns'
-var envAdminResourceGroup = '${env}-ctcms-admin-rg'
+var networkPrivateEndpointPrivateDnsZoneGroup3 = '${env}-ctcms-ct${siteId}-app-pe-dns'
+var admResourceGroup = '${env}-ctcms-admin-rg'
 
-resource dfAppPe 'Microsoft.Network/privateEndpoints@2020-11-01' = {
-  name: dfAppPe_name
+resource networkPrivateEndpoint3 'Microsoft.Network/privateEndpoints@2020-11-01' = {
+  name: appPrivateEndpointName
   location: cmLocation
   properties: {
     subnet: {
-      id: resourceId('Microsoft.Network/virtualNetworks/subnets', dfVnet_name, dfAppSn_name)
+      id: resourceId('Microsoft.Network/virtualNetworks/subnets', dfVirtualNetwork1, appSubnet)
     }
     privateLinkServiceConnections: [
       {
         properties: {
-          privateLinkServiceId: resourceId(dfDataResourceGroup, 'Microsoft.Web/sites', appService)
+          privateLinkServiceId: resourceId(appResourceGroup, 'Microsoft.Web/sites', appService)
           groupIds: [
             'sites'
           ]
         }
-        name: dfAppPe_name
+        name: appPrivateEndpointName
       }
     ]
   }
 }
 
-resource dfAppPeDnsConfig 'Microsoft.Network/privateEndpoints/privateDnsZoneGroups@2020-08-01' = {
-  parent: dfAppPe
-  name: dfAppPeDns_config
+resource networkPrivateEndpoint3_networkPrivateEndpointPrivateDnsZoneGroup3 'Microsoft.Network/privateEndpoints/privateDnsZoneGroups@2020-08-01' = {
+  parent: networkPrivateEndpoint3
+  name: networkPrivateEndpointPrivateDnsZoneGroup3
   properties: {
     privateDnsZoneConfigs: [
       {
         name: '${env}-ctcms-ct${siteId}-app-dns'
         properties: {
-          privateDnsZoneId: resourceId(envAdminResourceGroup, 'Microsoft.Network/privateDnsZones', appDns)
+          privateDnsZoneId: resourceId(admResourceGroup, 'Microsoft.Network/privateDnsZones', appDns)
         }
       }
     ]

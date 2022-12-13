@@ -9,7 +9,7 @@ var appService = '${env}-ctcms-ct${siteId}-app${uniqueMod}'
 var dfFrontDoor_name = '${env}-ctcms-df${siteFarmId}-fd'
 var envFrontDoorWafPolicy_name = '${env}wafpol1'
 var dfFrontdoorOriginGrp_name = 'df${siteFarmId}-ct${siteId}-fd-orggrp'
-var dfFrontdoorSecPolicy_name = 'df${siteFarmId}-fdsecpol'
+var dfFrontdoorSecPolicy_name = 'df${siteFarmId}fdsecpol'
 var dfFrontdoorOrigin_name = 'df${siteFarmId}-ct${siteId}-fd-origin'
 var dfFrontdoorEndpoint_name = 'df${siteFarmId}-ct${siteId}-fd-endpoint'
 var dfFrontdoorRoute_name = 'df${siteFarmId}-ct${siteId}-route'
@@ -81,7 +81,7 @@ resource dfFrontdoorSecPolicy 'Microsoft.Cdn/profiles/securityPolicies@2021-06-0
 
 resource dfFrontdoorOrigin 'Microsoft.Cdn/profiles/originGroups/origins@2021-06-01' = {
   parent: dfFrontdoorOriginGrp
-  name: dfFrontdoorOrigin_name 
+  name: dfFrontdoorOrigin_name
   properties: {
     enabledState: 'Enabled'
     enforceCertificateNameCheck: true

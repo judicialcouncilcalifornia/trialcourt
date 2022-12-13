@@ -35,19 +35,19 @@ parameters:
 #      - tehama|1|107
 #      - sierra|1|108
 #      - sanbenito|1|109
-#      - glenn|1|110
-#      - supremecourt|1|111
-#      - fresno|1|112
-#      - newsroom|1|113
+      - glenn|1|110
+      - supremecourt|1|111
+      - fresno|1|112
+      - newsroom|1|113
       - sf|2|200
       - santabarbara|2|201
       - riverside|2|202
       - partners|2|203
-      - oc|2|204
-      - mendocino|2|205
   - name: sites_1
     type: object
     default:
+      - oc|2|204
+      - mendocino|2|205
       - monterey|2|206
       - slo2|2|207
       - sc|2|208
