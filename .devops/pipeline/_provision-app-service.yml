@@ -54,5 +54,6 @@ steps:
         {
           if ($privateEndpoint.properties.privateLinkServiceConnectionState.status -ne "Approved") {
             az network private-endpoint-connection approve --id  $($privateEndpoint.id) --description "Approved"
+            break
           }
         }
