@@ -53,7 +53,15 @@ steps:
         foreach ($privateEndpoint in $privateEndpoints)
         {
           if ($privateEndpoint.properties.privateLinkServiceConnectionState.status -ne "Approved") {
-            az network private-endpoint-connection approve --id  $($privateEndpoint.id) --description "Approved"
-            break
+            try {
+              az network private-endpoint-connection approve --id  $($privateEndpoint.id) --description "Approved"
+            }
+            catch {
+              Start-Sleep -s 15
+              az network private-endpoint-connection approve --id  $($privateEndpoint.id) --description "Approved"
+            }
+            finally {
+              break
+            }
           }
         }
