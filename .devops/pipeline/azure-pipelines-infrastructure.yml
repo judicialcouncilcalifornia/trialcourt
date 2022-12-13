@@ -165,7 +165,7 @@ stages:
             displayName: 'Initialize drop files'
       - job: ProcessSites1
         displayName: Process 1st set
-        dependsOn: ['ReadManifest']
+        dependsOn: ['SetPrefix']
         variables:
           siteEnvPrefixLocal: $[ dependencies.ReadManifest.outputs['EnvironmentPrefix.siteEnvPrefix'] ]
         steps:
@@ -204,7 +204,7 @@ stages:
                 tag: 'latest'
       - job: ProcessSites2
         displayName: Process 2nd set
-        dependsOn: ['ReadManifest']
+        dependsOn: ['SetPrefix']
         variables:
           siteEnvPrefixLocal: $[ dependencies.ReadManifest.outputs['EnvironmentPrefix.siteEnvPrefix'] ]
         steps:
@@ -243,7 +243,7 @@ stages:
                   tag: 'latest'
       - job: ProcessSites3
         displayName: Process 3rd set
-        dependsOn: ['ReadManifest']
+        dependsOn: ['SetPrefix']
         variables:
           siteEnvPrefixLocal: $[ dependencies.ReadManifest.outputs['EnvironmentPrefix.siteEnvPrefix'] ]
         steps:
@@ -282,7 +282,7 @@ stages:
                   tag: 'latest'
       - job: ProcessSites4
         displayName: Process 4th set
-        dependsOn: ['ReadManifest']
+        dependsOn: ['SetPrefix']
         variables:
           siteEnvPrefixLocal: $[ dependencies.ReadManifest.outputs['EnvironmentPrefix.siteEnvPrefix'] ]
         steps:
@@ -321,7 +321,7 @@ stages:
                   tag: 'latest'
       - job: ProcessSites5
         displayName: Process 5th set
-        dependsOn: ['ReadManifest']
+        dependsOn: ['SetPrefix']
         variables:
           siteEnvPrefixLocal: $[ dependencies.ReadManifest.outputs['EnvironmentPrefix.siteEnvPrefix'] ]
         steps:
@@ -360,7 +360,7 @@ stages:
                   tag: 'latest'
       - job: ProcessSites6
         displayName: Process 6th set
-        dependsOn: ['ReadManifest']
+        dependsOn: ['SetPrefix']
         variables:
           siteEnvPrefixLocal: $[ dependencies.ReadManifest.outputs['EnvironmentPrefix.siteEnvPrefix'] ]
         steps:
