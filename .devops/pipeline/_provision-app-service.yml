@@ -49,16 +49,10 @@ steps:
       scriptLocation: 'inlineScript'
       inlineScript: |
         $subscriptionInfo = az account show | ConvertFrom-Json
-        echo "Found Subscription Id: $($subscriptionInfo.id)"
-        echo "Issuing Command:"
-        echo "az network private-endpoint-connection list --id /subscriptions/$($subscriptionInfo.id)/resourceGroups/${{parameters.siteEnvPrefixLocal}}-ctcms-df${{parameters.siteFarmId}}-app-rg/providers/Microsoft.Web/sites/${{parameters.siteEnvPrefixLocal}}-ctcms-ct${{parameters.siteEnvPrefixLocal}}${{parameters.siteId}}-app${{parameters.uniqueMod}}"
         $privateEndpoints = az network private-endpoint-connection list --id /subscriptions/$($subscriptionInfo.id)/resourceGroups/${{parameters.siteEnvPrefixLocal}}-ctcms-df${{parameters.siteFarmId}}-app-rg/providers/Microsoft.Web/sites/${{parameters.siteEnvPrefixLocal}}-ctcms-ct${{parameters.siteId}}-app${{parameters.uniqueMod}} | ConvertFrom-Json
         foreach ($privateEndpoint in $privateEndpoints)
         {
-          echo "Found Private Endpoint: $($privateEndpoint.id)"
-          echo "Status: $($privateEndpoint.properties.privateLinkServiceConnectionState.status)"
           if ($privateEndpoint.properties.privateLinkServiceConnectionState.status -ne "Approved") {
-            echo "Approving Private Endpoint"
             az network private-endpoint-connection approve --id  $($privateEndpoint.id) --description "Approved"
           }
         }
