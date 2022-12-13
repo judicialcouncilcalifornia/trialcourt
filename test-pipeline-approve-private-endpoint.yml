@@ -38,5 +38,8 @@ steps:
       inlineScript: |
         $subscriptionInfo = az account show | ConvertFrom-Json
         $privateEndpoints = az network private-endpoint-connection list --id /subscriptions/$($subscriptionInfo.id)/resourceGroups/${{parameters.siteEnvPrefixLocal}}-ctcms-df${{parameters.siteFarmId}}-app-rg/providers/Microsoft.Web/sites/${{parameters.siteEnvPrefixLocal}}-ctcms-ct${{parameters.siteEnvPrefixLocal}}${{parameters.siteId}}-app${{parameters.uniqueMod}} | ConvertFrom-Json
-        $privateEndpoints | FT
-        az network private-endpoint-connection approve --id  /subscriptions/$($subscriptionInfo.id)/resourceGroups/${{parameters.siteEnvPrefixLocal}}-ctcms-df${{parameters.siteFarmId}}-app-rg/providers/Microsoft.Web/sites/${{parameters.siteEnvPrefixLocal}}-ctcms-ct${{parameters.siteEnvPrefixLocal}}${{parameters.siteId}}-app${{parameters.uniqueMod}}/privateEndpointConnections/6ffd1f8c-57da-412c-bfda-182ace4fe8f9-949243ba-a927-459e-a9a9-40161e331eb5 --description "Approved"
+        foreach ($privateEndpoint in $privateEndpoints)
+        {
+          write-host "$($privateEndpoint.id) has the status: $($privateEndpoint.properties.privateLinkServiceConnectionState.status)"
+          az network private-endpoint-connection approve --id  $($privateEndpoint.id) --description "Approved"
+        }
