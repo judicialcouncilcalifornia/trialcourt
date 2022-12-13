@@ -49,7 +49,7 @@ parameters:
 #      - alpine|2|213
 #      - tuolumne|2|214
 #      - deprep|2|215
-      - slo2|2|207
+      - slo2|2|_207
   - name: sites_1
     type: object
     default:
@@ -63,7 +63,7 @@ parameters:
 #      - kern|2|217
 #      - tularesuperiorcourt|2|218
 #      - napa|2|210
-      - eldorado|3|301
+      - eldorado|3|_301
 #  - name: sites_3
 #    type: object
 #    default:
