@@ -1,1 +1,55 @@
+trigger:
+- none
 
+name: $(Build.BuildId)
+
+parameters:
+  - name: azureServiceConnection
+    type: string
+    default: ''
+  - name: siteEnvPrefixLocal
+    type: string
+    default: ''
+  - name: resourceGroupName
+    type: string
+    default: ''
+  - name: location
+    type: string
+    default: ''
+  - name: siteFarmId
+    type: string
+    default: ''
+  - name: siteId
+    type: string
+    default: ''
+  - name: siteName
+    type: string
+    default: ''
+  - name: uniqueMod
+    type: string
+    default: ''
+  - name: buildId
+    type: string
+    default: ''
+
+variables:
+  subscriptionId: subscription().subscriptionId
+  azureServiceConnection: 'DevOps Web Service Non-Prod'
+  resourceGroupName: 'nprd-ctcms-df1-app-rg'
+  location: 'West US 3'
+  templateFile: './.devops/app-service.bicep'
+
+pool:
+  vmImage: ubuntu-latest
+
+steps:
+  - task: AzureCLI@2
+    displayName: '-- Approve Private Endpoint Connection'
+    inputs:
+      azureSubscription: '${{parameters.azureServiceConnection}}'
+      scriptType: 'ps'
+      scriptLocation: 'inlineScript'
+      #              az network private-endpoint-connection approve --id  [seeBelow]                                                                                                                                                                                                                                                                                                                                                   --description "Approved"
+      #                                                                   /subscriptions/${subscriptionId}                   /resourceGroups/${env}-ctcms-df${siteFarmId}-app-rg                                         /providers/Microsoft.Web/sites/${env}-ctcms-ct${siteId}-app${uniqueMod}                                  /privateEndpointConnections/YOUR PRIVATE ENDPOINT CONNECTION NAME
+      #                                                                                                                                                                                                                                                                                                                                                       ${env}-ctcms-ct${siteId}-app-pe
+      inlineScript: 'az network private-endpoint-connection approve --id  /subscriptions/$(subscriptionId)/resourceGroups/${{parameters.siteEnvPrefixLocal}}-ctcms-df${{parameters.siteFarmId}}-app-rg/providers/Microsoft.Web/sites/${{parameters.siteEnvPrefixLocal}}-ctms-ct${{parameters.siteId}}-app${{parameters.uniqueMod}}/privateEndpointConnections/${{parameters.siteEnvPrefixLocal}}-ctcms-ct${{parameters.siteId}}-app-pe --description "Approved"'
