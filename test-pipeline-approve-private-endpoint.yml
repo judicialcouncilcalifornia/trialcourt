@@ -49,7 +49,7 @@ steps:
       scriptLocation: 'inlineScript'
       inlineScript: |
         $subs = az account show | ConvertFrom-Json
-        $subss | FT
+        $subs | FT
   # - task: AzureCLI@2
   #   displayName: '-- List Private Endpoint Connections'
   #   inputs:
