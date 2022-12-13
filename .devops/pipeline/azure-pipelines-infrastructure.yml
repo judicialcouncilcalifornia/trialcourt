@@ -167,7 +167,7 @@ stages:
         displayName: Process 1st set
         dependsOn: ['SetPrefix']
         variables:
-          siteEnvPrefixLocal: $[ dependencies.ReadManifest.outputs['EnvironmentPrefix.siteEnvPrefix'] ]
+          siteEnvPrefixLocal: $[ dependencies.SetPrefix.outputs['EnvironmentPrefix.siteEnvPrefix'] ]
         steps:
           - ${{ each site in parameters.sites_1 }}:
             - script: |
@@ -206,7 +206,7 @@ stages:
         displayName: Process 2nd set
         dependsOn: ['SetPrefix']
         variables:
-          siteEnvPrefixLocal: $[ dependencies.ReadManifest.outputs['EnvironmentPrefix.siteEnvPrefix'] ]
+          siteEnvPrefixLocal: $[ dependencies.SetPrefix.outputs['EnvironmentPrefix.siteEnvPrefix'] ]
         steps:
           - ${{ each site in parameters.sites_2 }}:
               - script: |
@@ -245,7 +245,7 @@ stages:
         displayName: Process 3rd set
         dependsOn: ['SetPrefix']
         variables:
-          siteEnvPrefixLocal: $[ dependencies.ReadManifest.outputs['EnvironmentPrefix.siteEnvPrefix'] ]
+          siteEnvPrefixLocal: $[ dependencies.SetPrefix.outputs['EnvironmentPrefix.siteEnvPrefix'] ]
         steps:
           - ${{ each site in parameters.sites_3 }}:
               - script: |
@@ -284,7 +284,7 @@ stages:
         displayName: Process 4th set
         dependsOn: ['SetPrefix']
         variables:
-          siteEnvPrefixLocal: $[ dependencies.ReadManifest.outputs['EnvironmentPrefix.siteEnvPrefix'] ]
+          siteEnvPrefixLocal: $[ dependencies.SetPrefix.outputs['EnvironmentPrefix.siteEnvPrefix'] ]
         steps:
           - ${{ each site in parameters.sites_4 }}:
               - script: |
@@ -323,7 +323,7 @@ stages:
         displayName: Process 5th set
         dependsOn: ['SetPrefix']
         variables:
-          siteEnvPrefixLocal: $[ dependencies.ReadManifest.outputs['EnvironmentPrefix.siteEnvPrefix'] ]
+          siteEnvPrefixLocal: $[ dependencies.SetPrefix.outputs['EnvironmentPrefix.siteEnvPrefix'] ]
         steps:
           - ${{ each site in parameters.sites_5 }}:
               - script: |
@@ -362,7 +362,7 @@ stages:
         displayName: Process 6th set
         dependsOn: ['SetPrefix']
         variables:
-          siteEnvPrefixLocal: $[ dependencies.ReadManifest.outputs['EnvironmentPrefix.siteEnvPrefix'] ]
+          siteEnvPrefixLocal: $[ dependencies.SetPrefix.outputs['EnvironmentPrefix.siteEnvPrefix'] ]
         steps:
           - ${{ each site in parameters.sites_6 }}:
               - script: |
