@@ -24,47 +24,19 @@ parameters:
   - name: uniqueMod
     type: string
     default: '1'
-  - name: subscriptionId
-    type: string
-    default: '644d49f0-338a-44f4-b84c-b06a4fa253ad'
 
 pool:
   vmImage: ubuntu-latest
 
 steps:
-  # - script: |
-  #     echo "azureServiceConnection: ${{parameters.azureServiceConnection}}"
-  #     echo "siteEnvPrefixLocal: ${{parameters.siteEnvPrefixLocal}}"
-  #     echo "siteFarmId: ${{parameters.siteFarmId}}"
-  #     echo "siteId: ${{parameters.siteId}}"
-  #     echo "uniqueMod: ${{parameters.uniqueMod}}"
-  #     echo "subscriptionId : ${{parameters.subscriptionId}}"
-  #     echo "az network private-endpoint-connection approve --id  /subscriptions/${{parameters.subscriptionId}}/resourceGroups/${{parameters.siteEnvPrefixLocal}}-ctcms-df${{parameters.siteFarmId}}-app-rg/providers/Microsoft.Web/sites/${{parameters.siteEnvPrefixLocal}}-ctcms-ct${{parameters.siteEnvPrefixLocal}}${{parameters.siteId}}-app${{parameters.uniqueMod}}/privateEndpointConnections/${{parameters.siteEnvPrefixLocal}}-ctcms-ct${{parameters.siteId}}-app-pe --description Approved"
-  #   displayName: 'Display Params and Vars'
   - task: AzureCLI@2
-    displayName: '-- Show Subscription Info'
+    displayName: '-- Approve Private Endpoint'
     inputs:
       azureSubscription: '${{parameters.azureServiceConnection}}'
       scriptType: 'pscore'
       scriptLocation: 'inlineScript'
       inlineScript: |
-        $subs = az account show | ConvertFrom-Json
-        # $subs | FT
-        echo "Subs Id: $($subs.id)"
-  # - task: AzureCLI@2
-  #   displayName: '-- List Private Endpoint Connections'
-  #   inputs:
-  #     azureSubscription: '${{parameters.azureServiceConnection}}'
-  #     scriptType: 'pscore'
-  #     scriptLocation: 'inlineScript'
-  #     inlineScript: 'az network private-endpoint-connection list --id /subscriptions/${{parameters.subscriptionId}}/resourceGroups/${{parameters.siteEnvPrefixLocal}}-ctcms-df${{parameters.siteFarmId}}-app-rg/providers/Microsoft.Web/sites/${{parameters.siteEnvPrefixLocal}}-ctcms-ct${{parameters.siteEnvPrefixLocal}}${{parameters.siteId}}-app${{parameters.uniqueMod}}'
-  # - task: AzureCLI@2
-  #   displayName: '-- Approve Private Endpoint Connection'
-  #   inputs:
-  #     azureSubscription: '${{parameters.azureServiceConnection}}'
-  #     scriptType: 'pscore'
-  #     scriptLocation: 'inlineScript'
-  #     #              az network private-endpoint-connection approve --id  [seeBelow]                                                                                                                                                                                                                                                                                                                                                   --description "Approved"
-  #     #                                                                   /subscriptions/${subscriptionId}                   /resourceGroups/${env}-ctcms-df${siteFarmId}-app-rg                                         /providers/Microsoft.Web/sites/${env}-ctcms-ct${siteId}-app${uniqueMod}                                  /privateEndpointConnections/YOUR PRIVATE ENDPOINT CONNECTION NAME
-  #     #                                                                                                                                                                                                                                                                                                                                                       ${env}-ctcms-ct${siteId}-app-pe
-  #     inlineScript: 'az network private-endpoint-connection approve --id  /subscriptions/${{parameters.subscriptionId}}/resourceGroups/${{parameters.siteEnvPrefixLocal}}-ctcms-df${{parameters.siteFarmId}}-app-rg/providers/Microsoft.Web/sites/${{parameters.siteEnvPrefixLocal}}-ctcms-ct${{parameters.siteEnvPrefixLocal}}${{parameters.siteId}}-app${{parameters.uniqueMod}}/privateEndpointConnections/6ffd1f8c-57da-412c-bfda-182ace4fe8f9-949243ba-a927-459e-a9a9-40161e331eb5 --description "Approved"'
+        $subscriptionInfo = az account show | ConvertFrom-Json
+        $privateEndpoints = az network private-endpoint-connection list --id /subscriptions/$($subscriptionInfo.id)/resourceGroups/${{parameters.siteEnvPrefixLocal}}-ctcms-df${{parameters.siteFarmId}}-app-rg/providers/Microsoft.Web/sites/${{parameters.siteEnvPrefixLocal}}-ctcms-ct${{parameters.siteEnvPrefixLocal}}${{parameters.siteId}}-app${{parameters.uniqueMod}} | ConvertFrom-Json
+        $privateEndpoints | FT
+        az network private-endpoint-connection approve --id  /subscriptions/$($subscriptionInfo.id)/resourceGroups/${{parameters.siteEnvPrefixLocal}}-ctcms-df${{parameters.siteFarmId}}-app-rg/providers/Microsoft.Web/sites/${{parameters.siteEnvPrefixLocal}}-ctcms-ct${{parameters.siteEnvPrefixLocal}}${{parameters.siteId}}-app${{parameters.uniqueMod}}/privateEndpointConnections/6ffd1f8c-57da-412c-bfda-182ace4fe8f9-949243ba-a927-459e-a9a9-40161e331eb5 --description "Approved"
