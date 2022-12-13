@@ -53,7 +53,7 @@ resource dfFrontdoorOriginGrp 'Microsoft.Cdn/profiles/originGroups@2021-06-01' =
     sessionAffinityState: 'Enabled'
   }
 }
-
+/*
 resource dfFrontdoorSecPolicy 'Microsoft.Cdn/profiles/securityPolicies@2021-06-01' = {
   parent: dfFrontDoor
   name: dfFrontdoorSecPolicy_name
@@ -77,7 +77,7 @@ resource dfFrontdoorSecPolicy 'Microsoft.Cdn/profiles/securityPolicies@2021-06-0
       }
     }
   }
-}
+}*/
 
 resource dfFrontdoorOrigin 'Microsoft.Cdn/profiles/originGroups/origins@2021-06-01' = {
   parent: dfFrontdoorOriginGrp
