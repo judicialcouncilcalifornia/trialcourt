@@ -47,7 +47,9 @@ steps:
       azureSubscription: '${{parameters.azureServiceConnection}}'
       scriptType: 'pscore'
       scriptLocation: 'inlineScript'
-      inlineScript: 'az account show'
+      inlineScript: |
+        $subs = az account show | ConvertFrom-Json
+        $subss | FT
   - task: AzureCLI@2
     displayName: '-- List Private Endpoint Connections'
     inputs:
