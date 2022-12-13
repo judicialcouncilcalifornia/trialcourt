@@ -15,6 +15,7 @@ trigger:
       - .devops/pipeline/_provision-app-service.yml
       - .devops/pipeline/azure-pipelines-infrastructure.yml
       - .devops/pipeline/azure-pipelines-release-infrastructure.yml
+      - test-pipeline-approve-private-endpoint.yml
 
 resources:
   - repo: self

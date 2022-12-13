@@ -74,7 +74,7 @@ parameters:
     default:
 #      - imperial|3|302
 #      - mono|3|305
-      - colusa|3|306
+#      - colusa|3|306
 #      - modoc|3|307
 #      - yuba|3|308
 #      - trinity|3|309
@@ -88,6 +88,7 @@ parameters:
 #      - idm|3|312
 #      - amdr|3|313
 #      - lake|3|314
+      - lake|3|9314
 
 variables:
   imageRepository: 'build/trialcourt/$(Build.SourceBranchName)'
