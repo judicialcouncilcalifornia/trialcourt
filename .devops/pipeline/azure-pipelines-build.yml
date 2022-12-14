@@ -15,7 +15,8 @@ trigger:
       - .devops/pipeline/_provision-app-service.yml
       - .devops/pipeline/azure-pipelines-infrastructure.yml
       - .devops/pipeline/azure-pipelines-release-infrastructure.yml
-      - test-pipeline-approve-private-endpoint.yml
+      - .devops/pipeline/azure-pipelines-reverse-proxy.yml
+      - .devops/reverseProxy
 
 resources:
   - repo: self

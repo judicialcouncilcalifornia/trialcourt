@@ -1,0 +1,55 @@
+trigger:
+  branches:
+    include:
+      - master
+  paths:
+    include:
+      - .devops/pipeline/azure-pipelines-reverse-proxy.yml
+      - .devops/reverseProxy
+
+resources:
+  - repo: self
+
+pool:
+  vmImage: 'ubuntu-20.04'
+
+name: $(Build.BuildId)
+
+variables:
+  imageRepository: 'build/trialcourt/reverseProxy'
+  dockerfilePath: '$(Build.SourcesDirectory)/.devops/reverseProxy/Dockerfile'
+  dockerRegistryServiceConnection: 'Global Container Registry'
+  containerRegistry: 'globalctcmscr.azurecr.io'
+  tag: 'build_$(Build.BuildId)'
+  azureServiceConnection: 'UAT Resource Manager'
+
+jobs:
+  - job: BuildAndDeploy
+    displayName: Build Image and Deploy to Azure App Service Container
+    steps:
+      - task: Docker@2
+        displayName: Build
+        inputs:
+          command: build
+          containerRegistry: $(dockerRegistryServiceConnection)
+          repository: $(imageRepository)
+          dockerfile: $(dockerfilePath)
+          tags: |
+            latest
+            $(tag)
+      - task: Docker@2
+        displayName: Push image to registry
+        inputs:
+          command: push
+          containerRegistry: $(dockerRegistryServiceConnection)
+          repository: $(imageRepository)
+          tags: |
+            latest
+            $(tag)
+      - task: AzureWebAppContainer@1
+        displayName: 'Deploy latest container'
+        inputs:
+          azureSubscription: $(azureServiceConnection)
+          appName: 'Proxy-websites'
+          resourceGroupName: 'uat-ctcms-admin-rg'
+          containers: '$(containerRegistry)/$(imageRepository):$(tag)'
