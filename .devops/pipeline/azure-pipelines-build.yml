@@ -161,7 +161,7 @@ variables:
   ResourceGroupName8: ''
 
   ${{ if eq(variables['Build.SourceBranchName'], 'master') }}:
-    azureServiceConnection: 'PROD Resource Manager'
+    azureServiceConnection: 'UAT Resource Manager'
   ${{ elseif eq(variables['Build.SourceBranchName'], 'stage') }}:
     azureServiceConnection: 'UAT Resource Manager'
   ${{ else }}:
