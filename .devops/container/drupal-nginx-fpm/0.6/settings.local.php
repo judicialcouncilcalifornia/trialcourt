@@ -10,6 +10,11 @@
  */
 $settings['file_private_path'] = 'sites/default/files/private/' . $_ENV['SITE_MAP_ID'];
 
+$settings['reverse_proxy'] = TRUE;
+$settings['reverse_proxy_addresses'] = [$_SERVER['REMOTE_ADDR']];
+$settings['reverse_proxy_trusted_headers'] = \Symfony\Component\HttpFoundation\Request::HEADER_X_FORWARDED_ALL;
+$settings['trusted_host_patterns'][] = '.*';
+
 //  Store local configuration separately so it isn't tracked by git.
 $config['config_split.config_split.local']['status'] = TRUE;
 $config['config_split.config_split.stage']['status'] = TRUE;

@@ -1,10 +1,14 @@
-FROM judicialcouncil/drupal-nginx-fpm:0.7
+FROM judicialcouncil/drupal-nginx-fpm:0.8
 LABEL maintainer="Azure App Service Container Images <appsvc-images@microsoft.com>"
 LABEL maintainer="Ivan Bueno <ivan.bueno@jud.ca.gov>"
 # ========
 # ENV vars
 # ========
 # drupal
+ARG GIT_REPO
+ENV GIT_REPO=$GIT_REPO
+ARG GIT_BRANCH
+ENV GIT_BRANCH=$GIT_BRANCH
 ENV DRUPAL_HOME "/var/www/html"
 ENV DRUPAL_PRJ "/var/drupal_prj"
 #nginx

@@ -13,10 +13,6 @@ ENV DRUPAL_PRJ "/home/drupal_source"
 ENV DRUPAL_STORAGE "/storage/files"
 ENV DRUPAL_SOURCE "/usr/src/drupal"
 ENV DRUPAL_BUILD "/usr/src/drupal-build"
-ARG GIT_REPO="https://github.com/judicialcouncilcalifornia/trialcourt.git"
-ENV GIT_REPO=$GIT_REPO
-ARG GIT_BRANCH="master"
-ENV GIT_BRANCH=$GIT_BRANCH
 #nginx
 ENV NGINX_LOG_DIR "/home/LogFiles/nginx"
 #varnish
