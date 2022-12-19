@@ -233,7 +233,7 @@ stages:
           - script: |
               case $(Build.SourceBranchName) in
                 master)
-                  echo "##vso[task.setvariable variable=siteEnvPrefix;isOutput=true;]int"
+                  echo "##vso[task.setvariable variable=siteEnvPrefix;isOutput=true;]uat"
                   ;;
                 stage)
                   echo "##vso[task.setvariable variable=siteEnvPrefix;isOutput=true;]uat"
