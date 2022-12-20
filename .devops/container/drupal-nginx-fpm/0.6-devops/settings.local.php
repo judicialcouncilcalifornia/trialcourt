@@ -20,9 +20,10 @@ $settings['reverse_proxy_addresses'] = [$_SERVER['REMOTE_ADDR']];
 $settings['reverse_proxy_trusted_headers'] = \Symfony\Component\HttpFoundation\Request::HEADER_X_FORWARDED_ALL;
 $settings['trusted_host_patterns'][] = '.*';
 
-//  Store local configuration separately so it isn't tracked by git.
-//$config['config_split.config_split.local']['status'] = TRUE;
-//$config['config_split.config_split.stage']['status'] = TRUE;
+//  We're in Azure.  Set config to PROD.
+$config['config_split.config_split.local']['status'] = FALSE;
+$config['config_split.config_split.stage']['status'] = FALSE;
+$config['config_split.config_split.prod']['status'] = TRUE;
 
 $databases['default']['default'] = array(
     'database' => $_ENV["DATABASE_NAME"],
