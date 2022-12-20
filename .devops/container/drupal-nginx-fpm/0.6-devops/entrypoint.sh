@@ -4,11 +4,31 @@
 
 php -v
 
+DEPLOYMENT_DIR="/home/deployment"
+DEPLOYMENT_TAG="$DEPLOYMENT_DIR/tag.txt"
+
+post_deployment_tasks(){
+  cat $DRUPAL_SOURCE/tag.txt > $DEPLOYMENT_TAG
+  cd "$DRUPAL_PRJ/web/sites/$SITE_MAP_ID"
+
+  echo "Running post deployment tasks..."
+  echo "Clear cache"
+  drush cr
+  echo "Update database"
+  drush updb -y
+  echo "Import config"
+  drush cim -y
+  echo "Import features"
+  drush fra --bundle=jcc_tc2 -y
+  echo "Clear cache again"
+  drush cr
+}
+
 #Get drupal from Git
 setup_drupal(){
   while test -d "$DRUPAL_PRJ"
   do
-    echo "INFO: $DRUPAL_PRJ exists, clean it ..."
+    echo "INFO: $DRUPAL_PRJ exists, clean it..."
     # mv is faster than rm.
     mv $DRUPAL_PRJ /tmp/drupal_prj_bak$(date +%s)
   done
@@ -83,6 +103,18 @@ find $DRUPAL_PRJ/web/sites -maxdepth 1 -mindepth 1 -type d | while read dir; do
   chmod a-w "$dir/settings.php"
   chmod a-w "$dir/settings.local.php"
 done
+
+# Check if config-import and cache clear are needed
+test ! -d "$DEPLOYMENT_DIR" && echo "INFO: $DEPLOYMENT_DIR not found. creating ..." && mkdir -p "$DEPLOYMENT_DIR"
+if [ -f "$DEPLOYMENT_TAG" ]; then
+  TAG=$(cat $DEPLOYMENT_TAG)
+  BUILD_TAG=$(cat $DRUPAL_SOURCE/tag.txt)
+  if [ "$TAG" != "$BUILD_TAG"  ]; then
+    post_deployment_tasks
+  fi
+else
+  post_deployment_tasks
+fi
 
 # Create log folders
 test ! -d "$SUPERVISOR_LOG_DIR" && echo "INFO: $SUPERVISOR_LOG_DIR not found. creating ..." && mkdir -p "$SUPERVISOR_LOG_DIR"
