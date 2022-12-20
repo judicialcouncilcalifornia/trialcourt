@@ -7,6 +7,7 @@ ENV SSH_PORT 2222
 # supervisor
 ENV SUPERVISOR_LOG_DIR "/home/LogFiles/supervisor"
 
+RUN apk add --update supervisor && rm  -rf /tmp/* /var/cache/apk/*
 RUN apk add --no-cache openssh-server \
     && echo "$SSH_PASSWD" | chpasswd \
 # =========
