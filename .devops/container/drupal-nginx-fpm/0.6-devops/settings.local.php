@@ -8,16 +8,22 @@
  * environment, but may be exposed if you migrate your site to
  * another environment.
  */
-$settings['file_private_path'] = 'sites/default/files/private/' . $_ENV['SITE_MAP_ID'];
+$config['system.file']['path']['temporary'] = '/home/tmp';
+$config['system.file']['path']['private'] = 'sites/default/files/private/' . $_ENV['SITE_MAP_ID'];
+$settings['file_temporary_path'] = $config['system.file']['path']['temporary'];
+$settings['file_private_path'] = $config['system.file']['path']['private'];
+$settings['php_storage']['twig']['directory'] = $config['system.file']['path']['temporary'];
+$settings['php_storage']['twig']['secret'] = $settings['hash_salt'] . $_ENV['SITE_MAP_ID'];
 
 $settings['reverse_proxy'] = TRUE;
 $settings['reverse_proxy_addresses'] = [$_SERVER['REMOTE_ADDR']];
 $settings['reverse_proxy_trusted_headers'] = \Symfony\Component\HttpFoundation\Request::HEADER_X_FORWARDED_ALL;
 $settings['trusted_host_patterns'][] = '.*';
 
-//  Store local configuration separately so it isn't tracked by git.
-$config['config_split.config_split.local']['status'] = TRUE;
-$config['config_split.config_split.stage']['status'] = TRUE;
+//  We're in Azure.  Set config to PROD.
+$config['config_split.config_split.local']['status'] = FALSE;
+$config['config_split.config_split.stage']['status'] = FALSE;
+$config['config_split.config_split.prod']['status'] = TRUE;
 
 $databases['default']['default'] = array(
     'database' => $_ENV["DATABASE_NAME"],
@@ -35,8 +41,11 @@ if (isset($_ENV['REDIS_HOST'])) {
   $settings['redis.connection']['port'] = $_ENV["REDIS_PORT"] ?: '6379';
   $settings['redis.connection']['password'] = $_ENV["REDIS_PASSWORD"];
   $settings['cache']['default'] = 'cache.backend.redis';
-
   $settings['cache_prefix']['default'] = $_ENV['SITE_MAP_ID'];
+  $settings['redis_compress_length'] = 100;
+  $settings['redis_compress_level'] = 1;
+//  $settings['cache']['default'] = 'cache.backend.redis'; // Use Redis as the default cache.
+//  $settings['cache']['bins']['form'] = 'cache.backend.database'; // Use the database for forms
 
   // Apply changes to the container configuration to better leverage Redis.
   // This includes using Redis for the lock and flood control systems, as well

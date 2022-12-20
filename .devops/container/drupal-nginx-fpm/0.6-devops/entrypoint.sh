@@ -4,11 +4,31 @@
 
 php -v
 
+DEPLOYMENT_DIR="/home/deployment"
+DEPLOYMENT_TAG="$DEPLOYMENT_DIR/tag.txt"
+
+post_deployment_tasks(){
+  cat $DRUPAL_SOURCE/tag.txt > $DEPLOYMENT_TAG
+  cd "$DRUPAL_PRJ/web/sites/$SITE_MAP_ID"
+
+  echo "Running post deployment tasks..."
+  echo "Clear cache"
+  drush cr
+  echo "Update database"
+  drush updb -y
+  echo "Import config"
+  drush cim -y
+  echo "Import features"
+  drush fra --bundle=jcc_tc2 -y
+  echo "Clear cache again"
+  drush cr
+}
+
 #Get drupal from Git
 setup_drupal(){
   while test -d "$DRUPAL_PRJ"
   do
-    echo "INFO: $DRUPAL_PRJ exists, clean it ..."
+    echo "INFO: $DRUPAL_PRJ exists, clean it..."
     # mv is faster than rm.
     mv $DRUPAL_PRJ /tmp/drupal_prj_bak$(date +%s)
   done
@@ -35,16 +55,6 @@ setup_drupal(){
       scripts/theme.sh -i jcc_deprep && scripts/theme.sh -b jcc_deprep
       scripts/theme.sh -i jcc_newsroom && scripts/theme.sh -b jcc_newsroom
   fi
-
-  # Tell code to use Azure Settings for all sites
-  find $DRUPAL_PRJ/web/sites -maxdepth 1 -mindepth 1 -type d | while read dir; do
-    SITE_ID=$(basename $dir)
-
-    test -d "$dir/settings.local.php" && chmod a+w "$dir/settings.local.php" && rm "$dir/settings.local.php"
-    cp "$DRUPAL_SOURCE/settings.local.php" "$dir/settings.local.php"
-    chmod a-w "$dir/settings.php"
-    chmod a-w "$dir/settings.local.php"
-  done
 
   while test -d "$DRUPAL_HOME"
   do
@@ -83,6 +93,29 @@ else
     setup_drupal
 fi
 
+# Tell code to use Azure Settings for all sites
+echo "Update Drupal settings..."
+find $DRUPAL_PRJ/web/sites -maxdepth 1 -mindepth 1 -type d | while read dir; do
+  SITE_ID=$(basename $dir)
+
+  test -d "$dir/settings.local.php" && chmod a+w "$dir/settings.local.php" && rm "$dir/settings.local.php"
+  cp "$DRUPAL_SOURCE/settings.local.php" "$dir/settings.local.php"
+  chmod a-w "$dir/settings.php"
+  chmod a-w "$dir/settings.local.php"
+done
+
+# Check if config-import and cache clear are needed
+test ! -d "$DEPLOYMENT_DIR" && echo "INFO: $DEPLOYMENT_DIR not found. creating ..." && mkdir -p "$DEPLOYMENT_DIR"
+if [ -f "$DEPLOYMENT_TAG" ]; then
+  TAG=$(cat $DEPLOYMENT_TAG)
+  BUILD_TAG=$(cat $DRUPAL_SOURCE/tag.txt)
+  if [ "$TAG" != "$BUILD_TAG"  ]; then
+    post_deployment_tasks
+  fi
+else
+  post_deployment_tasks
+fi
+
 # Create log folders
 test ! -d "$SUPERVISOR_LOG_DIR" && echo "INFO: $SUPERVISOR_LOG_DIR not found. creating ..." && mkdir -p "$SUPERVISOR_LOG_DIR"
 test ! -d "$VARNISH_LOG_DIR" && echo "INFO: Log folder for varnish found. creating..." && mkdir -p "$VARNISH_LOG_DIR"
@@ -109,7 +142,7 @@ mkdir -p /run/php && touch /run/php/php-fpm.sock && chown nginx:nginx /run/php/p
 sed -i "s/SSH_PORT/$SSH_PORT/g" /etc/ssh/sshd_config
 
 # Get environment variables to show up in SSH session
-eval $(printenv | awk -F= '{print "export " "\""$1"\"""=""\""$2"\"" }' >> /etc/profile)
+eval $(printenv | sed -n "s/^\([^=]\+\)=\(.*\)$/export \1=\2/p" | sed 's/"/\\\"/g' | sed '/=/s//="/' | sed 's/$/"/' >> /etc/profile)
 
 echo "Starting SSH ..."
 echo "Starting php-fpm ..."

@@ -6,7 +6,7 @@ param uniqueMod string
 param subscriptionId string = subscription().subscriptionId
 param cmLocation string = resourceGroup().location
 
-var appService = '${env}-ctcms-ct${siteId}-app${uniqueMod}'
+var appService_name = '${env}-ctcms-ct${siteId}-app${uniqueMod}'
 var webServerfarm = '${env}-ctcms-df${siteFarmId}-asp'
 var operationalInsightsWorkspace1 = '${env}-ctcms-law'
 var admResourceGroup = '${env}-ctcms-admin-rg'
@@ -18,7 +18,7 @@ var umiId = '/subscriptions/${subscriptionId}/resourceGroups/${admResourceGroup}
 var networkPrivateEndpoint3_var = '${env}-ctcms-ct${siteId}-app-pe'
 var resourceGroupApp = '${env}-ctcms-df${siteFarmId}-app-rg'
 var resourceGroupData = '${env}-ctcms-df${siteFarmId}-data-rg'
-var appServiceInsightsDiagnosticSetting1_var = '${env}-ctcms-ct${siteId}-diag'
+var appServiceDiagnosticSetting_name = '${env}-ctcms-ct${siteId}-diag'
 var appInsights_Name = '${env}-ctcms-appi'
 
 var siteStorageAccountName = '${env}ctcmsdf${siteFarmId}sa${uniqueMod}'
@@ -37,8 +37,8 @@ resource appInsights 'Microsoft.Insights/components@2020-02-02' existing = {
   name: appInsights_Name
 }
 
-resource appService1 'Microsoft.Web/sites@2020-12-01' = {
-  name: appService
+resource appService 'Microsoft.Web/sites@2020-12-01' = {
+  name: appService_name
   identity: {
     type: 'UserAssigned'
     userAssignedIdentities: {
@@ -151,7 +151,7 @@ resource appService1 'Microsoft.Web/sites@2020-12-01' = {
         }
         {
           name: 'SITE_MAP_DOMAINS'
-          value: '${appService}.azurewebsites.net'
+          value: '${appService_name}.azurewebsites.net'
         }
       ]
       linuxFxVersion: 'DOCKER|globalctcmscr.azurecr.io/build/trialcourt/master:latest'
@@ -170,7 +170,7 @@ resource appService1 'Microsoft.Web/sites@2020-12-01' = {
 }
 
 resource storageSetting 'Microsoft.Web/sites/config@2021-01-15' = {
-  parent: appService1
+  parent: appService
   name: 'azurestorageaccounts'
   properties: {
     '${shareName}': {
@@ -183,14 +183,28 @@ resource storageSetting 'Microsoft.Web/sites/config@2021-01-15' = {
   }
 }
 
-
-resource appServiceInsightsDiagnosticSetting1 'Microsoft.Insights/diagnosticSettings@2017-05-01-preview' = {
-  scope: appService1
-  name: appServiceInsightsDiagnosticSetting1_var
+resource appServiceDiagnosticSetting 'Microsoft.Insights/diagnosticSettings@2021-05-01-preview' = {
+  scope: appService
+  name: appServiceDiagnosticSetting_name
   properties: {
-    logAnalyticsDestinationType: 'Dedicated'
-    logs: []
-    metrics: []
+    //logAnalyticsDestinationType: 'Dedicated'
+    logs: [{
+      categoryGroup: 'allLogs'
+      enabled: true
+      retentionPolicy: {
+        enabled: true
+        days: 60
+      }
+    }]
+    metrics: [{
+      category: 'AllMetrics'
+      timeGrain: null
+      enabled: true
+      retentionPolicy: {
+        enabled: true
+        days: 60
+      }
+    }]
     storageAccountId: resourceId(admResourceGroup, 'Microsoft.Storage/storageAccounts', admStorageAccountName)
     workspaceId: resourceId(admResourceGroup, 'Microsoft.OperationalInsights/workspaces', operationalInsightsWorkspace1)
   }

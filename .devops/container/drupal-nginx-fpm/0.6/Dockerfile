@@ -13,10 +13,6 @@ ENV DRUPAL_PRJ "/home/drupal_source"
 ENV DRUPAL_STORAGE "/storage/files"
 ENV DRUPAL_SOURCE "/usr/src/drupal"
 ENV DRUPAL_BUILD "/usr/src/drupal-build"
-ARG GIT_REPO="https://github.com/judicialcouncilcalifornia/trialcourt.git"
-ENV GIT_REPO=$GIT_REPO
-ARG GIT_BRANCH="master"
-ENV GIT_BRANCH=$GIT_BRANCH
 #nginx
 ENV NGINX_LOG_DIR "/home/LogFiles/nginx"
 #varnish
@@ -83,7 +79,7 @@ RUN set -ex \
     && composer global require consolidation/cgr \
 	&& composer_home=$(find / -name .composer) \
     && ln -s $composer_home/vendor/bin/cgr /usr/local/bin/cgr \
-	&& cgr drush/drush \
+	&& cgr drush/drush ^10.0.0 \
     && ln -s $composer_home/vendor/bin/drush /usr/local/bin/drush \
 # ----------
 # 4. varnish
