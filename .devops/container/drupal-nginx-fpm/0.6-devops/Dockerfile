@@ -57,13 +57,16 @@ RUN set -ex \
   && composer install --no-dev --no-interaction --optimize-autoloader \
   && scripts/theme.sh -i jcc_base && scripts/theme.sh -b jcc_base \
   && scripts/theme.sh -i jcc_deprep && scripts/theme.sh -b jcc_deprep \
-  && scripts/theme.sh -i jcc_newsroom && scripts/theme.sh -b jcc_newsroom
+  && scripts/theme.sh -i jcc_newsroom && scripts/theme.sh -b jcc_newsroom \
+  && rm -rf ${DRUPAL_SOURCE}/settings.local.php
 # =========
 # Configure
 # =========
 WORKDIR $DRUPAL_HOME
 # nginx
 COPY nginx.conf /etc/nginx/
+# drupal
+COPY settings.local.php ${DRUPAL_SOURCE}
 # =====
 # final
 # =====
