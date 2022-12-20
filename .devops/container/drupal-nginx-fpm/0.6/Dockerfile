@@ -79,7 +79,7 @@ RUN set -ex \
     && composer global require consolidation/cgr \
 	&& composer_home=$(find / -name .composer) \
     && ln -s $composer_home/vendor/bin/cgr /usr/local/bin/cgr \
-	&& cgr drush/drush \
+	&& cgr drush/drush ^10.0.0 \
     && ln -s $composer_home/vendor/bin/drush /usr/local/bin/drush \
 # ----------
 # 4. varnish
