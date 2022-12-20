@@ -61,7 +61,7 @@ RUN set -ex \
   && scripts/theme.sh -i jcc_deprep && scripts/theme.sh -b jcc_deprep \
   && scripts/theme.sh -i jcc_newsroom && scripts/theme.sh -b jcc_newsroom \
   && rm -rf ${DRUPAL_SOURCE}/settings.local.php \
-  && mkdir -p ${DRUPAL_SOURCE}/tag.txt && echo ${GIT_TAG} > ${DRUPAL_SOURCE}/tag.txt
+  && echo ${GIT_TAG} > ${DRUPAL_SOURCE}/tag.txt
 # =========
 # Configure
 # =========
