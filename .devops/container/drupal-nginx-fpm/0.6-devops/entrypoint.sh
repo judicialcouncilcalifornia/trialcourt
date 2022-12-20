@@ -36,16 +36,6 @@ setup_drupal(){
       scripts/theme.sh -i jcc_newsroom && scripts/theme.sh -b jcc_newsroom
   fi
 
-  # Tell code to use Azure Settings for all sites
-  find $DRUPAL_PRJ/web/sites -maxdepth 1 -mindepth 1 -type d | while read dir; do
-    SITE_ID=$(basename $dir)
-
-    test -d "$dir/settings.local.php" && chmod a+w "$dir/settings.local.php" && rm "$dir/settings.local.php"
-    cp "$DRUPAL_SOURCE/settings.local.php" "$dir/settings.local.php"
-    chmod a-w "$dir/settings.php"
-    chmod a-w "$dir/settings.local.php"
-  done
-
   while test -d "$DRUPAL_HOME"
   do
       echo "INFO: $DRUPAL_HOME exists. Clean it ..."
@@ -82,6 +72,17 @@ else
     echo "Installing Drupal ..."
     setup_drupal
 fi
+
+# Tell code to use Azure Settings for all sites
+echo "Update Drupal settings..."
+find $DRUPAL_PRJ/web/sites -maxdepth 1 -mindepth 1 -type d | while read dir; do
+  SITE_ID=$(basename $dir)
+
+  test -d "$dir/settings.local.php" && chmod a+w "$dir/settings.local.php" && rm "$dir/settings.local.php"
+  cp "$DRUPAL_SOURCE/settings.local.php" "$dir/settings.local.php"
+  chmod a-w "$dir/settings.php"
+  chmod a-w "$dir/settings.local.php"
+done
 
 # Create log folders
 test ! -d "$SUPERVISOR_LOG_DIR" && echo "INFO: $SUPERVISOR_LOG_DIR not found. creating ..." && mkdir -p "$SUPERVISOR_LOG_DIR"

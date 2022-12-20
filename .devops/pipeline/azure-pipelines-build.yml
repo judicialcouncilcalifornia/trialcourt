@@ -226,6 +226,8 @@ stages:
 
   - stage: Manifest
     displayName: Manifest
+    dependsOn: Build
+    condition: succeeded('Build')
     jobs:
       - job: ReadManifest
         displayName: Read manifest file
