@@ -16,7 +16,7 @@ pool:
 name: $(Build.BuildId)
 
 variables:
-  imageRepository: 'build/trialcourt/reverseProxy'
+  imageRepository: 'build/trialcourt/reverseproxy'
   dockerfilePath: '$(Build.SourcesDirectory)/.devops/reverseProxy/Dockerfile'
   dockerRegistryServiceConnection: 'Global Container Registry'
   containerRegistry: 'globalctcmscr.azurecr.io'
