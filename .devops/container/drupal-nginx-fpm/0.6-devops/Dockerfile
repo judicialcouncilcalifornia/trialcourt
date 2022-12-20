@@ -5,6 +5,8 @@ LABEL maintainer="Ivan Bueno <ivan.bueno@jud.ca.gov>"
 # ENV vars
 # ========
 # drupal
+ARG GIT_TAG
+ENV GIT_TAG=$GIT_TAG
 ARG GIT_REPO
 ENV GIT_REPO=$GIT_REPO
 ARG GIT_BRANCH
@@ -58,7 +60,8 @@ RUN set -ex \
   && scripts/theme.sh -i jcc_base && scripts/theme.sh -b jcc_base \
   && scripts/theme.sh -i jcc_deprep && scripts/theme.sh -b jcc_deprep \
   && scripts/theme.sh -i jcc_newsroom && scripts/theme.sh -b jcc_newsroom \
-  && rm -rf ${DRUPAL_SOURCE}/settings.local.php
+  && rm -rf ${DRUPAL_SOURCE}/settings.local.php \
+  && mkdir -p ${DRUPAL_SOURCE}/tag.txt && echo ${GIT_TAG} > ${DRUPAL_SOURCE}/tag.txt
 # =========
 # Configure
 # =========
