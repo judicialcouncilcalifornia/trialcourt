@@ -27,5 +27,6 @@ COPY sshd_config /etc/ssh/
 COPY init_container.sh /bin/
 COPY index.html /home/site/wwwroot/index.html
 
+RUN chmod +x /bin/init_container.sh
 EXPOSE 80 2222
 CMD ["/bin/init_container.sh"]
