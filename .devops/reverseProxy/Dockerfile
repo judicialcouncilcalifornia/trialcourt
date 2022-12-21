@@ -25,7 +25,6 @@ RUN set -ex \
 
 COPY nginx.conf /etc/nginx/nginx.conf
 COPY redirects/. /etc/nginx/conf.d/
-COPY index.html /home/site/wwwroot/
 
 COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 COPY sshd_config /etc/ssh/
