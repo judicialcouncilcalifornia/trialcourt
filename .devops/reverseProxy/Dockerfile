@@ -14,7 +14,12 @@ RUN set -ex \
 # ssh
 # ------
     && apk add --no-cache openssh-server \
-    && echo "$SSH_PASSWD" | chpasswd
+    && echo "$SSH_PASSWD" | chpasswd \
+#---------------
+# openrc service
+#---------------
+    && apk add --no-cache openrc \
+    && sed -i 's/"cgroup_add_service/" # cgroup_add_service/g' /lib/rc/sh/openrc-run.sh \
 
 COPY nginx.conf /etc/nginx/nginx.conf
 COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
