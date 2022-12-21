@@ -1,4 +1,4 @@
-FROM nginx:1.23.3
+FROM nginx:latest
 
 # ssh
 ENV SSH_PASSWD "root:Docker!"
