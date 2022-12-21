@@ -11,7 +11,7 @@ post_deployment_tasks(){
   cat $DRUPAL_SOURCE/tag.txt > $DEPLOYMENT_TAG
   cd "$DRUPAL_PRJ/web/sites/$SITE_MAP_ID"
 
-  echo "Running post deployment tasks..."
+  echo "RUNNING POST DEPLOYMENT TASKS..."
   echo "Clear cache"
   drush cr
   echo "Update database"
@@ -38,8 +38,9 @@ setup_drupal(){
 
   if [ "$(ls -A $DRUPAL_BUILD)" ]
   then
-    echo "Copying files from $DRUPAL_BUILD to $DRUPAL_PRJ"
+    echo "COPYING FILES FROM $DRUPAL_BUILD TO $DRUPAL_PRJ"
     cp -R $DRUPAL_BUILD/* $DRUPAL_PRJ/
+    echo "All files copied."
   else
     	echo "INFO: ++++++++++++++++++++++++++++++++++++++++++++++++++:"
     	echo "REPO: "$GIT_REPO
@@ -84,17 +85,17 @@ if [ -e "$DRUPAL_HOME/web/sites/default/settings.php" ] || [ "$RESET_INSTANCE" =
         echo "INFO: $DRUPAL_PRJ exists..."
         echo "INFO: Site is Ready..."
     else
-        echo "Installing Drupal ..."
+        echo "INSTALLING DRUPAL..."
         setup_drupal
     fi
 else
 # drupal isn't installed, fresh start
-    echo "Installing Drupal ..."
+    echo "INSTALLING DRUPAL..."
     setup_drupal
 fi
 
 # Tell code to use Azure Settings for all sites
-echo "Update Drupal settings..."
+echo "UPDATING SETTINGS.LOCAL.PHP..."
 find $DRUPAL_PRJ/web/sites -maxdepth 1 -mindepth 1 -type d | while read dir; do
   SITE_ID=$(basename $dir)
 
@@ -110,9 +111,13 @@ if [ -f "$DEPLOYMENT_TAG" ]; then
   TAG=$(cat $DEPLOYMENT_TAG)
   BUILD_TAG=$(cat $DRUPAL_SOURCE/tag.txt)
   if [ "$TAG" != "$BUILD_TAG"  ]; then
+    echo "NEW BUILD DETECTED.  RUNNING POST DEPLOYMENT TASKS."
     post_deployment_tasks
+  else
+    echo "SAME BUILD DETECTED.  SKIPPING DEPLOYMENT TASKS."
   fi
 else
+  echo "NEW BUILD DETECTED.  RUNNING POST DEPLOYMENT TASKS."
   post_deployment_tasks
 fi
 
@@ -128,14 +133,14 @@ test ! -d "/home/etc/nginx" && mkdir -p /home/etc && mv /etc/nginx /home/etc/ngi
 test -d "/home/etc/varnish" && mv /etc/varnish /etc/varnish-bak && ln -s /home/etc/varnish /etc/varnish
 test ! -d "/home/etc/varnish" && mkdir -p /home/etc && mv /etc/varnish /home/etc/varnish && ln -s /home/etc/varnish /etc/varnish
 
-#echo "Starting Varnishd ..."
 if [ "$ENABLE_VARNISH" == "true" ];then
+  echo "STARTING VARNISHD..."
   /usr/sbin/varnishd -a :80 -f /etc/varnish/default.vcl
   sed -i 's|listen 80;|listen 8080;|g' /home/etc/nginx/nginx.conf
   sed -i 's|listen [::]:80;|listen [::]:8080;|g' /home/etc/nginx/nginx.conf
 fi
 
-echo "INFO: creating /run/php/php-fpm.sock ..."
+echo "INFO: creating /run/php/php-fpm.sock..."
 test -e /run/php/php-fpm.sock && rm -f /run/php/php-fpm.sock
 mkdir -p /run/php && touch /run/php/php-fpm.sock && chown nginx:nginx /run/php/php-fpm.sock && chmod 777 /run/php/php-fpm.sock
 
@@ -144,9 +149,9 @@ sed -i "s/SSH_PORT/$SSH_PORT/g" /etc/ssh/sshd_config
 # Get environment variables to show up in SSH session
 eval $(printenv | sed -n "s/^\([^=]\+\)=\(.*\)$/export \1=\2/p" | sed 's/"/\\\"/g' | sed '/=/s//="/' | sed 's/$/"/' >> /etc/profile)
 
-echo "Starting SSH ..."
-echo "Starting php-fpm ..."
-echo "Starting Nginx ..."
+echo "STARTING SSH..."
+echo "STARTING PHP-FPM..."
+echo "STARTING NGINX..."
 
 cd /usr/bin/
 supervisord -c /etc/supervisord.conf

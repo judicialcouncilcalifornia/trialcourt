@@ -12,7 +12,7 @@ $config['system.file']['path']['temporary'] = '/home/tmp';
 $config['system.file']['path']['private'] = 'sites/default/files/private/' . $_ENV['SITE_MAP_ID'];
 $settings['file_temporary_path'] = $config['system.file']['path']['temporary'];
 $settings['file_private_path'] = $config['system.file']['path']['private'];
-$settings['php_storage']['twig']['directory'] = $config['system.file']['path']['temporary'];
+$settings['php_storage']['twig']['directory'] = 'sites/default/files';
 $settings['php_storage']['twig']['secret'] = $settings['hash_salt'] . $_ENV['SITE_MAP_ID'];
 
 $settings['reverse_proxy'] = TRUE;
