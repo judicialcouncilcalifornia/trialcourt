@@ -1,17 +1,20 @@
-FROM nginx:latest
+FROM nginx:alpine
 
 # ssh
 ENV SSH_PASSWD "root:Docker!"
 ENV SSH_PORT 2222
-# supervisor
-ENV SUPERVISOR_LOG_DIR "/home/LogFiles/supervisor"
 
-# Install openssh-server to provide web ssh access from kudu, supervisor to run processor
-RUN apt-get clean && apt-get update \
-    && apt-get install --no-install-recommends --no-install-suggests -y \
-    supervisor \
-    openssh-server \
-    && echo "root:Docker!" | chpasswd
+RUN set -ex \
+    && apk update \
+    && apk add --no-cache supervisor openssl git net-tools tcpdump tcptraceroute vim curl wget bash patch\
+	&& cd /usr/bin \
+	&& wget http://www.vdberg.org/~richard/tcpping \
+	&& chmod 777 tcpping \
+# ------
+# ssh
+# ------
+    && apk add --no-cache openssh-server \
+    && echo "$SSH_PASSWD" | chpasswd
 
 COPY nginx.conf /etc/nginx/nginx.conf
 COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
