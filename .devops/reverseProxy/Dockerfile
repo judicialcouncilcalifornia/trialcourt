@@ -3,6 +3,7 @@ FROM nginx:alpine
 # ssh
 ENV SSH_PASSWD "root:Docker!"
 ENV SSH_PORT 2222
+ENV SUPERVISOR_LOG_DIR "/home/LogFiles/supervisor"
 
 RUN set -ex \
     && apk update \
