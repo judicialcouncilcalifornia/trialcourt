@@ -20,7 +20,8 @@ RUN set -ex \
 # openrc service
 #---------------
     && apk add --no-cache openrc \
-    && sed -i 's/"cgroup_add_service/" # cgroup_add_service/g' /lib/rc/sh/openrc-run.sh
+    && sed -i 's/"cgroup_add_service/" # cgroup_add_service/g' /lib/rc/sh/openrc-run.sh \
+    && mkdir -p /home/site/wwwroot/
 
 COPY nginx.conf /etc/nginx/nginx.conf
 COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
