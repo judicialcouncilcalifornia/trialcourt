@@ -24,10 +24,12 @@ RUN set -ex \
     && mkdir -p /home/site/wwwroot/
 
 COPY nginx.conf /etc/nginx/nginx.conf
+COPY redirects/. /etc/nginx/conf.d/
+COPY index.html /home/site/wwwroot/
+
 COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 COPY sshd_config /etc/ssh/
 COPY init_container.sh /bin/
-COPY index.html /home/site/wwwroot/index.html
 
 RUN chmod +x /bin/init_container.sh
 EXPOSE 80 2222
