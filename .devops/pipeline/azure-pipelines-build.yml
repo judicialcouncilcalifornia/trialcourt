@@ -107,7 +107,7 @@ variables:
   containerRegistry: 'globalctcmscr.azurecr.io'
   tag: 'build_$(Build.BuildId)-$(Build.SourceVersion)'
   gitRepo: 'https://github.com/judicialcouncilcalifornia/trialcourt.git'
-  phpVersion: 7.4
+  phpVersion: 8.2.12
   sshPort: 9837
   uniqueMod: '1'
 
