@@ -1,0 +1,67 @@
+{{ attach_library("jcc_storybook/Card") }}
+{{ attach_library("jcc_storybook/Button") }}
+{{ attach_library("jcc_storybook/Icon") }}
+
+{# Card variant selection set by parent #}
+{% set paragraph_parent = paragraph.getParentEntity() %}
+{% set cards_sub_variant = paragraph_parent.field_sub_variant.value|json_decode|default([]).card %}
+{% if cards_sub_variant == 'cta' %}
+  {% set cards_sub_variant = 'default' %}
+{% endif %}
+
+{# Adjust heading hierarchy #}
+{% if paragraph_parent.field_heading.value %}
+  {% set has_section_heading = true %}
+{% endif %}
+
+{# Icon if in use for striped card #}
+{% if (cards_sub_variant == 'striped' or cards_sub_variant == 'striped-aligned') and paragraph.field_icon.value %}
+  {% set icon_data = {
+    icon: card_icon,
+    color: false,
+    icon_path: ' ',
+  } %}
+{% endif %}
+
+{# Media alignment if in use #}
+{% if cards_sub_variant == 'default' and paragraph.field_media_alignment.value != 'top' %}
+  {% set cards_sub_variant = 'media-' ~ paragraph.field_media_alignment.value %}
+{% endif %}
+
+{# Button link if in use #}
+{% set button_data = [] %}
+{% if paragraph.field_link.get(0).getUrl() is not empty %}
+  {% set href = paragraph.field_link.get(0).getUrl() %}
+  {% if cards_sub_variant == 'striped' and paragraph.field_entire_card_clickable.value %}
+    {% set href = paragraph.field_link.get(0).getUrl().toString() %}
+  {% endif %}
+  {% set primary_button = {
+    label: paragraph.field_link.title,
+    href: href,
+    variant: 'primary',
+  } %}
+  {% set button_data = button_data|merge([primary_button]) %}
+{% endif %}
+{# If additional buttons #}
+{% if not paragraph.field_entire_card_clickable.value and paragraph.field_link_multiple is not empty %}
+  {% for key, child in paragraph.field_link_multiple if key|first != '#' %}
+    {% set button = {
+      label: child.title,
+      href: child.getUrl(),
+      variant: 'primary',
+    } %}
+    {% set button_data = button_data|merge([button]) %}
+  {% endfor %}
+{% endif %}
+
+{% include "@molecules/Card/Card.twig" with {
+  variant: cards_sub_variant,
+  clickable_card: cards_sub_variant == 'striped' ? paragraph.field_entire_card_clickable.value : null,
+  background: cards_sub_variant == 'striped' or cards_sub_variant == 'striped-aligned' ? paragraph.field_background.value : null,
+  media: cards_sub_variant != 'striped' ? media : false,
+  media_caption: media_caption,
+  has_section_heading: has_section_heading,
+  heading: content.field_heading.0,
+  text: filtered_text ?? content.field_text.0|render,
+  button_data: button_data,
+} %}

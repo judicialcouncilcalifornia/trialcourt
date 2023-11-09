@@ -1,0 +1,20 @@
+uuid: 258919b5-abbe-40b2-9f4e-60775e6c238c
+langcode: en
+status: true
+dependencies:
+  config:
+    - node.type.tentative_ruling
+_core:
+  default_config_hash: saysyivW9ujw6L-1bjmK65J5KElkrUe6VeP_p9PWgkE
+id: node.tentative_ruling.created
+field_name: created
+entity_type: node
+bundle: tentative_ruling
+label: 'Authored on'
+description: 'The time that the node was created.'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: created

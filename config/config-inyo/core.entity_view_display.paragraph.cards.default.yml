@@ -6,17 +6,19 @@ dependencies:
     - field.field.paragraph.cards.field_columns
     - field.field.paragraph.cards.field_components
     - field.field.paragraph.cards.field_heading
+    - field.field.paragraph.cards.field_image_media
     - field.field.paragraph.cards.field_lead
     - field.field.paragraph.cards.field_link
     - field.field.paragraph.cards.field_sub_variant
     - field.field.paragraph.cards.field_variant
+    - field.field.paragraph.cards.field_width_minimum
     - paragraphs.paragraphs_type.cards
   module:
     - entity_reference_revisions
     - link
     - text
 _core:
-  default_config_hash: 13uAUn8zX8SErXWez8IjfEM93GnwwcnzUqts2ZJXIUg
+  default_config_hash: nppqBa8hwBp68ex2bnvXx05S0taG4aCAJu0802cB9Zg
 id: paragraph.cards.default
 targetEntityType: paragraph
 bundle: cards
@@ -39,6 +41,14 @@ content:
     third_party_settings: {  }
     weight: 0
     region: content
+  field_image_media:
+    type: entity_reference_label
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+    weight: 5
+    region: content
   field_lead:
     type: text_default
     label: hidden
@@ -58,7 +68,19 @@ content:
     third_party_settings: {  }
     weight: 3
     region: content
+  field_width_minimum:
+    type: number_integer
+    label: above
+    settings:
+      thousand_separator: ''
+      prefix_suffix: true
+    third_party_settings: {  }
+    weight: 4
+    region: content
 hidden:
+  entity_print_view_epub: true
+  entity_print_view_pdf: true
+  entity_print_view_word_docx: true
   field_columns: true
   field_sub_variant: true
   field_variant: true

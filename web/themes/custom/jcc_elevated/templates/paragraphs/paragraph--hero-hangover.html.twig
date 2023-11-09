@@ -1,0 +1,44 @@
+{{ attach_library("jcc_storybook/HeroHangover") }}
+{{ attach_library("jcc_storybook/Card") }}
+
+{# Hangover Media #}
+{% set blurb = false %}
+{% set hangover_content = false %}
+{% if card_media %}
+  {% set hangover_content %}
+    {% include "@molecules/Card/Card.twig" with {
+      variant: "bordered-center",
+      aspect: [4, 3],
+      clickable_card: false,
+      background: null,
+      media: card_media,
+    } %}
+  {% endset %}
+{% elseif paragraph.field_hangover_blurb.value %}
+  {% set hangover_content %}
+    {% include "@molecules/Card/Card.twig" with {
+      variant: "bordered-center",
+      aspect: [4, 3],
+      clickable_card: false,
+      background: null,
+      text: content.field_hangover_blurb.0|render,
+    } %}
+  {% endset %}
+  {% set blurb = true %}
+{% endif %}
+
+
+{% include "@molecules/HeroHangover/HeroHangover.twig" with {
+  hangover_hide_compact: false,
+  hangover_offset: 22,
+  background: paragraph.field_background.value,
+  brow: {
+    part_one: paragraph.field_brow.value,
+    part_two: paragraph.field_subheading.value,
+  },
+  heading: paragraph.field_heading.value,
+  text: content.field_lead.0|render,
+  hangover_content: hangover_content,
+  bottom_content: content.field_text.0|render,
+  blurb: blurb,
+} %}

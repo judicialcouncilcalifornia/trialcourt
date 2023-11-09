@@ -1,4 +1,3 @@
-uuid: e0b4b0d2-0267-4f06-9391-39bed256e085
 langcode: en
 status: true
 dependencies:
@@ -21,6 +20,7 @@ settings:
           name: Style
           items:
             - Styles
+            - Format
         -
           name: Links
           items:
@@ -44,17 +44,8 @@ settings:
     drupallink:
       linkit_enabled: true
       linkit_profile: default
-    language:
-      language_list: un
     stylescombo:
-      styles: "blockquote.blockquote--callout|Callout\r\na.jcc-button--primary|Primary\r\na.jcc-button--cta-link|CTA Link"
-    video_embed:
-      defaults:
-        children:
-          autoplay: true
-          responsive: true
-          width: '854'
-          height: '480'
+      styles: "blockquote.blockquote--callout|Callout\r\na.jcc-button--primary.button|Primary Button\r\na.jcc-button--secondary.button.button--secondary|Secondary Button\r\na.jcc-button--cta-link.button.button--text|CTA Link\r\na.twitter-timeline|Twitter Timeline"
 image_upload:
   status: false
   scheme: public

@@ -21,6 +21,7 @@ module:
   ckeditor: 0
   ckeditor_a11ychecker: 0
   ckeditor_balloonpanel: 0
+  ckeditor_bidi: 0
   color: 0
   colorbox: 0
   components: 0
@@ -44,10 +45,13 @@ module:
   easy_breadcrumb: 0
   editor: 0
   embed: 0
+  emptyparagraphkiller: 0
   encrypt: 0
+  entity: 0
   entity_browser: 0
   entity_browser_entity_form: 0
   entity_embed: 0
+  entity_print: 0
   entity_reference_facet_link: 0
   entity_reference_revisions: 0
   entity_usage: 0
@@ -73,6 +77,7 @@ module:
   glossify: 0
   glossify_taxonomy: 0
   google_tag: 0
+  help: 0
   honeypot: 0
   image: 0
   image_widget_crop: 0
@@ -85,6 +90,10 @@ module:
   jcc_tc2_all_immutable_config: 0
   jcc_tc_migration: 0
   jcc_twig: 0
+  jquery_ui: 0
+  jquery_ui_datepicker: 0
+  jquery_ui_slider: 0
+  jquery_ui_touch_punch: 0
   key: 0
   language: 0
   link: 0
@@ -126,6 +135,7 @@ module:
   options: 0
   page_cache: 0
   pantheon_advanced_page_cache: 0
+  paragraphs_inline_entity_form: 0
   password_policy: 0
   password_policy_character_types: 0
   password_policy_length: 0
@@ -165,6 +175,7 @@ module:
   tmgmt_file: 0
   token: 0
   toolbar: 0
+  tooltip: 0
   tour: 0
   update: 0
   user: 0
@@ -175,6 +186,9 @@ module:
   views_ui: 0
   viewsreference: 0
   webform: 0
+  webform_attachment: 0
+  webform_entity_print: 0
+  webform_entity_print_attachment: 0
   webform_translation_permissions: 0
   webform_ui: 0
   webform_views: 0
@@ -184,15 +198,20 @@ module:
   extlink: 1
   menu_admin_per_menu: 1
   pathauto: 1
+  selective_better_exposed_filters: 0
   xmlsitemap: 1
   content_translation: 10
   views: 10
   paragraphs: 11
   jcc_components_profile: 1000
+  jcc_messaging_center: 0
+  email_registration: 0
 theme:
   stable: 0
   classy: 0
   claro: 0
   gin: 0
   jcc_components: 0
+  jcc_elevated: 0
+  jcc_storybook: 0
 profile: jcc_components_profile

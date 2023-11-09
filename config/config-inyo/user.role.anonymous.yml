@@ -7,12 +7,13 @@ dependencies:
     - protected_pages
     - system
 _core:
-  default_config_hash: 9FGqXexk9X5VqIb6uOY09xt_0BWeE85eTDQV4cDpoQE
+  default_config_hash: OY6VOhbPnspDXCpOFaflfSh2CX_a0OZ5zbTfTErblBY
 id: anonymous
 label: 'Anonymous user'
-weight: -10
+weight: -4
 is_admin: false
 permissions:
   - 'access content'
   - 'access protected page password screen'
+  - 'access sitemap'
   - 'view media'

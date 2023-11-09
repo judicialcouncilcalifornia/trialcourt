@@ -18,43 +18,49 @@ function jcc_base_preprocess_block__views_block__multimedia_block_1(&$variables)
   if (isset($variables['elements']['content']['#view'])) {
     $cards = [];
     $rows = $variables['elements']['content']['#view']->result;
-    $featured = $rows[0];
+    if (isset($rows[0])) {
+      $featured = $rows[0];
+    }
 
     $moduleHandler = Drupal::service('module_handler');
     $user = Drupal::currentUser();
     $placeholder = FALSE;
     if ($moduleHandler->moduleExists('contextual') && $user->hasPermission('access contextual links')) {
-      $contextual_links = [
-        'node' => [
-          'route_parameters' => [
-            'node' => $rows[0]->_entity->id(),
+      if (isset($rows[0]) && isset($rows[0]->_entity)) {
+        $contextual_links = [
+          'node' => [
+            'route_parameters' => [
+              'node' => $rows[0]->_entity->id(),
+            ],
           ],
-        ],
-      ];
-      $placeholder = [
-        '#type' => 'contextual_links_placeholder',
-        '#id' => _contextual_links_to_id($contextual_links),
-      ];
+        ];
+        $placeholder = [
+          '#type' => 'contextual_links_placeholder',
+          '#id' => _contextual_links_to_id($contextual_links),
+        ];
+      }
     }
 
-    if ($featured->_entity->field_videos != NULL && !empty($featured->_entity->field_videos->getValue())) {
+    if (isset($rows[0]) && $featured->_entity->field_videos != NULL && !empty($featured->_entity->field_videos->getValue())) {
       $video = $featured->_entity->field_videos->getValue();
       // Get  video entity by target id from media field.
       $video_entity = Media::load($video[0]["target_id"]);
-      // Video title.
-      $video_title = $video_entity->label();
-      // Video embed.
-      $view_builder = \Drupal::entityTypeManager()->getViewBuilder('media');
-      $build = $view_builder->view($video_entity, 'default');
-      $video_elem = render($build);
+      if ($video_entity != NULL) {
+        // Video title.
+        $video_title = $video_entity->label();
+        // Video embed.
+        $view_builder = \Drupal::entityTypeManager()->getViewBuilder('media');
+        $build = $view_builder->view($video_entity, 'default');
+        $video_elem = render($build);
 
-      $featured_video_card = [
-        'title' => $video_title,
-        'excerpt_vid' => $video_elem,
-        'contextual_links' => $placeholder,
-      ];
+        $featured_video_card = [
+          'title' => $video_title,
+          'excerpt_vid' => $video_elem,
+          'contextual_links' => $placeholder,
+        ];
 
-      array_push($cards, $featured_video_card);
+        array_push($cards, $featured_video_card);
+      }
     }
 
     if (!empty($featured->_entity->field_images)) {

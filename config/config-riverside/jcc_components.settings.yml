@@ -8,7 +8,7 @@ logo:
   path: sites/riverside/logo.svg
 favicon:
   use_default: true
-scheme: base
+scheme: local
 header_footer_variant: default
 site_name_first: 'Superior Court of California'
 site_name_second: 'County of Riverside'
@@ -23,3 +23,4 @@ twitter: ''
 youtube: ''
 hide_translation: 1
 show_google_translate: 1
+enable_twitter_embed: 0

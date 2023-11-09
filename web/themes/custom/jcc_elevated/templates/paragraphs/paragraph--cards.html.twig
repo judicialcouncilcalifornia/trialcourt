@@ -1,0 +1,30 @@
+{{ attach_library("jcc_storybook/Section") }}
+{{ attach_library("jcc_storybook/Cards") }}
+
+{% set cards = [] %}
+{% for key, child in content.field_components if key|first != '#' %}
+  {% set cards = cards|merge([child]) %}
+{% endfor %}
+
+{% if content.field_link.0 is not empty %}
+  {% set button_data = {
+    label: content.field_link.0['#title'],
+    href: content.field_link.0['#url'],
+    variant: "primary",
+  } %}
+{% endif %}
+
+{% set image = paragraph.field_image_media.entity.field_media_image.entity.uri.value %}
+
+{% include "@organisms/Section/Section.twig" with {
+  variant: 'default',
+  first_component: false,
+  grid_min_width: paragraph.field_width_minimum.value ? paragraph.field_width_minimum.value : 41,
+  heading: content.field_heading.0,
+  text: content.field_lead.0,
+  button_data: button_data,
+  sub_component_layout: 'grid',
+  sub_component_data: cards,
+  background_image_url: file_url(image),
+  section_classes: ['cards'],
+} %}

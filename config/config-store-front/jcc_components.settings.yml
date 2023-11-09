@@ -8,7 +8,7 @@ logo:
   path: sites/store-front/logo.svg
 favicon:
   use_default: true
-scheme: base
+scheme: local
 header_footer_variant: default
 site_name_first: 'California Judicial Branch'
 site_name_second: 'Design System'
@@ -22,3 +22,4 @@ rss: ''
 twitter: ''
 youtube: ''
 hide_translation: 0
+enable_twitter_embed: 0

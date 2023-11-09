@@ -5,6 +5,8 @@ dependencies:
   module:
     - glossify_taxonomy
     - linkit
+_core:
+  default_config_hash: K8Olde2S32AU0MXXVN6jE9xN7Rn3c2Jy2exYIIFV7-c
 name: Minimal
 format: minimal
 weight: -8
@@ -15,7 +17,7 @@ filters:
     status: true
     weight: -10
     settings:
-      allowed_html: '<em> <strong> <a href hreflang title data-entity-substitution data-entity-type data-entity-uuid>'
+      allowed_html: '<em> <strong> <a href hreflang title data-entity-substitution data-entity-type data-entity-uuid> <u> <s> <sup> <sub> <ol> <li> <ul>'
       filter_html_help: true
       filter_html_nofollow: false
   glossify_taxonomy:

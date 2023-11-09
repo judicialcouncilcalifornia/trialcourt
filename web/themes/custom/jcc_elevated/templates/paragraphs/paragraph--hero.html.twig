@@ -1,0 +1,36 @@
+{{ attach_library("jcc_storybook/Hero") }}
+{{ attach_library("jcc_storybook/Card") }}
+{{ attach_library("jcc_storybook/Button") }}
+
+{% set variant = paragraph.field_variant.value|json_decode|default([]).hero %}
+{% if variant == 'default' %}
+  {% set variant = 'banner' %}
+{% endif %}
+
+{% if variant == 'banner' %}
+  {% set bg_tint = 'accent-warm-dark-xx' %}
+{% else %}
+  {% set bg_tint = false %}
+{% endif %}
+
+{% include "@molecules/Hero/Hero.twig" with {
+  variant: variant,
+  content_justify: 'left',
+  bg_tint: bg_tint,
+  background_image_url: file_url(bckg_img_url),
+  card_data: {
+    attributes: create_attribute(),
+    variant: 'default',
+    first_component: true,
+    media: false,
+    heading: paragraph.field_heading.value,
+    text: custom ? custom : content.field_lead.0,
+    button_data: {
+      attributes: create_attribute(),
+      variant: 'primary',
+      label: paragraph.field_link.title,
+      href: paragraph.field_link.uri,
+    }
+  },
+  navigation: cards
+} %}

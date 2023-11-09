@@ -8,14 +8,15 @@ dependencies:
     - system
     - userprotect
 _core:
-  default_config_hash: CSj6TZa0gz-oF2USBASNNYxZWA5TG_nYzpVuYH4oBV0
+  default_config_hash: FVssKl1GdjPp-hQGetYCkJE4dir9CS7cMgJ0A4VrLG4
 id: authenticated
 label: 'Authenticated user'
-weight: -9
+weight: -3
 is_admin: false
 permissions:
   - 'access content'
   - 'access protected page password screen'
+  - 'access sitemap'
   - userprotect.account.edit
   - userprotect.mail.edit
   - userprotect.pass.edit
