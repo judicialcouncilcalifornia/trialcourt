@@ -1,4 +1,4 @@
-FROM php:7.4.33-fpm-alpine3.16
+FROM php:8.2.12-fpm-alpine3.18
 LABEL maintainer="Azure App Service Container Images <appsvc-images@microsoft.com>"
 LABEL maintainer="Ivan Bueno <ivan.bueno@jud.ca.gov>"
 # ========
@@ -61,12 +61,13 @@ RUN set -ex \
             libssh2-dev                     \
             libxslt-dev                     \
     && docker-php-source extract \
-    && pecl install xdebug-beta apcu \
+    && pecl install apcu \
     && docker-php-ext-install -j "$(nproc)" \
 	    mysqli \
 		opcache \
 		pdo_mysql \
 		pdo_pgsql \
+# apcu
 	&& docker-php-ext-enable apcu \
     && docker-php-source delete \
     && runDeps="$( \
@@ -80,6 +81,18 @@ RUN set -ex \
 	&& docker-php-source delete \
 	&& mkdir -p /usr/local/php/tmp \
 	&& chmod 777 /usr/local/php/tmp \
+# Add xdebug
+  && apk add --no-cache --virtual .build-deps $PHPIZE_DEPS \
+  && apk add --update linux-headers \
+  && pecl install xdebug-3.2.2 \
+  && docker-php-ext-enable xdebug \
+  && apk del -f .build-deps \
+# Configure Xdebug
+  && echo "xdebug.start_with_request=yes" >> /usr/local/etc/php/conf.d/xdebug.ini \
+  && echo "xdebug.mode=debug" >> /usr/local/etc/php/conf.d/xdebug.ini \
+  && echo "xdebug.log=/var/www/html/xdebug/xdebug.log" >> /usr/local/etc/php/conf.d/xdebug.ini \
+  && echo "xdebug.discover_client_host=1" >> /usr/local/etc/php/conf.d/xdebug.ini \
+  && echo "xdebug.client_port=9000" >> /usr/local/etc/php/conf.d/xdebug.ini \
 # ------
 # ssh
 # ------
@@ -154,12 +167,12 @@ RUN set -ex \
 		openssl-dev \
 		pcre-dev \
 		zlib-dev \
-		linux-headers \
 		curl \
 		gnupg \
 		libxslt-dev \
 		gd-dev \
 		geoip-dev \
+  && apk add --update linux-headers \
 	&& curl -fSL https://nginx.org/download/nginx-$NGINX_VERSION.tar.gz -o nginx.tar.gz \
 	&& curl -fSL https://nginx.org/download/nginx-$NGINX_VERSION.tar.gz.asc  -o nginx.tar.gz.asc \
 	&& curl -fSL https://github.com/nullunit/ngx_cache_purge/archive/c7345057ad5429617fc0823e92e3fa8043840cef.zip -o ngx_cache_purge-2.3.zip \

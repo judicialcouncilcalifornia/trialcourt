@@ -1,4 +1,4 @@
-FROM judicialcouncil/nginx-fpm:php7.4.33-redis
+FROM judicialcouncil/nginx-fpm:php8.2.12-redis
 LABEL maintainer="Azure App Service Container Images <appsvc-images@microsoft.com>"
 LABEL maintainer="Ivan Bueno <ivan.bueno@jud.ca.gov>"
 # ========
@@ -22,7 +22,7 @@ ENV PHP_CONF_FILE "/usr/local/etc/php/php.ini"
 # Composer
 # Updation: https://getcomposer.org/download/
 ENV COMPOSER_DOWNLOAD_URL "https://getcomposer.org/installer"
-ENV COMPOSER_VERSION "2.4.2"
+ENV COMPOSER_VERSION "2.6.5"
 # ====================
 # Download and Install
 # ~. essentials
@@ -76,7 +76,7 @@ RUN set -ex \
 # 3. drush
 # ----------
     && rm -rf /home/.composer && export COMPOSER_HOME='/root/.composer/' \
-    && composer global require consolidation/cgr \
+    && composer global require --ignore-platform-req php consolidation/cgr \
 	&& composer_home=$(find / -name .composer) \
     && ln -s $composer_home/vendor/bin/cgr /usr/local/bin/cgr \
 	&& cgr drush/drush ^10.0.0 \
