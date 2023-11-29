@@ -92,7 +92,7 @@ parameters:
 variables:
   imageRepository: 'build/trialcourt/$(Build.SourceBranchName)'
   dockerfilePath: '$(Build.SourcesDirectory)/.devops/drupal-nginx-fpm/0.6-devops/Dockerfile'
-  containerRegistry: 'globalctcmscr.azurecr.io'
+  containerRegistry: 'intctcmsdf1registry.azurecr.io'
   tag: 'build_$(Build.BuildId)-$(Build.SourceVersion)'
   location: 'West US 3'
   siteEnvPrefix: ''
