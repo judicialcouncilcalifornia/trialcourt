@@ -125,7 +125,8 @@ function jcc_components_paragraph_hero_banner(array &$variables, ParagraphInterf
 
     if (!empty($component->field_icon)) {
       $card_icon = !empty($component->field_icon->view('default')[0]) ? $component->field_icon->view('default')[0] : NULL;
-      $card_icon = str_replace("-dark", "-white", $card_icon);
+     // $card_icon = str_replace("-dark", "-white", $card_icon);
+     $card_icon = str_replace("-dark", "-white", $card_icon['#icon_set']);
       $variables['content']['icon_links'][] = [
         'icon' => $card_icon,
         'link' => !empty($component->field_link->view('default')[0]) ? $component->field_link->view('default')[0] : NULL,
@@ -166,20 +167,30 @@ function jcc_components_paragraph_views_reference(array &$variables, ParagraphIn
  *   The news view.
  */
 function jcc_components_paragraph_views_reference_news_sticky_list(array &$variables, ViewEntityInterface $view) {
+  $langcode = \Drupal::languageManager()->getCurrentLanguage(LanguageInterface::TYPE_CONTENT)->getId();
   $executable = $view ? $view->getExecutable() : NULL;
   // Start with the sticky_list display.
   $sticky_list = $executable ? $executable->setDisplay('sticky_list') : FALSE;
-  $display = $executable->executeDisplay();
+  $display = $executable->executeDisplay(); 
 
-  if ($sticky_list) {
-    $variables['sticky_list'] = !empty($display['#rows']) ? $display['#rows'][0]['#rows'] : [];
+  foreach ($display['#rows'][0]['#rows'] as &$row) {   
+    $nodeid = $row['#node']->id();
+    $translated_path = \Drupal::service('path_alias.manager')->getAliasByPath('/node/'. $nodeid, $langcode);   
+    $row['#lang'] = $langcode;
+    if($langcode === "es") {
+    $prefixed_translated_path = '/' . $langcode . $translated_path;   
+    $row['#sticky'] = $prefixed_translated_path;    
+    }       
   }
+  if ($sticky_list) {  
+    $variables['sticky_list'] = !empty($display['#rows']) ? $display['#rows'][0]['#rows'] : [];    
+  }  
   // Also get the More News path. Should be a node with path /news but fallback
   // to view url if it exists.
-  $view_url = !empty($executable->getUrl()) ? $executable->getUrl()->toString() : '';
+  $view_url = !empty($executable->getUrl()) ? $executable->getUrl()->toString() : ''; 
   $path = \Drupal::service('path.validator')->isValid('/news') ? '/news' : $view_url;
-
-  $variables['news_url'] = $path;
+ 
+  $variables['news_url'] = $path; 
   $variables['#cache']['tags'][] = 'node_list:news';
 }
 
@@ -242,8 +253,6 @@ function jcc_components_paragraph_text_share(array &$variables, ParagraphInterfa
  */
 function jcc_components_paragraph_content_stream(array &$variables, ParagraphInterface $paragraph) {
   $taxonomy = $paragraph->field_taxonomy ? $paragraph->field_taxonomy->target_id : NULL;
-  $date_start = $paragraph->field_filter_by_date->start_date ? $paragraph->field_filter_by_date->start_date->format('Y-m-d\T00:00:00') : NULL;
-  $date_end = $paragraph->field_filter_by_date->end_date ? $paragraph->field_filter_by_date->end_date->format('Y-m-d\T24:00:00') : NULL;
 
   if ($taxonomy) {
     // If News + Sticky listing, filter by taxonomy option.
@@ -254,13 +263,13 @@ function jcc_components_paragraph_content_stream(array &$variables, ParagraphInt
     }
   }
 
-  if ($date_start && $date_end) {
-    // If Oral Arguments case documents listing, filter by date range.
-    if ($paragraph->field_content_stream->plugin_id == 'views_block:oral_arguments-block_1') {
-      $view = Views::getView('oral_arguments');
-      $stream = $view->buildRenderable('block_1', [$date_start, $date_end]);
-      $variables['filtered_content'] = $stream;
-    }
+  // If Oral Arguments case documents listing, filter by date range.
+  if ($paragraph->field_content_stream->plugin_id == 'views_block:oral_arguments-block_1') {
+    $date_start = $paragraph->field_filter_by_date->start_date ? $paragraph->field_filter_by_date->start_date->format('Y-m-d\T00:00:00') : NULL;
+    $date_end = $paragraph->field_filter_by_date->end_date ? $paragraph->field_filter_by_date->end_date->format('Y-m-d\T24:00:00') : NULL;
+    $view = Views::getView('oral_arguments');
+    $stream = $view->buildRenderable('block_1', [$date_start, $date_end]);
+    $variables['filtered_content'] = $stream;
   }
 }
 
@@ -327,10 +336,8 @@ function _jcc_components_generate_cards($cards, $sub_variants) {
       $fid = $img_media->field_media_image->target_id;
       $file = File::load($fid);
       $styled_image_url = ImageStyle::load('card_image_background')->buildUrl($file->getFileUri());
-      $image_url = \Drupal::service('file_url_generator')->transformRelative($styled_image_url);
-
       $bgcolor = $card->field_overlay->value;
-      $media['src'] = $image_url;
+      $media['src'] = _jcc_components_remove_image_protocol($styled_image_url);
       $media['alt'] = $title;
       if ($card->field_top_background->value) {
         if ($card->field_overlay->value) {

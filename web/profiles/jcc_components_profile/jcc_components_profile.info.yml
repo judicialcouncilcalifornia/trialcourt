@@ -31,6 +31,7 @@ install:
   - admin_toolbar_links_access_filter
   - admin_toolbar_tools
   - allowed_formats
+  - anchor_link
   - autocomplete_deluxe
   - automated_cron
   - better_exposed_filters
@@ -69,6 +70,7 @@ install:
   - easy_breadcrumb
   - editor
   - embed
+  - email_registration
   - encrypt
   - entity_browser
   - entity_browser_entity_form
@@ -103,9 +105,10 @@ install:
   - image_widget_crop
   - inline_entity_form
   - inline_form_errors
+  - jcc_bulk_document_importer
   - jcc_components_variants
   - jcc_courtyard_icons
-  - jcc_custom
+  - jcc_custom 
   - jcc_migrate_source_ui
   - jcc_twig
   - key
@@ -156,7 +159,6 @@ install:
   - rebuild_cache_access
   - recaptcha
   - redirect
-  - redis
   - responsive_image
   - role_delegation
   - scheduler
@@ -164,6 +166,8 @@ install:
   - search_api
   - search_api_attachments
   - search_api_autocomplete
+  - search_api_pantheon
+  - search_api_pantheon_admin
   - search_api_solr
   - sendgrid_integration
   - straw
@@ -177,6 +181,7 @@ install:
   - tmgmt_file
   - token
   - toolbar
+  - tooltip
   - tour
   - update
   - user
@@ -185,6 +190,8 @@ install:
   - video_embed_media
   - video_embed_wysiwyg
   - views_ui
+  - views_bulk_edit
+  - views_bulk_operations
   - viewsreference
   - weight
   - webform
@@ -199,6 +206,8 @@ install:
   - views
   - paragraphs
   - jcc_components_profile
+  - jcc_messaging_center
+  - email_registration
 
 required:
   - ctools
@@ -209,5 +218,7 @@ required:
 
 themes:
   - jcc_components
+  - jcc_storybook
+  - jcc_elevated
   - claro
   - gin

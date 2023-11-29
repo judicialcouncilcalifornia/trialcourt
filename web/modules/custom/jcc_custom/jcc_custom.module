@@ -7,27 +7,30 @@
 
 use Drupal\Core\Database\Database;
 use Drupal\Core\Datetime\DrupalDateTime;
+use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Field\FieldFilteredMarkup;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\editor\Entity\Editor;
+use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\file\Element\ManagedFile;
 use Drupal\jcc_custom\Ajax\ManagedFileUploadCompleteEventCommand;
 use Drupal\taxonomy\Entity\Term;
 use Drupal\views\Plugin\views\query\QueryPluginBase;
 use Drupal\views\ViewExecutable;
+use Drupal\Core\Entity\EntityForm;
 
 /**
  * Implements hook_page_attachments().
  */
 function jcc_custom_page_attachments(array &$attachments) {
   $attachments['#attached']['library'][] = 'jcc_custom/fontawesome';
-
+  $attachments['#attached']['library'][] = 'jcc_custom/tableadapt';
   $is_admin = \Drupal::service('router.admin_context')->isAdminRoute();
   if (!$is_admin) {
     $attachments['#attached']['library'][] = 'jcc_custom/filelink';
     $attachments['#attached']['library'][] = 'jcc_custom/forms';
-    $attachments['#attached']['library'][] = 'jcc_custom/tableadapt';
     $attachments['#attached']['library'][] = 'jcc_custom/feedbacksurvey';
+    $attachments['#attached']['library'][] = 'jcc_custom/gin-elevated';
   }
 }
 
@@ -35,21 +38,38 @@ function jcc_custom_page_attachments(array &$attachments) {
  * Implements hook_ckeditor_css_alter().
  */
 function jcc_custom_ckeditor_css_alter(array &$css, Editor $editor) {
-  if ($scheme = theme_get_setting('scheme', 'jcc_components')) {
+  $theme_handler = \Drupal::service('theme_handler');
+
+  $known_formats = [
+    'basic_html',
+    'full_html',
+    'body',
+    'aside',
+    'minimal',
+  ];
+
+  if (jcc_custom_is_elevated_site() && in_array($editor->getFilterFormat()->id(), $known_formats)) {
     if (!$editor->hasAssociatedFilterFormat()) {
       return;
     }
 
-    $known_formats = [
-      'basic_html',
-      'full_html',
-      'body',
-      'aside',
-      'minimal',
-    ];
+    $css[] = "/themes/contrib/jcc_storybook/lib/css/scheme-default.css";
+    $css[] = "/themes/contrib/jcc_storybook/lib/css/elements.css";
+    // For paragraphs embedded as ckeditor content.
+    if ($editor->getFilterFormat()->id() == 'body') {
+      $css[] = "/themes/contrib/jcc_storybook/lib/stories/Atoms/Button/Button.css";
+      $css[] = "/themes/contrib/jcc_storybook/lib/stories/Molecules/ReadMore/ReadMore.css";
+    }
+  }
+  else {
+    if ($scheme = theme_get_setting('scheme', $theme_handler->getDefault())) {
+      if (!$editor->hasAssociatedFilterFormat()) {
+        return;
+      }
 
-    if (in_array($editor->getFilterFormat()->id(), $known_formats)) {
-      $css[] = drupal_get_path('core', NULL) . "/../libraries/courtyard-artifact/2.x/public/css/${scheme}.css";
+      if (in_array($editor->getFilterFormat()->id(), $known_formats)) {
+        $css[] = "/libraries/courtyard-artifact/2.x/public/css/${scheme}.css";
+      }
     }
   }
 }
@@ -129,6 +149,81 @@ function jcc_custom_form_alter(&$form, $form_state, $form_id) {
       $form['filters']['status']['filter_html_image_secure']['#description'] = FieldFilteredMarkup::create(t('Disallows usage of &lt;img&gt; tag sources that are not hosted on this site by replacing them with a placeholder image. Disabling this setting will restrict Source editing to allowed roles.'));
 
       break;
+
+    case 'node_judge_form':
+    case 'node_judge_edit_form':
+      if (jcc_custom_is_elevated_site()) {
+        unset($form['field_address']);
+      }
+      else {
+        unset($form['field_location']);
+      }
+      break;
+  }
+}
+
+/**
+ * Implements hook_field_widget_single_element_WIDGET_TYPE_form_alter().
+ */
+function jcc_custom_field_widget_single_element_entity_reference_paragraphs_form_alter(&$element, FormStateInterface $form_state, $context) {
+  $theme = \Drupal::config('system.theme')->get('default');
+  // If elevated theme is not in use by all sites.
+  if ($theme == 'jcc_elevated') {
+    $element['#attached']['library'][] = 'jcc_custom/gin-elevated';
+
+    switch ($element['#paragraph_type']) {
+      case 'hero':
+        unset($element['subform']['field_subheading']);
+        unset($element['subform']['field_link']);
+        unset($element['subform']['field_aside']);
+        break;
+
+      case 'hero_banner':
+        unset($element['subform']['field_brow']);
+        break;
+
+      case 'cards':
+        unset($element['subform']['field_variant']);
+        unset($element['subform']['field_columns']);
+
+        // Attach Card.css for background swatches.
+        $element['#attached']['library'][] = 'jcc_custom/storybook-scheme-default';
+        $element['#attached']['library'][] = 'jcc_custom/storybook-card';
+        $element['#attached']['library'][] = 'jcc_custom/gin-elevated';
+        break;
+
+      case 'hero_hangover':
+      case 'section':
+        // Attach Section.css for background swatches.
+        $element['#attached']['library'][] = 'jcc_custom/storybook-scheme-default';
+        $element['#attached']['library'][] = 'jcc_custom/storybook-section';
+        $element['#attached']['library'][] = 'jcc_custom/gin-elevated';
+        break;
+    }
+  }
+  else {
+    switch ($element['#paragraph_type']) {
+      case 'hero':
+        unset($element['subform']['field_components']);
+        unset($element['subform']['field_image_media']);
+        unset($element['subform']['field_granicus_view_link_id']);
+        break;
+
+      case 'cards':
+        unset($element['subform']['field_width_minimum']);
+        unset($element['subform']['field_image_media']);
+        break;
+
+      case 'card':
+        unset($element['subform']['field_media']);
+        unset($element['subform']['field_background']);
+        unset($element['subform']['field_link_multiple']);
+        if ($theme != 'jcc_professional') {
+          unset($element['subform']['field_icon']);
+          unset($element['subform']['field_entire_card_clickable']);
+        }
+        break;
+    }
   }
 }
 
@@ -274,4 +369,410 @@ function jcc_custom_managed_file_process(array &$element, FormStateInterface $fo
   $element['upload_button']['#ajax']['callback'] = 'jcc_custom_managed_file_ajax_callback';
 
   return $element;
+}
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
+function jcc_custom_preprocess_views_view_row_rss(&$variables) {
+  $view = $variables['view'];
+  $view_id = $view->id();
+  if ($view_id == 'news_types') {
+    // Extending RSS content.
+    $item = $variables['row'];
+    foreach ($item->elements as $element) {
+      if ($element['key'] == 'pubDate') {
+        $variables['pubDate'] = $element['value']->__toString();
+      }
+      if ($element['key'] == 'dc:creator') {
+        $variables['category'] = $element['value'];
+      }
+    }
+  }
+  if ($view_id == 'taxanomy_rss') {
+    // Extending RSS content.
+    $item = $variables['row'];
+    foreach ($item->elements as $element) {
+      if ($element['key'] == 'pubDate') {
+        $variables['pubDate'] = $element['value'];
+      }
+      if ($element['key'] == 'dc:creator') {
+        $variables['category'] = $element['value'];
+      }
+    }
+  }
+}
+
+/**
+ * Set dynamic allowed values for the bundle field.
+ *
+ * @param \Drupal\field\Entity\FieldStorageConfig $definition
+ *   The field definition.
+ * @param \Drupal\Core\Entity\ContentEntityInterface|null $entity
+ *   The entity being created if applicable.
+ * @param bool $cacheable
+ *   Boolean indicating if the results are cacheable.
+ *
+ * @return array
+ *   An array of possible key and value options.
+ *
+ * @see options_allowed_values()
+ */
+function jcc_custom_background_options_bundle(FieldStorageConfig $definition, ContentEntityInterface $entity = NULL, $cacheable): array {
+  // Load overlay theme options into select field.
+  $options = [];
+  $file = file_get_contents(\Drupal::service('extension.list.theme')->getPath('jcc_elevated') . '/jcc-background-options.json');
+  if ($file) {
+    $overlays = json_decode($file);
+    foreach ($overlays as $style) {
+      foreach ($style as $key => $overlay) {
+        $options[] = [$key => $overlay];
+      }
+    }
+  }
+
+  return $options;
+}
+
+/**
+ * Set dynamic default value for the section background bundle field.
+ */
+function jcc_custom_section_background_options_bundle(FieldStorageConfig $definition, ContentEntityInterface $entity = NULL, $cacheable): array {
+  return [
+    "default" => '<span class="section field--select section--color-default">Default</span>',
+    "primary-dark-xx" => '<span class="section field--select section--color-primary-dark-xx">Primary (Dark)</span>',
+    "primary-dark-xx-stripe" => '<span class="section field--select section--color-primary-dark-xx-stripe">Primary (Dark/Striped)</span>',
+    "warm-dark-xx" => '<span class="section field--select section--color-warm-dark-xx">Warm (Dark)</span>',
+    "warm-dark-x" => '<span class="section field--select section--color-warm-dark-x">Warm</span>',
+  ];
+}
+
+/**
+ * Set dynamic allowed values for the section layout bundle field.
+ */
+function jcc_custom_sub_component_layout_options_bundle(FieldStorageConfig $definition, ContentEntityInterface $entity = NULL, $cacheable): array {
+  return [
+    'stack' => 'Stack content (Default)',
+    'center' => 'Center content',
+    'switcher' => 'Switcher',
+    'cluster' => 'Cluster (inline)',
+    'grid' => 'Grid',
+    'reel' => 'Reel',
+    'with-sidebar' => 'With sidebar',
+    'flex flex--75-25' => '25% sidebar',
+    'flex flex--70-30' => '30% sidebar',
+    'flex flex--60-40' => '40% sidebar',
+  ];
+}
+
+/**
+ * Set dynamic allowed values for the alignment bundle field.
+ */
+function jcc_custom_alignment_options_bundle(FieldStorageConfig $definition, ContentEntityInterface $entity = NULL, $cacheable): array {
+  return [
+    'flex-start' => 'flex-start',
+    'center' => 'center',
+    'flex-end' => 'flex-end',
+  ];
+}
+
+/**
+ * Set dynamic allowed values for the gap width size bundle field.
+ */
+function jcc_custom_gap_size_options_bundle(FieldStorageConfig $definition, ContentEntityInterface $entity = NULL, $cacheable): array {
+  return [
+    '--s0' => '18px:Default (--s-0)',
+    '--s-3' => '9px (--s-1)',
+    '--s-2' => '11px (--s-2)',
+    '--s-1' => '14px (--s-3)',
+    '--s1' => '23px (--s1)',
+    '--s2' => '28px (--s2)',
+    '--s3' => '36px (--s3)',
+    '--s4' => '45px (--s4)',
+    '--s5' => '57px (--s5)',
+    '--s6' => '72px (--s6)',
+  ];
+}
+
+/**
+ * Set dynamic allowed values for the sidebar direction bundle field.
+ */
+function jcc_custom_sidebar_direction_options_bundle(FieldStorageConfig $definition, ContentEntityInterface $entity = NULL, $cacheable): array {
+  return [
+    'row' => 'Sidebar on left',
+    'row-reverse' => 'Sidebar on right',
+  ];
+}
+
+/**
+ * Implements hook_field_widget_WIDGET_TYPE_form_alter().
+ */
+function jcc_custom_field_widget_entity_reference_paragraphs_form_alter(&$element, &$form_state, $context) {
+  if ($element['#paragraph_type'] == 'section') {
+
+    // Set string of subform parents array, for use in form states settings.
+    if (isset($element['subform']['#parents'])) {
+      $parents_array = $element['subform']['#parents'];
+      $parents = array_shift($parents_array) . '[' . implode('][', $parents_array) . ']';
+      $key = ':input[name="' . $parents . '[field_sub_component_layout]"]';
+
+      // Set visibility on style fields depending on value of Layout field.
+      $element['subform']['field_grid_min_width']['#states'] = [
+        'visible' => [
+          $key => ['value' => (string) 'grid'],
+        ],
+      ];
+      $element['subform']['field_measure']['#states'] = [
+        'visible' => [
+          [$key => ['value' => (string) 'center']],
+          'or',
+          [$key => ['value' => (string) 'switcher']],
+        ],
+      ];
+      $element['subform']['field_sidebar_direction']['#states'] = [
+        'visible' => [
+          $key => ['value' => (string) 'with-sidebar'],
+        ],
+      ];
+      $element['subform']['field_sidebar_width']['#states'] = [
+        'visible' => [
+          $key => ['value' => (string) 'with-sidebar'],
+        ],
+      ];
+      $element['subform']['field_alignment']['#states'] = [
+        'visible' => [
+          [$key => ['value' => (string) 'with-sidebar']],
+          'or',
+          [$key => ['value' => (string) 'flex flex--75-25']],
+          'or',
+          [$key => ['value' => (string) 'flex flex--70-30']],
+          'or',
+          [$key => ['value' => (string) 'flex flex--60-40']],
+          'or',
+          [$key => ['value' => (string) 'switcher']],
+          'or',
+          [$key => ['value' => (string) 'grid']],
+          'or',
+          [$key => ['value' => (string) 'reel']],
+        ],
+      ];
+      $element['subform']['field_gap_size']['#states'] = [
+        'visible' => [
+          [$key => ['value' => (string) 'with-sidebar']],
+          'or',
+          [$key => ['value' => (string) 'flex flex--75-25']],
+          'or',
+          [$key => ['value' => (string) 'flex flex--70-30']],
+          'or',
+          [$key => ['value' => (string) 'flex flex--60-40']],
+          'or',
+          [$key => ['value' => (string) 'switcher']],
+          'or',
+          [$key => ['value' => (string) 'grid']],
+          'or',
+          [$key => ['value' => (string) 'reel']],
+          'or',
+          [$key => ['value' => (string) 'center']],
+          'or',
+          [$key => ['value' => (string) 'cluster']],
+          'or',
+          [$key => ['value' => (string) 'stack']],
+        ],
+      ];
+    }
+  }
+}
+
+/**
+ * Helper function to build a storybook compatible menu tree.
+ */
+function jcc_custom_build_menu_tree(array $tree): array {
+  $items = [];
+  foreach ($tree as $menu_data) {
+    if (!empty($menu_data['url'])) {
+      $items[] = [
+        'title' => $menu_data['title'],
+        'url' => !empty($menu_data['url']) ? $menu_data['url'] : '',
+        'attributes' => !empty($menu_data['attributes']) ? $menu_data['attributes']->toArray() : [],
+        'active' => $menu_data['in_active_trail'],
+        'links' => $menu_data['below'] && $menu_data['in_active_trail'] ? jcc_custom_build_menu_tree($menu_data['below']) : [],
+      ];
+    }
+  }
+
+  return $items;
+
+}
+
+/**
+ * Helper function to determine if site uses the elevated theme.
+ */
+function jcc_custom_is_elevated_site(): bool {
+  return \Drupal::config('system.theme')->get('default') == 'jcc_elevated';
+}
+
+/**
+ * Implements hook_field_widget_form_alter().
+ *
+ * Overriding the selection handler for redirect entity type.
+ */
+function jcc_custom_field_widget_form_alter(&$element, FormStateInterface $form_state, $context) {
+  /** @var \Drupal\Core\Entity\EntityForm $form_object */
+  if ($form_state->getBuildInfo()['form_id'] == 'redirect_redirect_form') {
+    $form_object = $form_state->getFormObject();
+
+    if ($form_object instanceof EntityForm) {
+      $entity = $form_object->getEntity();
+      if ($entity->getEntityTypeId() == 'redirect') {
+        if (isset($context['widget'])) {
+          $type = get_class($context['widget']);
+          if (in_array($type, ['Drupal\linkit_field\Plugin\Field\FieldWidget\LinkitWidget',
+            'Drupal\link\Plugin\Field\FieldWidget\LinkWidget',
+          ])) {
+            $element['uri']['#selection_handler'] = 'jcc_custom:node';
+          }
+        }
+      }
+    }
+
+  }
+}
+
+/**
+ * Implements hook_theme_suggestions_details_alter().
+ */
+function jcc_custom_theme_suggestions_details_alter(array &$suggestions, array $variables, $hook) {
+  if (isset($variables['element']['#id'])) {
+    $suggestions[] = $hook . '__' . str_replace('-', '_', $variables['element']['#id']);
+  }
+}
+
+/**
+ * Implements hook_theme_suggestions_select_alter().
+ */
+function jcc_custom_theme_suggestions_select_alter(array &$suggestions, array $variables, $hook) {
+  if (isset($variables['element']['#id'])) {
+    $suggestions[] = $hook . '__' . str_replace('-', '_', $variables['element']['#id']);
+  }
+}
+
+/**
+ * Implements hook_theme().
+ */
+function jcc_custom_theme($existing, $type, $theme, $path) {
+  // Override elevated admin theme templates.
+  if (jcc_custom_is_elevated_site()) {
+    return [
+      'details__edit_menu' => [
+        'base hook' => 'details',
+      ],
+      'select__edit_menu_menu_parent' => [
+        'base hook' => 'select',
+      ],
+    ];
+  }
+}
+
+/**
+ * Implements hook_preprocess_details().
+ */
+function jcc_custom_preprocess_details(&$variables) {
+  // Elements for menu settings if first level and not allowed.
+  if (jcc_custom_is_elevated_site() && \Drupal::routeMatch()->getParameter('node')) {
+    if ($variables['title'] && !is_array($variables['title']) && $variables['title'] == 'Menu settings') {
+      $enabled = $variables['element']['enabled']['#default_value'];
+      $node = \Drupal::routeMatch()->getParameter('node');
+      $url_alias = $node->toUrl()->toString();
+      $menu_level = substr_count($url_alias, '/');
+      $roles = \Drupal::currentUser()->getRoles();
+      $is_allowed = in_array('administrator', $roles);
+      if ($menu_level == 1 && !$is_allowed) {
+        // Menu title.
+        $title_label_exp = '/<label(?:.*?)for=\"edit-menu-title\"(?:.*)>([^"]+)<\/.*>/';
+        preg_match($title_label_exp, $variables['children'], $title_label);
+        $title_val_exp = '/<input(?:.*?)id=\"edit-menu-title\"(?:.*)value=\"([^"]+).*/';
+        preg_match($title_val_exp, $variables['children'], $title_value);
+
+        // Menu description.
+        $desc_label_exp = '/<label(?:.*?)for=\"edit-menu-description\"(?:.*)>([^"]+)<\/.*>/';
+        preg_match($desc_label_exp, $variables['children'], $description_label);
+        $desc_value_exp = '/<input(?:.*?)id=\"edit-menu-description\"(?:.*)value=\"([^"]+).*/';
+        preg_match($desc_value_exp, $variables['children'], $description_value);
+
+        // Menu parent.
+        $parent_label_exp = '/<label(?:.*?)for=\"edit-menu-menu-parent\"(?:.*)>([^"]+)<\/.*>/';
+        preg_match($parent_label_exp, $variables['children'], $parent_label);
+        $parent_value_exp = '/<option(?:.*?)selected(?:.*?)>([^"]+)<\/option>/';
+        preg_match($parent_value_exp, $variables['children'], $parent_value);
+        $parent_value = preg_replace('/&#?[a-z0-9]{2,8};/', '', $parent_value[1]);
+
+        // Menu weight.
+        $weight_label_exp = '/<label(?:.*?)for=\"edit-menu-weight\"(?:.*)>([^"]+)<\/.*>/';
+        preg_match($weight_label_exp, $variables['children'], $weight_label);
+        $weight_value_exp = '/<input(?:.*?)id=\"edit-menu-weight\"(?:.*)value=\"([^"]+).*/';
+        preg_match($weight_value_exp, $variables['children'], $weight_value);
+
+        // Readonly menu details.
+        $variables['readonly'] = [
+          'menu_title' => [
+            'label' => $title_label[1],
+            'value' => $title_value[1] ?? '(Not set)',
+          ],
+          'menu_description' => [
+            'label' => $description_label[1],
+            'value' => $description_value[1] ?? '(Not set)',
+          ],
+          'menu_parent' => [
+            'label' => $parent_label[1],
+            'value' => $enabled ? $parent_value : '(Not set)',
+          ],
+          'menu_weight' => [
+            'label' => $weight_label[1],
+            'value' => $enabled ? $weight_value[1] : '(Not set)',
+          ],
+        ];
+
+        // Flags and attributes to visibly hide settings.
+        $variables['is_not_allowed'] = TRUE;
+        $variables['attributes']['aria-hidden'] = 'true';
+      }
+    }
+  }
+}
+
+/**
+ * Implements hook_preprocess_select().
+ */
+function jcc_custom_preprocess_select__edit_menu_menu_parent(&$variables) {
+  // Flags to restrict 'Main navigation' (first level) selection.
+  if (jcc_custom_is_elevated_site()) {
+    $roles = \Drupal::currentUser()->getRoles();
+    $is_allowed = in_array('administrator', $roles);
+    $variables['is_allowed'] = $is_allowed;
+    if (\Drupal::routeMatch()->getParameter('node')) {
+      $node = \Drupal::routeMatch()->getParameter('node');
+      $url_alias = $node->toUrl()->toString();
+      $menu_level = substr_count($url_alias, '/');
+      $variables['menu_level'] = $menu_level;
+    }
+    else {
+      // Flag create mode.
+      $variables['create_mode'] = TRUE;
+    }
+  }
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function jcc_custom_form_taxonomy_overview_vocabularies_alter(&$form, FormStateInterface $form_state) {
+  // Hide the "JCC Sections" vocabulary from Vocab if "jcc_elevated_sections"
+  // module is not enabled. Since the vocab config must be in the immutable
+  // feature, this will at least hide it for all sites that are not using the
+  // "JCC Sections" functionality.
+  $moduleHandler = \Drupal::service('module_handler');
+  if (!$moduleHandler->moduleExists('jcc_elevated_sections')) {
+    unset($form['vocabularies']['jcc_sections']);
+  }
+
 }

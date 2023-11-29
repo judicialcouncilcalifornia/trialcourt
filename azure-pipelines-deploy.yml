@@ -1,0 +1,26 @@
+parameters:
+  - name: siteEnvPrefixLocal
+    type: string
+  - name: siteId
+    type: string
+  - name: siteFarmId
+    type: string
+  - name: branch
+    type: string
+  - name: azureServiceConnection
+    type: string
+  - name: dockerRegistryServiceConnection
+    type: string
+  - name: imageRepository
+    type: string
+  - name: containerRegistry
+    type: string
+
+steps:
+  - task: AzureWebAppContainer@1
+    displayName: '-- Push latest container'
+    inputs:
+      azureSubscription: ${{azureServiceConnection}}
+      appName: '${{siteEnvPrefixLocal}}-ctcms-ct${{siteId}}-app'
+      resourceGroupName: '${{siteEnvPrefixLocal}}-ctcms-df${{siteFarmId}}-app-rg'
+      containers: '$(containerRegistry)/$(imageRepository):latest'

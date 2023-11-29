@@ -5,9 +5,28 @@
  * Sites routing map.
  */
 
+// Dynamically handle Azure Site mapping.
+if (isset($_ENV['SITE_MAP_DOMAINS'])
+  && !empty($_ENV['SITE_MAP_DOMAINS'])
+  && isset($_ENV['SITE_MAP_ID'])
+  && !empty($_ENV['SITE_MAP_ID'])
+  ) {
+
+  $map_domains = explode(" ", $_ENV['SITE_MAP_DOMAINS']);
+  foreach ($map_domains as $domain) {
+    $sites[$domain] = $_ENV['SITE_MAP_ID'];
+  }
+
+}
+
 // Dynamically match sites directory to current host.
-$dirs = preg_grep('/^([^.])/', scandir('sites/'));
+$filesdir = scandir('sites/');
+if(is_array($filesdir)) {
+$dirs = preg_grep('/^([^.])/', $filesdir);
 foreach ($dirs as $dir) {
+  if ($dir == "courts") {
+    continue;
+  }
   // Map any host that contains dir as the part of subdomain to that dir.
   // Either as the start of the string, or preceded by a - or . and always
   // followed by a .
@@ -18,6 +37,7 @@ foreach ($dirs as $dir) {
     }
   }
 }
+}
 
 // Custom domains for any that do not match above.
 // The patterns to match in the domain are as follows.
@@ -26,9 +46,23 @@ foreach ($dirs as $dir) {
 // .slo. - . followed by directory name and ends in .
 // If the custom domain does not contain one of these patterns,
 // add it manually below.
-$sites['www.occourts.org'] = 'oc';
 
 // @todo perhaps move these sites to dir that matches their domain.
+$sites['www.occourts.org'] = 'oc';
+
+// courts
+$sites['courts.lndo.site'] = 'courts';
+$sites['develop-jcc-courts.pantheonsite.io'] = 'courts';
+$sites['stage-jcc-courts.pantheonsite.io'] = 'courts';
+$sites['epic-uat-jcc-courts.pantheonsite.io'] = 'courts';
+$sites['live-jcc-courts.pantheonsite.io'] = 'courts';
+$sites['develop.courts.ca.gov'] = 'courts';
+$sites['stage.courts.ca.gov'] = 'courts';
+$sites['uat.courts.ca.gov'] = 'courts';
+$sites['www.courts.ca.gov'] = 'courts';
+$sites['courts.ca.gov'] = 'courts';
+$sites['beta.courts.ca.gov'] = 'courts';
+
 // = 'jcart';
 $sites['develop.jcart.courts.ca.gov'] = 'deprep';
 $sites['stage.jcart.courts.ca.gov'] = 'deprep';
@@ -85,6 +119,8 @@ $sites['nevada.courts.ca.gov'] = 'nccourt';
 // = 'supremecourt'
 $sites['www.supreme.courts.ca.gov'] = 'supremecourt';
 $sites['supreme.courts.ca.gov'] = 'supremecourt';
+$sites['stage.supreme.courts.ca.gov'] = 'supremecourt';
+$sites['develop.supreme.courts.ca.gov'] = 'supremecourt';
 // = 'stanislaus'
 $sites['www.stanct.org'] = 'stanislaus';
 // = 'oc';
@@ -93,6 +129,10 @@ $sites['orange.courts.ca.gov'] = 'oc';
 // = 'amdr';
 $sites['www.amador.courts.ca.gov'] = 'amdr';
 $sites['amador.courts.ca.gov'] = 'amdr';
+// = 'partners';
+$sites['languageaccess.courts.ca.gov'] = 'partners';
+// = 'diversity-toolkit';
+$sites['racialjustice-toolkit.courts.ca.gov'] = 'diversity-toolkit';
 
 // Local using Other.
 // If you're not using Lando, place additional site definitions in

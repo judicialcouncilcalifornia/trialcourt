@@ -69,16 +69,6 @@ $is_installer_url = (strpos($_SERVER['SCRIPT_NAME'], '/core/install.php') === 0)
  * you should relocate these locations. See "After Installation"
  * at https://www.drupal.org/node/2431247
  */
-if ($is_installer_url) {
-  $config_directories = [
-    CONFIG_SYNC_DIRECTORY => 'sites/default/files',
-  ];
-}
-else {
-  $config_directories = [
-    CONFIG_SYNC_DIRECTORY => '../config/config-default',
-  ];
-}
 
 /**
  * Allow Drupal 8 to Cleanly Redirect to Install.php For New Sites.
@@ -204,7 +194,7 @@ if (empty($settings['file_scan_ignore_directories'])) {
  */
 if (defined('PANTHEON_ENVIRONMENT')) {
   // Include the Redis services.yml file. Adjust the path if you installed to a contrib or other subdirectory.
-  $settings['container_yamls'][] = 'modules/redis/example.services.yml';
+  $settings['container_yamls'][] = 'modules/contrib/redis/redis.services.yml';
 
   //phpredis is built into the Pantheon application container.
   $settings['redis.connection']['interface'] = 'PhpRedis';

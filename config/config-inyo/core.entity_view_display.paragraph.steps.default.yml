@@ -10,6 +10,8 @@ dependencies:
   module:
     - entity_reference_revisions
     - text
+_core:
+  default_config_hash: geq_40rQPyVlV9VAbsYsQHY3d-cxHIkgqIs8c_w8BGA
 id: paragraph.steps.default
 targetEntityType: paragraph
 bundle: steps
@@ -40,4 +42,7 @@ content:
     weight: 1
     region: content
 hidden:
+  entity_print_view_epub: true
+  entity_print_view_pdf: true
+  entity_print_view_word_docx: true
   search_api_excerpt: true

@@ -1,11 +1,3 @@
-# Docker image, Azure Container Registry, and Azure Web App
-# 1. Test the code
-#    a. On Pull Requests, and
-#    b. Commits to develop, stage, master
-# 2. Build a Docker image, push it to an Azure Container Registry.
-#    a. On commits to develop, stage, master
-# 3. Deploy it to an Azure Web App.
-# https://docs.microsoft.com/azure/devops/pipelines/languages/docker
 
 trigger:
   - develop
@@ -15,99 +7,190 @@ trigger:
 resources:
   - repo: self
 
+pool:
+  vmImage: 'ubuntu-22.04'
+
+name: $(Build.BuildId)
+
+parameters:
+  - name: sites
+    type: object
+    default:
+      - tehama|1|015
+
 variables:
-  webAppName: 'trialcourt'
   dockerRegistryServiceConnection: '3f015a0b-e8e0-41a5-887c-d04efab1abd1'
-  imageRepository: 'build/$(webAppName)/$(Build.SourceBranchName)'
+  imageRepository: 'build/trialcourt/$(Build.SourceBranchName)'
   containerRegistry: 'devopswebcourtsnp.azurecr.io'
   dockerfilePath: '$(Build.SourcesDirectory)/.devops/drupal-nginx-fpm/0.6-devops/Dockerfile'
   tag: 'build_$(Build.BuildId)-$(Build.SourceVersion)'
   phpVersion: 7.4
+  location: 'West US 3'
+  templateFile: './.devops/app-service.bicep'
+
+  site: ''
+  siteId: ''
+  siteName: ''
+  siteFarmId: ''
+  siteEnvPrefix: ''
+  ResourceGroupName: ''
+
   ${{ if eq(variables['Build.SourceBranchName'], 'master') }}:
-    deploymentSlot: 'stage'
+    deploymentSlot: 'production'
+    azureServiceConnection: 'DevOps Web Service Non-Prod'
   ${{ else }}:
-    deploymentSlot: '$(Build.SourceBranchName)'
+    deploymentSlot: 'production'
+    azureServiceConnection: 'TODO'
 
-
-  # Agent VM image name
-  vmImageName: 'ubuntu-latest'
 
 stages:
-  - stage: Test
-    displayName: Test
+
+
+  #  - stage: Test
+  #    displayName: Test
+  #    jobs:
+  #      - job: Compile
+  #        displayName: Compile code
+  #        pool:
+  #          vmImage: $(vmImageName)
+  #        steps:
+  #          - script: |
+  #              sudo update-alternatives --set php /usr/bin/php$(phpVersion)
+  #              sudo update-alternatives --set phar /usr/bin/phar$(phpVersion)
+  #              sudo update-alternatives --set phpdbg /usr/bin/phpdbg$(phpVersion)
+  #              sudo update-alternatives --set php-cgi /usr/bin/php-cgi$(phpVersion)
+  #              sudo update-alternatives --set phar.phar /usr/bin/phar.phar$(phpVersion)
+  #              php -version
+  #            displayName: 'Use PHP version $(phpVersion)'
+  #          - script: composer install --no-interaction --prefer-dist
+  #            displayName: 'Composer install'
+  #      - job: Analyze
+  #        displayName: Analyze code
+  #        pool:
+  #          vmImage: $(vmImageName)
+  #        steps:
+  #          - script: composer -n lint
+  #            displayName: 'Lint php for syntax errors'
+  #          - script: composer -n code-sniff
+  #            displayName: 'Check coding standards'
+  #          - script: composer -n unit-test
+  #            displayName: 'Run unit tests'
+
+  #  - stage: Build
+  #    displayName: Build
+  #    dependsOn: Test
+  #    condition: and(succeeded('Test'), ne(variables['Build.SourceBranchName'], 'merge'))
+  #    jobs:
+  #      - job: Build
+  #        displayName: Build image
+  #        pool:
+  #          vmImage: $(vmImageName)
+  #        steps:
+  #          - task: Docker@2
+  #            displayName: Build
+  #            inputs:
+  #              command: build
+  #              containerRegistry: $(dockerRegistryServiceConnection)
+  #              repository: $(imageRepository)
+  #              dockerfile: $(dockerfilePath)
+  #              tags: |
+  #                latest
+  #                $(tag)
+  #              arguments: --label buildtype=nightly --build-arg GIT_BRANCH=$(Build.SourceBranchName)
+  #          - task: Docker@2
+  #            displayName: Push to registry
+  #            inputs:
+  #              command: push
+  #              containerRegistry: $(dockerRegistryServiceConnection)
+  #              repository: $(imageRepository)
+  #              tags: |
+  #                latest
+  #                $(tag)
+
+  - stage: Manifest
+    displayName: Manifest
     jobs:
-      - job: Compile
-        displayName: Compile code
-        pool:
-          vmImage: $(vmImageName)
+      - job: ReadManifest
+        displayName: Read manifest file
         steps:
           - script: |
-              sudo update-alternatives --set php /usr/bin/php$(phpVersion)
-              sudo update-alternatives --set phar /usr/bin/phar$(phpVersion)
-              sudo update-alternatives --set phpdbg /usr/bin/phpdbg$(phpVersion)
-              sudo update-alternatives --set php-cgi /usr/bin/php-cgi$(phpVersion)
-              sudo update-alternatives --set phar.phar /usr/bin/phar.phar$(phpVersion)
-              php -version
-            displayName: 'Use PHP version $(phpVersion)'
-          - script: composer install --no-interaction --prefer-dist
-            displayName: 'Composer install'
-      - job: Analyze
-        displayName: Analyze code
-        pool:
-          vmImage: $(vmImageName)
+              case $(Build.SourceBranchName) in
+                master)
+                  echo "##vso[task.setvariable variable=siteEnvPrefix;isOutput=true;]nprd"
+                  ;;
+                stage)
+                  echo "##vso[task.setvariable variable=siteEnvPrefix;isOutput=true;]uat"
+                  ;;
+                *)
+                  echo "##vso[task.setvariable variable=siteEnvPrefix;isOutput=true;]int"
+                  ;;
+              esac
+            displayName: 'Set Environment Prefix'
+            name: EnvironmentPrefix
+          - script: echo "$(EnvironmentPrefix.siteEnvPrefix)"
+            displayName: 'Display Prefix'
+            
+      - job: ProcessSites
+        displayName: Process sites
+        dependsOn: ['ReadManifest']
+        variables:
+          siteEnvPrefixLocal: $[ dependencies.ReadManifest.outputs['EnvironmentPrefix.siteEnvPrefix'] ]
         steps:
-          - script: composer -n lint
-            displayName: 'Lint php for syntax errors'
-          - script: composer -n code-sniff
-            displayName: 'Check coding standards'
-          - script: composer -n unit-test
-            displayName: 'Run unit tests'
+          - ${{ each site in parameters.sites }}:
+            - script: |
+                IFS='|'
+                read -a siteInfo <<< "${{site}}"
 
-  - stage: Build
-    displayName: Build
-    dependsOn: Test
-    condition: and(succeeded('Test'), ne(variables['Build.SourceBranchName'], 'merge'))
-    jobs:
-      - job: Build
-        displayName: Build image
-        pool:
-          vmImage: $(vmImageName)
-        steps:
-          - task: Docker@2
-            displayName: Build
-            inputs:
-              command: build
-              containerRegistry: $(dockerRegistryServiceConnection)
-              repository: $(imageRepository)
-              dockerfile: $(dockerfilePath)
-              tags: |
-                latest
-                $(tag)
-              arguments: --label buildtype=nightly --build-arg GIT_BRANCH=$(Build.SourceBranchName)
-          - task: Docker@2
-            displayName: Push to registry
-            inputs:
-              command: push
-              containerRegistry: $(dockerRegistryServiceConnection)
-              repository: $(imageRepository)
-              tags: |
-                latest
-                $(tag)
-  - stage: Deploy
-    displayName: Deploy
-    dependsOn: Build
-    condition: succeeded('Build')
-    jobs:
-      - job: Deploy
-        displayName: Deploy to App Service
-        pool:
-          vmImage: $(vmImageName)
-        steps:
-          - task: AzureWebAppContainer@1
-            inputs:
-              azureSubscription: 'DevOps Web Service Non-Prod'
-              appName: 'SUP-DEV01'
-              deployToSlotOrASE: true
-              resourceGroupName: 'jcc-webcourts-np-rg-apps'
-              slotName: $(deploymentSlot)
-              containers: '$(containerRegistry)/$(imageRepository):$(tag)'
+                echo "CountyId: ${siteInfo[0]}"
+                echo "CountyName : ${siteInfo[2]}"
+                echo "FarmId : ${siteInfo[1]}"
+                echo "##vso[task.setvariable variable=site;]${{site}}"
+                echo "##vso[task.setvariable variable=siteId;]${siteInfo[2]}"
+                echo "##vso[task.setvariable variable=siteFarmId;]${siteInfo[1]}"
+                echo "##vso[task.setvariable variable=siteName;]${siteInfo[0]}"
+                echo "##vso[task.setvariable variable=ResourceGroupName;]-ctcms-df${siteInfo[1]}-app-rg"
+              displayName: 'SITE: ${{ site }}'
+
+            - task: AzureResourceManagerTemplateDeployment@3
+              displayName: '-- Provision $(siteName) App Service'
+              inputs:
+                deploymentScope: 'Resource Group'
+                azureResourceManagerConnection: '$(azureServiceConnection)'
+                action: 'Create Or Update Resource Group'
+                resourceGroupName: '$(siteEnvPrefixLocal)$(ResourceGroupName)'
+                location: '$(location)'
+                templateLocation: 'Linked artifact'
+                csmFile: '$(templateFile)'
+                overrideParameters: '-siteFarmId $(siteFarmId) -siteId $(siteId) -environment $(siteEnvPrefixLocal) -siteName $(siteName)'
+                deploymentMode: 'Incremental'
+                deploymentName: 'DeployPipelineTemplate-$(Build.BuildId)'
+
+            - task: AzureWebAppContainer@1
+              displayName: '-- Push latest container'
+              inputs:
+                azureSubscription: $(azureServiceConnection)
+                appName: '$(siteEnvPrefixLocal)-ctcms-ct$(siteId)-app'
+                resourceGroupName: '$(siteEnvPrefixLocal)-ctcms-df$(siteFarmId)-app-rg'
+                containers: '$(containerRegistry)/build/trialcourt/$(Build.SourceBranchName):latest'
+
+            - task: MysqlDeploymentOnMachineGroup@1
+              displayName: '-- Create a database if not exists'
+              inputs:
+                TaskNameSelector: 'InlineSqlTask'
+                SqlInline: 'CREATE DATABASE IF NOT EXISTS $(siteName);'
+                ServerName: 'supdevmdb01.mariadb.database.azure.com'
+                DatabaseName: ''
+                SqlUsername: 'azuremdb@supdevmdb01'
+                SqlPassword: 'AdamTheGreat1!'
+
+            # - task: AzureCLI@2
+            #   displayName: '-- Create an SSH remote connection to the App Service'
+            #   inputs:
+            #     azureSubscription: $(azureServiceConnection)
+            #     scriptType: bash
+            #     scriptLocation: inlineScript
+            #     inlineScript: |
+            #       az --version
+            #       az account show
+            #       az webapp config set --resource-group $(siteEnvPrefixLocal)-ctcms-df$(siteFarmId)-app-rg -n $(siteEnvPrefixLocal)-ctcms-ct$(siteId)-app --remote-debugging-enabled=false
+            #       az webapp create-remote-connection --subscription 539516a7-6f4e-450d-b99e-be9dcc48a4c4 --resource-group $(siteEnvPrefixLocal)-ctcms-df$(siteFarmId)-app-rg -n $(siteEnvPrefixLocal)-ctcms-ct$(siteId)-app &

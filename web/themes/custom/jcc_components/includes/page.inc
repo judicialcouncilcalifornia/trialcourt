@@ -7,6 +7,7 @@
 
 use Drupal\Core\Menu\MenuTreeParameters;
 use Drupal\Core\Url;
+use Drupal\node\NodeInterface;
 
 /**
  * Implements hook_preprocess_HOOK().
@@ -22,6 +23,25 @@ function jcc_components_preprocess_page(&$variables) {
 
   $variables['main_links'] = jcc_components_get_menu_array('main');
   $variables['footer_links'] = jcc_components_get_menu_array('footer');
+
+  $variables['messaging_display_footer_form'] = \Drupal::config('jcc_messaging_center.settings')->get('messaging_display_footer_form');
+  $variables['messaging_center_preselected_groups'] = '';
+  if($variables['messaging_display_footer_form'] == 1){
+    $node = \Drupal::routeMatch()->getParameter('node');
+    if ($node instanceof \Drupal\node\NodeInterface) {
+      if($node->hasField('field_pre_selected_notification_')){
+        $preselected_values = $node->get('field_pre_selected_notification_')->getValue();
+        foreach ($preselected_values as $key => $preselected_value) {
+          if ($key == 0) {
+            $variables['messaging_center_preselected_groups'] .= '?preselected=' . $preselected_value['target_id'];
+          } else {
+            $variables['messaging_center_preselected_groups'] .= ',' . $preselected_value['target_id'];
+          }
+        }
+      }
+    }
+  }
+
   $variables['social_links'] = jcc_components_social_links();
 
   $variables['hat'] = [
@@ -45,8 +65,9 @@ function jcc_components_preprocess_page(&$variables) {
   $path = \Drupal::service('path.current')->getPath();
   $langcodes = \Drupal::languageManager()->getLanguages();
   if (count($langcodes) > 1 && !theme_get_setting('hide_translation')) {
+    $languages = [];
+    $default = \Drupal::languageManager()->getDefaultLanguage()->getId();
     foreach ($langcodes as $langcode => $language) {
-      $default = \Drupal::languageManager()->getDefaultLanguage()->getId();
       $url = \Drupal::service('path_alias.manager')->getAliasByPath($path, $langcode);
 
       // If there's no alias use the path from the current route.
@@ -55,12 +76,20 @@ function jcc_components_preprocess_page(&$variables) {
       }
 
       // Add langcode prefix if not the default language.
-      $url = ($langcode == $default) ? $url : "/${langcode}${url}";
-
-      $variables['translation_links'][] = [
-        'text' => $language->getName(),
-        'url' => $url,
-      ];
+      $node = \Drupal::routeMatch()->getParameter('node');
+      // Add only if translated content exists.
+      if ($node instanceof NodeInterface && $node->hasTranslation($langcode)) {
+        $url = ($langcode == $default) ? $url : "/${langcode}${url}";
+        $languages[] = [
+          'langcode' => $langcode,
+          'text' => $language->getName(),
+          'url' => $url,
+        ];
+      }
+    }
+    // Display translate menu if not just default.
+    if (count($languages) > 1) {
+      $variables['translation_links'] = $languages;
     }
   }
 
@@ -70,6 +99,9 @@ function jcc_components_preprocess_page(&$variables) {
     if (isset($google_translate) && !empty($google_translate)) {
       $variables['google_translate'] = $google_translate->build();
     }
+  }
+  if (theme_get_setting('enable_twitter_embed') === 1) {
+    $variables['#attached']['library'][] = 'jcc_components/twitter_widget';
   }
 
   // Display content only when embed param is 1.  Hide header and footer.

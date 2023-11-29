@@ -1,0 +1,25 @@
+{
+  "sites": [
+    {
+      "court": {
+        "id": "001",
+        "name": "County One"
+      },
+      "farmId": 1
+    },
+    {
+      "court": {
+        "id": "002",
+        "name": "County Two"
+      },
+      "farmId": 1
+    },
+    {
+      "court": {
+        "id": "003",
+        "name": "County Three"
+      },
+      "farmId": 2
+    }
+  ]
+}

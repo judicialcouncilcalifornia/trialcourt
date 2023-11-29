@@ -1,0 +1,31 @@
+uuid: 91886c23-4aa8-45c9-b38c-996c77838497
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.media.field_media_caption
+    - media.type.image
+  module:
+    - allowed_formats
+    - text
+    - tmgmt_content
+third_party_settings:
+  tmgmt_content:
+    excluded: false
+  allowed_formats:
+    allowed_formats:
+      - caption
+_core:
+  default_config_hash: sxGgFSOD3xeq6TMzhFd6tQmcQ3lcP0EUkdTabhSnPC8
+id: media.image.field_media_caption
+field_name: field_media_caption
+entity_type: media
+bundle: image
+label: 'Media caption'
+description: 'Provide a default description to display where applicable.'
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: text_long
