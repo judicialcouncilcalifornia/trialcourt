@@ -32,7 +32,6 @@ parameters:
     default:
       - sacramento|1|100
       - stanislaus|1|101
-      - butte|1|102
       - humboldt|1|103
       - merced|1|104
       - siskiyou|1|105
@@ -104,7 +103,7 @@ variables:
   imageRepository: 'build/trialcourt/$(Build.SourceBranchName)'
   dockerfilePath: '$(Build.SourcesDirectory)/.devops/container/drupal-nginx-fpm/0.6-devops/Dockerfile'
   dockerRegistryServiceConnection: 'INT Container Registry'
-  containerRegistry: 'globalctcmscr.azurecr.io'
+  containerRegistry: 'intctcmsdf1registry.azurecr.io'
   tag: 'build_$(Build.BuildId)-$(Build.SourceVersion)'
   gitRepo: 'https://github.com/judicialcouncilcalifornia/trialcourt.git'
   phpVersion: 8.2.12
