@@ -54,51 +54,51 @@ parameters:
       - santabarbara|2|201
       - riverside|2|202
       - partners|2|203
-  - name: sites_4
-    type: object
-    default:
-      - oc|2|204
-      - mendocino|2|205
-      - monterey|2|206
-      - slo2|2|207
-      - sc|2|208
-      - madera|2|209
-  - name: sites_5
-    type: object
-    default:
-      - napa|2|210
-      - inyo|2|211
-      - mariposa|2|212
-      - alpine|2|213
-      - tuolumne|2|214
-      - deprep|2|215
-  - name: sites_6
-    type: object
-    default:
-      - alameda|2|216
-      - kern|2|217
-      - tularesuperiorcourt|2|218
-      - sonoma|3|300
-      - eldorado|3|301
-      - imperial|3|302
-  - name: sites_7
-    type: object
-    default:
-      - kings|3|303
-      - sutter|3|304
-      - mono|3|305
-      - colusa|3|306
-      - modoc|3|307
-      - yuba|3|308
-  - name: sites_8
-    type: object
-    default:
-      - trinity|3|309
-      - srl|3|310
-      - elcondado|3|311
-      - idm|3|312
-      - amdr|3|313
-      - lake|3|314
+#  - name: sites_4
+#    type: object
+#    default:
+#      - oc|2|204
+#      - mendocino|2|205
+#      - monterey|2|206
+#      - slo2|2|207
+#      - sc|2|208
+#      - madera|2|209
+#  - name: sites_5
+#    type: object
+#    default:
+#      - napa|2|210
+#      - inyo|2|211
+#      - mariposa|2|212
+#      - alpine|2|213
+#      - tuolumne|2|214
+#      - deprep|2|215
+#  - name: sites_6
+#    type: object
+#    default:
+#      - alameda|2|216
+#      - kern|2|217
+#      - tularesuperiorcourt|2|218
+#      - sonoma|3|300
+#      - eldorado|3|301
+#      - imperial|3|302
+#  - name: sites_7
+#    type: object
+#    default:
+#      - kings|3|303
+#      - sutter|3|304
+#      - mono|3|305
+#      - colusa|3|306
+#      - modoc|3|307
+#      - yuba|3|308
+#  - name: sites_8
+#    type: object
+#    default:
+#      - trinity|3|309
+#      - srl|3|310
+#      - elcondado|3|311
+#      - idm|3|312
+#      - amdr|3|313
+#      - lake|3|314
 
 variables:
   imageRepository: 'build/trialcourt/$(Build.SourceBranchName)'
