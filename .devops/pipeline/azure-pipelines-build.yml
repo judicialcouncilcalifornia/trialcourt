@@ -287,7 +287,7 @@ stages:
                 azureServiceConnection: $(azureServiceConnection)
                 siteEnvPrefixLocal: $(siteEnvPrefixLocal)
                 uniqueMod: $(uniqueMod)
-                siteId: '$(siteEnvPrefixLocal)$(siteId1)'
+                siteId: '$(siteId1)'
                 siteFarmId: $(siteFarmId1)
                 containerRegistry: $(containerRegistry)
                 sourceBranchName: $(Build.SourceBranchName)
@@ -321,7 +321,7 @@ stages:
                   azureServiceConnection: $(azureServiceConnection)
                   siteEnvPrefixLocal: $(siteEnvPrefixLocal)
                   uniqueMod: $(uniqueMod)
-                  siteId: '$(siteEnvPrefixLocal)$(siteId2)'
+                  siteId: '$(siteId2)'
                   siteFarmId: $(siteFarmId2)
                   containerRegistry: $(containerRegistry)
                   sourceBranchName: $(Build.SourceBranchName)
@@ -355,7 +355,7 @@ stages:
                   azureServiceConnection: $(azureServiceConnection)
                   siteEnvPrefixLocal: $(siteEnvPrefixLocal)
                   uniqueMod: $(uniqueMod)
-                  siteId: '$(siteEnvPrefixLocal)$(siteId3)'
+                  siteId: '$(siteId3)'
                   siteFarmId: $(siteFarmId3)
                   containerRegistry: $(containerRegistry)
                   sourceBranchName: $(Build.SourceBranchName)
