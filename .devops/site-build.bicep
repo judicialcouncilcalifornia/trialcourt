@@ -17,7 +17,7 @@ param siteFarmId string
 
 param siteId string
 param siteName string
-param uniqueMod string = '1'
+param uniqueMod string = ''
 
 param location1 string = 'West US 3'
 param utcValue string = utcNow()
