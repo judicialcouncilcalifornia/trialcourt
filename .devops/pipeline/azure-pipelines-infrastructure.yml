@@ -1,6 +1,8 @@
 trigger:
   branches:
     include:
+      - develop
+      - stage
       - master
   paths:
     include:
