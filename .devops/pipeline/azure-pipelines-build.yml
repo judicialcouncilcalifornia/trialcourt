@@ -30,85 +30,44 @@ parameters:
   - name: sites_1
     type: object
     default:
-      - sacramento|1|100
-      - stanislaus|1|101
-      - humboldt|1|103
-      - merced|1|104
-      - siskiyou|1|105
+      - sacramento|1|150
+      - stanislaus|1|151
   - name: sites_2
     type: object
     default:
-      - nccourt|1|106
-      - tehama|1|107
-      - sierra|1|108
-      - sanbenito|1|109
-      - glenn|1|110
-      - supremecourt|1|111
+      - sierra|1|152
+      - sanbenito|1|153
   - name: sites_3
     type: object
     default:
-      - fresno|1|112
-      - newsroom|1|113
-      - sf|2|200
-      - santabarbara|2|201
-      - riverside|2|202
-      - partners|2|203
-#  - name: sites_4
-#    type: object
-#    default:
-#      - oc|2|204
-#      - mendocino|2|205
-#      - monterey|2|206
-#      - slo2|2|207
-#      - sc|2|208
-#      - madera|2|209
-#  - name: sites_5
-#    type: object
-#    default:
-#      - napa|2|210
-#      - inyo|2|211
-#      - mariposa|2|212
-#      - alpine|2|213
-#      - tuolumne|2|214
-#      - deprep|2|215
-#  - name: sites_6
-#    type: object
-#    default:
-#      - alameda|2|216
-#      - kern|2|217
-#      - tularesuperiorcourt|2|218
-#      - sonoma|3|300
-#      - eldorado|3|301
-#      - imperial|3|302
-#  - name: sites_7
-#    type: object
-#    default:
-#      - kings|3|303
-#      - sutter|3|304
-#      - mono|3|305
-#      - colusa|3|306
-#      - modoc|3|307
-#      - yuba|3|308
-#  - name: sites_8
-#    type: object
-#    default:
-#      - trinity|3|309
-#      - srl|3|310
-#      - elcondado|3|311
-#      - idm|3|312
-#      - amdr|3|313
-#      - lake|3|314
+      - riverside|2|250
+      - partners|2|251
+  - name: sites_4
+    type: object
+    default:
+      - madera|2|252
+      - napa|2|253
+  - name: sites_5
+    type: object
+    default:
+      - kern|3|350
+      - tularesuperiorcourt|3|351
+  - name: sites_6
+    type: object
+    default:
+      - colusa|3|352
+      - modoc|3|353
 
 variables:
   imageRepository: 'build/trialcourt/$(Build.SourceBranchName)'
   dockerfilePath: '$(Build.SourcesDirectory)/.devops/container/drupal-nginx-fpm/0.6-devops/Dockerfile'
-  dockerRegistryServiceConnection: 'INT Container Registry'
-  containerRegistry: 'intctcmsdf1registry.azurecr.io'
+  dockerRegistryServiceConnection: 'Global Container Registry'
+  containerRegistry: 'globalctcmscr.azurecr.io'
   tag: 'build_$(Build.BuildId)-$(Build.SourceVersion)'
   gitRepo: 'https://github.com/judicialcouncilcalifornia/trialcourt.git'
   phpVersion: 8.2.12
   sshPort: 9837
-  uniqueMod: ''
+  uniqueMod: '1'
 
   site1: ''
   siteId1: ''
@@ -286,7 +245,7 @@ stages:
                 azureServiceConnection: $(azureServiceConnection)
                 siteEnvPrefixLocal: $(siteEnvPrefixLocal)
                 uniqueMod: $(uniqueMod)
-                siteId: '$(siteId1)'
+                siteId: '$(siteEnvPrefixLocal)$(siteId1)'
                 siteFarmId: $(siteFarmId1)
                 containerRegistry: $(containerRegistry)
                 sourceBranchName: $(Build.SourceBranchName)
@@ -320,7 +279,7 @@ stages:
                   azureServiceConnection: $(azureServiceConnection)
                   siteEnvPrefixLocal: $(siteEnvPrefixLocal)
                   uniqueMod: $(uniqueMod)
-                  siteId: '$(siteId2)'
+                  siteId: '$(siteEnvPrefixLocal)$(siteId2)'
                   siteFarmId: $(siteFarmId2)
                   containerRegistry: $(containerRegistry)
                   sourceBranchName: $(Build.SourceBranchName)
@@ -354,8 +313,110 @@ stages:
                   azureServiceConnection: $(azureServiceConnection)
                   siteEnvPrefixLocal: $(siteEnvPrefixLocal)
                   uniqueMod: $(uniqueMod)
-                  siteId: '$(siteId3)'
+                  siteId: '$(siteEnvPrefixLocal)$(siteId3)'
                   siteFarmId: $(siteFarmId3)
+                  containerRegistry: $(containerRegistry)
+                  sourceBranchName: $(Build.SourceBranchName)
+                  imageRepository: $(imageRepository)
+                  tag: $(tag)
+
+      - job: ProcessSites4
+        displayName: Process 4th set of sites
+        dependsOn: ['ReadManifest']
+        variables:
+          siteEnvPrefixLocal: $[ dependencies.ReadManifest.outputs['EnvironmentPrefix.siteEnvPrefix'] ]
+        steps:
+          - ${{ each site in parameters.sites_4 }}:
+              - script: |
+                  IFS='|'
+                  read -a siteInfo <<< "${{site}}"
+                  echo "${{site}}" >> $(Build.ArtifactStagingDirectory)/manifest.txt
+
+                  echo "CountyId: ${siteInfo[0]}"
+                  echo "CountyName : ${siteInfo[2]}"
+                  echo "FarmId : ${siteInfo[1]}"
+                  echo "##vso[task.setvariable variable=site4;]${{site}}"
+                  echo "##vso[task.setvariable variable=siteId4;]${siteInfo[2]}"
+                  echo "##vso[task.setvariable variable=siteFarmId4;]${siteInfo[1]}"
+                  echo "##vso[task.setvariable variable=siteName4;]${siteInfo[0]}"
+                  echo "##vso[task.setvariable variable=ResourceGroupName4;]-ctcms-df${siteInfo[1]}-app-rg"
+                displayName: 'SITE: ${{ site }}'
+
+              - template: /.devops/pipeline/_deploy-container.yml
+                parameters:
+                  azureServiceConnection: $(azureServiceConnection)
+                  siteEnvPrefixLocal: $(siteEnvPrefixLocal)
+                  uniqueMod: $(uniqueMod)
+                  siteId: '$(siteEnvPrefixLocal)$(siteId4)'
+                  siteFarmId: $(siteFarmId4)
+                  containerRegistry: $(containerRegistry)
+                  sourceBranchName: $(Build.SourceBranchName)
+                  imageRepository: $(imageRepository)
+                  tag: $(tag)
+
+      - job: ProcessSites5
+        displayName: Process 5th set of sites
+        dependsOn: ['ReadManifest']
+        variables:
+          siteEnvPrefixLocal: $[ dependencies.ReadManifest.outputs['EnvironmentPrefix.siteEnvPrefix'] ]
+        steps:
+          - ${{ each site in parameters.sites_5 }}:
+              - script: |
+                  IFS='|'
+                  read -a siteInfo <<< "${{site}}"
+                  echo "${{site}}" >> $(Build.ArtifactStagingDirectory)/manifest.txt
+
+                  echo "CountyId: ${siteInfo[0]}"
+                  echo "CountyName : ${siteInfo[2]}"
+                  echo "FarmId : ${siteInfo[1]}"
+                  echo "##vso[task.setvariable variable=site5;]${{site}}"
+                  echo "##vso[task.setvariable variable=siteId5;]${siteInfo[2]}"
+                  echo "##vso[task.setvariable variable=siteFarmId5;]${siteInfo[1]}"
+                  echo "##vso[task.setvariable variable=siteName5;]${siteInfo[0]}"
+                  echo "##vso[task.setvariable variable=ResourceGroupName5;]-ctcms-df${siteInfo[1]}-app-rg"
+                displayName: 'SITE: ${{ site }}'
+
+              - template: /.devops/pipeline/_deploy-container.yml
+                parameters:
+                  azureServiceConnection: $(azureServiceConnection)
+                  siteEnvPrefixLocal: $(siteEnvPrefixLocal)
+                  uniqueMod: $(uniqueMod)
+                  siteId: '$(siteEnvPrefixLocal)$(siteId5)'
+                  siteFarmId: $(siteFarmId5)
+                  containerRegistry: $(containerRegistry)
+                  sourceBranchName: $(Build.SourceBranchName)
+                  imageRepository: $(imageRepository)
+                  tag: $(tag)
+
+      - job: ProcessSites6
+        displayName: Process 6th set of sites
+        dependsOn: ['ReadManifest']
+        variables:
+          siteEnvPrefixLocal: $[ dependencies.ReadManifest.outputs['EnvironmentPrefix.siteEnvPrefix'] ]
+        steps:
+          - ${{ each site in parameters.sites_6 }}:
+              - script: |
+                  IFS='|'
+                  read -a siteInfo <<< "${{site}}"
+                  echo "${{site}}" >> $(Build.ArtifactStagingDirectory)/manifest.txt
+
+                  echo "CountyId: ${siteInfo[0]}"
+                  echo "CountyName : ${siteInfo[2]}"
+                  echo "FarmId : ${siteInfo[1]}"
+                  echo "##vso[task.setvariable variable=site6;]${{site}}"
+                  echo "##vso[task.setvariable variable=siteId6;]${siteInfo[2]}"
+                  echo "##vso[task.setvariable variable=siteFarmId6;]${siteInfo[1]}"
+                  echo "##vso[task.setvariable variable=siteName6;]${siteInfo[0]}"
+                  echo "##vso[task.setvariable variable=ResourceGroupName6;]-ctcms-df${siteInfo[1]}-app-rg"
+                displayName: 'SITE: ${{ site }}'
+
+              - template: /.devops/pipeline/_deploy-container.yml
+                parameters:
+                  azureServiceConnection: $(azureServiceConnection)
+                  siteEnvPrefixLocal: $(siteEnvPrefixLocal)
+                  uniqueMod: $(uniqueMod)
+                  siteId: '$(siteEnvPrefixLocal)$(siteId6)'
+                  siteFarmId: $(siteFarmId6)
                   containerRegistry: $(containerRegistry)
                   sourceBranchName: $(Build.SourceBranchName)
                   imageRepository: $(imageRepository)
