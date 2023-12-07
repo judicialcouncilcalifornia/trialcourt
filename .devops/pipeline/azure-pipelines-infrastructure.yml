@@ -27,7 +27,7 @@ parameters:
   - name: sites_1
     type: object
     default:
-      - sacramento|1|150
+      - courts|1|150
       - stanislaus|1|151
   - name: sites_2
     type: object

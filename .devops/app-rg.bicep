@@ -18,7 +18,7 @@ var umiId = '/subscriptions/${subscriptionId}/resourceGroups/${admResourceGroup}
 var networkPrivateEndpoint3_var = '${env}-ctcms-ct${siteId}-app-pe'
 var resourceGroupApp = '${env}-ctcms-df${siteFarmId}-app-rg'
 var resourceGroupData = '${env}-ctcms-df${siteFarmId}-data-rg'
-// var appServiceDiagnosticSetting_name = '${env}-ctcms-ct${siteId}-diag'
+var appServiceDiagnosticSetting_name = '${env}-ctcms-ct${siteId}-diag'
 var appInsights_Name = '${env}-ctcms-appi'
 
 var siteStorageAccountName = '${env}ctcmsdf${siteFarmId}sa${uniqueMod}'
@@ -182,7 +182,7 @@ resource storageSetting 'Microsoft.Web/sites/config@2021-01-15' = {
     }
   }
 }
-/*
+
 resource appServiceDiagnosticSetting 'Microsoft.Insights/diagnosticSettings@2021-05-01-preview' = {
   scope: appService
   name: appServiceDiagnosticSetting_name
@@ -209,4 +209,3 @@ resource appServiceDiagnosticSetting 'Microsoft.Insights/diagnosticSettings@2021
     workspaceId: resourceId(admResourceGroup, 'Microsoft.OperationalInsights/workspaces', operationalInsightsWorkspace1)
   }
 }
-*/
