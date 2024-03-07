@@ -30,33 +30,27 @@ parameters:
   - name: sites_1
     type: object
     default:
-      - sacramento|1|150
       - stanislaus|1|151
   - name: sites_2
     type: object
     default:
       - sierra|1|152
-      - sanbenito|1|153
   - name: sites_3
     type: object
     default:
-      - riverside|2|250
-      - partners|2|251
+      - riverside|1|154
   - name: sites_4
     type: object
     default:
-      - madera|2|252
-      - napa|2|253
+      - madera|1|156
   - name: sites_5
     type: object
     default:
-      - kern|3|350
-      - tularesuperiorcourt|3|351
+      - kern|1|158
   - name: sites_6
     type: object
     default:
-      - colusa|3|352
-      - modoc|3|353
+      - colusa|1|160
 
 variables:
   imageRepository: 'build/trialcourt/$(Build.SourceBranchName)'
@@ -65,7 +59,7 @@ variables:
   containerRegistry: 'globalctcmscr.azurecr.io'
   tag: 'build_$(Build.BuildId)-$(Build.SourceVersion)'
   gitRepo: 'https://github.com/judicialcouncilcalifornia/trialcourt.git'
-  phpVersion: 8.2.12
+  phpVersion: 8.1
   sshPort: 9837
   uniqueMod: '1'
 
