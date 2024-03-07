@@ -1,3 +1,4 @@
+uuid: 70fd4d29-cd96-43ca-a283-9cf6c54e6456
 langcode: en
 status: true
 dependencies:
@@ -16,9 +17,11 @@ dependencies:
     - node.type.alert
     - node.type.custom_email
     - node.type.document
+    - node.type.job
     - node.type.landing_page
     - node.type.location
     - node.type.news
+    - node.type.request
     - node.type.subpage
     - taxonomy.vocabulary.department
     - taxonomy.vocabulary.division
@@ -35,6 +38,7 @@ dependencies:
     - taxonomy.vocabulary.topics
     - workflows.workflow.editorial
   module:
+    - access_unpublished
     - captcha
     - content_moderation
     - content_translation
@@ -59,6 +63,8 @@ dependencies:
     - toolbar
     - userprotect
     - webform
+_core:
+  default_config_hash: MvTaEWM6lCwNCnFVuvSZiozb-3dbrFhIfGk0GEFjG0o
 id: editor
 label: Editor
 weight: -8
@@ -99,6 +105,7 @@ permissions:
   - 'create document content'
   - 'create file media'
   - 'create image media'
+  - 'create job content'
   - 'create landing_page content'
   - 'create location content'
   - 'create media'
@@ -106,6 +113,7 @@ permissions:
   - 'create news content'
   - 'create publication media'
   - 'create remote_video media'
+  - 'create request content'
   - 'create subpage content'
   - 'create url aliases'
   - 'create webform'
@@ -117,17 +125,21 @@ permissions:
   - 'delete any document content'
   - 'delete any file media'
   - 'delete any image media'
+  - 'delete any job content'
   - 'delete any landing_page content'
   - 'delete any location content'
   - 'delete any media'
   - 'delete any menu_icons media'
   - 'delete any news content'
+  - 'delete any publication media'
   - 'delete any remote_video media'
+  - 'delete any request content'
   - 'delete any subpage content'
   - 'delete any webform'
   - 'delete content translations'
   - 'delete custom_email revisions'
   - 'delete document revisions'
+  - 'delete job revisions'
   - 'delete landing_page revisions'
   - 'delete location revisions'
   - 'delete media'
@@ -138,15 +150,19 @@ permissions:
   - 'delete own document content'
   - 'delete own file media'
   - 'delete own image media'
+  - 'delete own job content'
   - 'delete own landing_page content'
   - 'delete own location content'
   - 'delete own menu_icons media'
   - 'delete own news content'
   - 'delete own remote_video media'
+  - 'delete own request content'
   - 'delete own subpage content'
   - 'delete own webform'
   - 'delete own webform submission'
+  - 'delete request revisions'
   - 'delete subpage revisions'
+  - 'delete token'
   - 'edit any alert content'
   - 'edit any announcement content'
   - 'edit any book content'
@@ -166,6 +182,7 @@ permissions:
   - 'edit any person content'
   - 'edit any publication media'
   - 'edit any remote_video media'
+  - 'edit any request content'
   - 'edit any subpage content'
   - 'edit any webform'
   - 'edit any webform submission'
@@ -189,6 +206,7 @@ permissions:
   - 'edit own person content'
   - 'edit own publication media'
   - 'edit own remote_video media'
+  - 'edit own request content'
   - 'edit own subpage content'
   - 'edit own webform'
   - 'edit own webform submission'
@@ -196,6 +214,7 @@ permissions:
   - 'moderated content bulk unpublish'
   - 'openid connect set own password'
   - 'rebuild cache access'
+  - 'renew token'
   - 'revert alert revisions'
   - 'revert all revisions'
   - 'revert announcement revisions'
@@ -210,6 +229,7 @@ permissions:
   - 'revert news revisions'
   - 'revert page revisions'
   - 'revert person revisions'
+  - 'revert request revisions'
   - 'revert subpage revisions'
   - 'schedule publishing of nodes'
   - 'skip CAPTCHA'
@@ -281,6 +301,7 @@ permissions:
   - 'view own webform submission'
   - 'view page revisions'
   - 'view person revisions'
+  - 'view request revisions'
   - 'view scheduled content'
   - 'view subpage revisions'
   - 'view the administration theme'

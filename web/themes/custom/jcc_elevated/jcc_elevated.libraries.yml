@@ -1,0 +1,12 @@
+extlink:
+  css:
+    theme:
+      src/css/extlink.css: {}
+
+extlinkcustom:
+  js:
+    src/js/extlinkcustom.js: {}
+    src/js/remotevideoaccessibility.js: {}
+  dependencies:
+    - core/jquery
+    - core/drupal

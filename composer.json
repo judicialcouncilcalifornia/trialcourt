@@ -175,8 +175,8 @@
         "drupal/ckeditor_bidi": "^3.1",
         "drupal/ckeditor_templates": "^1.1",
         "drupal/ckeditor_templates_ui": "^1.2",
-        "drupal/colorbox": "^1.6",
-        "drupal/colorbox_inline": "^1.2",
+        "drupal/colorbox": "^2.0",
+        "drupal/colorbox_inline": "^2.0",
         "drupal/components": "^2.0",
         "drupal/config_filter": "^1.6",
         "drupal/config_ignore": "^2.1",
@@ -188,7 +188,7 @@
         "drupal/core-recommended": "9.5.11",
         "drupal/cshs": "^3.5",
         "drupal/ctools": "^3.6",
-        "drupal/diff": "^1.0@RC",
+        "drupal/diff": "^1.1",
         "drupal/dropzonejs": "^2.0@alpha",
         "drupal/easy_breadcrumb": "2.x-dev@dev",
         "drupal/editor_advanced_link": "^1.8",
@@ -270,7 +270,7 @@
         "drupal/protected_pages": "^1.6",
         "drupal/queue_ui": "^2.2",
         "drupal/r4032login": "^2.1",
-        "drupal/range": "^1.1",
+        "drupal/range": "^1.5",
         "drupal/rate_limits": "^2.0",
         "drupal/real_aes": "^2.2",
         "drupal/rebuild_cache_access": "^1.7",
@@ -313,7 +313,7 @@
         "drupal/views_daterange_filters": "^1.0.0-alpha1",
         "drupal/views_entity_form_field": "^1.0@beta",
         "drupal/views_taxonomy_term_name_depth": "^7.0.0",
-        "drupal/viewsreference": "^1.8",
+        "drupal/viewsreference": "^2.0",
         "drupal/webform": "^6.0",
         "drupal/webform_myemma": "1.0",
         "drupal/webform_translation_permissions": "^1.1",
@@ -327,9 +327,9 @@
         "geocoder-php/bing-maps-provider": "^4.0",
         "harvesthq/chosen": "^1.8.7",
         "jackmoore/colorbox": "^1.6",
-        "judicialcouncil/courtyard-artifact": "^0.1.407",
+        "judicialcouncil/courtyard-artifact": "^0.1.423",
         "judicialcouncil/emma": "^4.0.1",
-        "judicialcouncil/jcc_storybook": "^0.54.33",
+        "judicialcouncil/jcc_storybook": "^0.55.13",
         "oomphinc/composer-installers-extender": "^2.0",
         "pantheon-systems/search_api_pantheon": "^8.1",
         "phpoffice/phpspreadsheet": "^1.11",
@@ -428,14 +428,16 @@
                 "Enable Needs Translation on moderated content.": "https://www.drupal.org/files/issues/2022-02-01/2950626-14.patch",
                 "Recursive rendering images when they are 20+": "https://www.drupal.org/files/issues/2021-09-24/3151977-d9-media-recursive-rendering.patch",
                 "Required fields support under collapsed details grouping": "https://www.drupal.org/files/issues/2023-05-24/3333481-fix-details-html5-validation-10.patch",
-                "Taxonomy terms load in admin side give white screen": "https://www.drupal.org/files/issues/2023-06-06/2183565-69.patch",                    
+                "Taxonomy terms load in admin side give white screen": "https://www.drupal.org/files/issues/2023-06-06/2183565-69.patch",
                 "Fix for unable to decode outout into JSON": "patches/locale_patch.patch",
                 "PoStreamReader error": "https://www.drupal.org/files/issues/2023-01-17/drupal_core-PoStreamReader_readLine_throws_an_error_on_module_install-3301239-7.patch",
-                "Fix for PHP warning isArray check": "patches/fixphp-warning.patch"
+                "Fix for PHP warning isArray check": "patches/fixphp-warning.patch",
+                "Fix for deprecated function mb_strtolower": "https://www.drupal.org/files/issues/2023-11-21/3199.patch",
+                "PHP warnings in array_flip": "https://www.drupal.org/files/issues/2023-01-12/3145190-21.patch"
             },
             "drupal/entity_usage": {
-                "Remove old rivisions from usage count.": "https://www.drupal.org/files/issues/2020-09-26/entity_usage_views_integration_usage_count-3043388-6.patch" 
-            },          
+                "Remove old rivisions from usage count.": "https://www.drupal.org/files/issues/2020-09-26/entity_usage_views_integration_usage_count-3043388-6.patch"
+            },
             "drupal/devel": {
                 "Fix devel count() warning in php 7.2": "patches/devel-count-warning.patch",
                 "Fix Cannot unset offset in a non-array variable in devel_get_handlers" : "patches/devel-unset-issue.patch"
@@ -479,12 +481,24 @@
             },
             "drupal/advagg": {
                 "Fix for stripos deprecated": "patches/advagg-stripos-fix.patch"
-            },            
+            },
             "drupal/fullcalendar_view" : {
-                "Fix for Calendar options": "patches/fix-jserror-fullcalendarview.patch"    
+                "Fix for Calendar options": "patches/fix-jserror-fullcalendarview.patch"
             },
             "drupal/search_api_autocomplete": {
-            "Fix for Solr error":"https://www.drupal.org/files/issues/2023-10-01/3382226-22--solr_version_check_bug.patch"
+                "Fix for Solr error":"https://www.drupal.org/files/issues/2023-10-01/3382226-22--solr_version_check_bug.patch"
+            },
+            "drupal/feeds": {
+                "Fix for call to a member function unlink() on null": "https://www.drupal.org/files/issues/2023-09-29/feeds-3390530.patch"
+            },
+            "drupal/mimemail": {
+                "Webform fix  PHP upgrade" : "https://www.drupal.org/files/issues/2023-03-24/3302223-check-in-public-path.patch"
+            },
+            "drupal/colorbox": {
+                "Add support for remote video media": "https://www.drupal.org/files/issues/2023-06-08/add-support-for-remote-video-media-D10-3021913-43.patch"
+            },
+            "drupal/viewsreference": {
+                "'Enable extra settings' only allows for saving of 'Pagination' and 'Argument' options": "https://git.drupalcode.org/project/viewsreference/-/merge_requests/38.patch"
             }
         },
         "installer-paths": {

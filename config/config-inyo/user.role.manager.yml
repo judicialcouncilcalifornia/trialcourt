@@ -1,3 +1,4 @@
+uuid: cced076d-f3fb-49d8-a96a-eb68f44970b8
 langcode: en
 status: true
 dependencies:
@@ -16,6 +17,7 @@ dependencies:
     - node.type.alert
     - node.type.custom_email
     - node.type.document
+    - node.type.job
     - node.type.judge
     - node.type.landing_page
     - node.type.location
@@ -41,6 +43,7 @@ dependencies:
     - taxonomy.vocabulary.user_groups
     - workflows.workflow.editorial
   module:
+    - access_unpublished
     - captcha
     - content_moderation
     - content_translation
@@ -67,7 +70,6 @@ dependencies:
     - redirect
     - role_delegation
     - scheduler
-    - sitemap
     - system
     - taxonomy
     - toolbar
@@ -75,6 +77,8 @@ dependencies:
     - webform
     - webform_translation_permissions
     - xlsx
+_core:
+  default_config_hash: oqHP2RnaO0yI0A7V_SOLjcf-kzT4ZuwtbRj5aEl0pEo
 id: manager
 label: Manager
 weight: -7
@@ -127,6 +131,7 @@ permissions:
   - 'create document content'
   - 'create file media'
   - 'create image media'
+  - 'create job content'
   - 'create judge content'
   - 'create landing_page content'
   - 'create location content'
@@ -163,6 +168,7 @@ permissions:
   - 'delete any file'
   - 'delete any file media'
   - 'delete any image media'
+  - 'delete any job content'
   - 'delete any judge content'
   - 'delete any landing_page content'
   - 'delete any location content'
@@ -176,6 +182,7 @@ permissions:
   - 'delete content translations'
   - 'delete custom_email revisions'
   - 'delete document revisions'
+  - 'delete job revisions'
   - 'delete judge revisions'
   - 'delete landing_page revisions'
   - 'delete location revisions'
@@ -188,6 +195,7 @@ permissions:
   - 'delete own document content'
   - 'delete own file media'
   - 'delete own image media'
+  - 'delete own job content'
   - 'delete own judge content'
   - 'delete own landing_page content'
   - 'delete own location content'
@@ -216,6 +224,7 @@ permissions:
   - 'delete terms in subject_matter'
   - 'delete terms in tags'
   - 'delete terms in topics'
+  - 'delete token'
   - 'delete xlsx mapping'
   - 'edit any alert content'
   - 'edit any boxcast_stream media'
@@ -223,6 +232,7 @@ permissions:
   - 'edit any document content'
   - 'edit any file media'
   - 'edit any image media'
+  - 'edit any job content'
   - 'edit any judge content'
   - 'edit any landing_page content'
   - 'edit any location content'
@@ -239,6 +249,7 @@ permissions:
   - 'edit own document content'
   - 'edit own file media'
   - 'edit own image media'
+  - 'edit own job content'
   - 'edit own judge content'
   - 'edit own landing_page content'
   - 'edit own location content'
@@ -275,10 +286,12 @@ permissions:
   - 'openid connect set own password'
   - 'perform batch updates entity usage'
   - 'rebuild cache access'
+  - 'renew token'
   - 'revert alert revisions'
   - 'revert all revisions'
   - 'revert custom_email revisions'
   - 'revert document revisions'
+  - 'revert job revisions'
   - 'revert judge revisions'
   - 'revert landing_page revisions'
   - 'revert location revisions'
@@ -332,6 +345,7 @@ permissions:
   - 'view any webform submission'
   - 'view custom_email revisions'
   - 'view document revisions'
+  - 'view job revisions'
   - 'view judge revisions'
   - 'view landing_page revisions'
   - 'view latest version'

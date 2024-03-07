@@ -3,11 +3,15 @@ status: true
 dependencies:
   config:
     - node.type.alert
+    - node.type.arbitrator
+    - node.type.custom_email
     - node.type.document
+    - node.type.job
     - node.type.judge
     - node.type.landing_page
     - node.type.location
     - node.type.news
+    - node.type.request
     - node.type.subpage
     - node.type.tentative_ruling
   module:
@@ -449,11 +453,15 @@ display:
           operator: in
           value:
             alert: alert
+            arbitrator: arbitrator
+            custom_email: custom_email
             document: document
+            job: job
             judge: judge
             landing_page: landing_page
             location: location
             news: news
+            request: request
             subpage: subpage
             tentative_ruling: tentative_ruling
           group: 1
@@ -481,6 +489,7 @@ display:
               administrator: '0'
               anonymous: '0'
               tentative_rulings_editor: '0'
+              messaging_manager: '0'
             reduce: true
           is_grouped: false
           group_info:
@@ -659,11 +668,13 @@ display:
           operator: in
           value:
             alert: alert
+            arbitrator: arbitrator
             document: document
             judge: judge
             landing_page: landing_page
             location: location
             news: news
+            request: request
             subpage: subpage
             tentative_ruling: tentative_ruling
           group: 1

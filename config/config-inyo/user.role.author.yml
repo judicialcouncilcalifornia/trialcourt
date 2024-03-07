@@ -1,3 +1,4 @@
+uuid: 4bb334b1-79df-4642-ba43-29570886e845
 langcode: en
 status: true
 dependencies:
@@ -14,10 +15,12 @@ dependencies:
     - media.type.remote_video
     - node.type.alert
     - node.type.document
+    - node.type.job
     - node.type.judge
     - node.type.landing_page
     - node.type.location
     - node.type.news
+    - node.type.request
     - node.type.subpage
     - node.type.tentative_ruling
     - taxonomy.vocabulary.department
@@ -35,6 +38,7 @@ dependencies:
     - taxonomy.vocabulary.topics
     - workflows.workflow.editorial
   module:
+    - access_unpublished
     - captcha
     - content_moderation
     - content_translation
@@ -51,6 +55,8 @@ dependencies:
     - redirect
     - system
     - toolbar
+_core:
+  default_config_hash: EZzcqybRrqlAagT_DiiZigYrcm0GgnBA3ooQeMN0APw
 id: author
 label: Author
 weight: -10
@@ -76,20 +82,24 @@ permissions:
   - 'create document content'
   - 'create file media'
   - 'create image media'
+  - 'create job content'
   - 'create judge content'
   - 'create landing_page content'
   - 'create location content'
   - 'create news content'
   - 'create publication media'
   - 'create remote_video media'
+  - 'create request content'
   - 'create subpage content'
   - 'create url aliases'
   - 'delete content translations'
+  - 'delete token'
   - 'edit any alert content'
   - 'edit any boxcast_stream media'
   - 'edit any document content'
   - 'edit any file media'
   - 'edit any image media'
+  - 'edit any job content'
   - 'edit any judge content'
   - 'edit any landing_page content'
   - 'edit any location content'
@@ -103,15 +113,18 @@ permissions:
   - 'edit own document content'
   - 'edit own file media'
   - 'edit own image media'
+  - 'edit own job content'
   - 'edit own judge content'
   - 'edit own landing_page content'
   - 'edit own location content'
   - 'edit own news content'
   - 'edit own publication media'
   - 'edit own remote_video media'
+  - 'edit own request content'
   - 'edit own subpage content'
   - 'edit own tentative_ruling content'
   - 'rebuild cache access'
+  - 'renew token'
   - 'skip CAPTCHA'
   - 'translate alert node'
   - 'translate department taxonomy_term'
