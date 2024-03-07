@@ -193,7 +193,6 @@ resource appServiceDiagnosticSetting 'Microsoft.Insights/diagnosticSettings@2021
       enabled: true
       retentionPolicy: {
         enabled: true
-        days: 60
       }
     }]
     metrics: [{
@@ -202,7 +201,6 @@ resource appServiceDiagnosticSetting 'Microsoft.Insights/diagnosticSettings@2021
       enabled: true
       retentionPolicy: {
         enabled: true
-        days: 60
       }
     }]
     storageAccountId: resourceId(admResourceGroup, 'Microsoft.Storage/storageAccounts', admStorageAccountName)
