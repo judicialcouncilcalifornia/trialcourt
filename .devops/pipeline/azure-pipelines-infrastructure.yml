@@ -161,6 +161,7 @@ stages:
                 siteFarmId: $(siteFarmId1)
                 containerRegistry: $(containerRegistry)
                 sourceBranchName: $(Build.SourceBranchName)
+                imageRepository: $(imageRepository)
                 tag: 'latest'
       - job: ProcessSites2
         displayName: Process 2nd set
@@ -200,6 +201,7 @@ stages:
                   siteFarmId: $(siteFarmId2)
                   containerRegistry: $(containerRegistry)
                   sourceBranchName: $(Build.SourceBranchName)
+                  imageRepository: $(imageRepository)
                   tag: 'latest'
       - job: ProcessSites3
         displayName: Process 3rd set
@@ -239,6 +241,7 @@ stages:
                   siteFarmId: $(siteFarmId3)
                   containerRegistry: $(containerRegistry)
                   sourceBranchName: $(Build.SourceBranchName)
+                  imageRepository: $(imageRepository)
                   tag: 'latest'
       - job: ProcessSites4
         displayName: Process 4th set
@@ -278,6 +281,7 @@ stages:
                   siteFarmId: $(siteFarmId4)
                   containerRegistry: $(containerRegistry)
                   sourceBranchName: $(Build.SourceBranchName)
+                  imageRepository: $(imageRepository)
                   tag: 'latest'
       - job: ProcessSites5
         displayName: Process 5th set
@@ -317,6 +321,7 @@ stages:
                   siteFarmId: $(siteFarmId5)
                   containerRegistry: $(containerRegistry)
                   sourceBranchName: $(Build.SourceBranchName)
+                  imageRepository: $(imageRepository)
                   tag: 'latest'
       - job: ProcessSites6
         displayName: Process 6th set
@@ -356,4 +361,5 @@ stages:
                   siteFarmId: $(siteFarmId6)
                   containerRegistry: $(containerRegistry)
                   sourceBranchName: $(Build.SourceBranchName)
+                  imageRepository: $(imageRepository)
                   tag: 'latest'
