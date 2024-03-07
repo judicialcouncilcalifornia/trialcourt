@@ -27,27 +27,27 @@ parameters:
   - name: sites_1
     type: object
     default:
-      - stanislaus|1|151
+      - inyo|1|100
   - name: sites_2
     type: object
     default:
-      - sierra|1|152
+      - sierra|1|101
   - name: sites_3
     type: object
     default:
-      - riverside|1|154
+      - alameda|1|102
   - name: sites_4
     type: object
     default:
-      - madera|1|156
+      - napa|1|103
   - name: sites_5
     type: object
     default:
-      - kern|1|158
+      - kern|1|104
   - name: sites_6
     type: object
     default:
-      - colusa|1|160
+      - colusa|1|105
 
 variables:
   imageRepository: 'build/trialcourt/$(Build.SourceBranchName)'
