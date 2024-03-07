@@ -61,7 +61,7 @@ parameters:
 variables:
   imageRepository: 'build/trialcourt/$(Build.SourceBranchName)'
   dockerfilePath: '$(Build.SourcesDirectory)/.devops/container/drupal-nginx-fpm/0.6-devops/Dockerfile'
-  dockerRegistryServiceConnection: 'Global Container Registry'
+  dockerRegistryServiceConnection: 'Global Container Registry1'
   containerRegistry: 'globalctcmscr.azurecr.io'
   tag: 'build_$(Build.BuildId)-$(Build.SourceVersion)'
   gitRepo: 'https://github.com/judicialcouncilcalifornia/trialcourt.git'
