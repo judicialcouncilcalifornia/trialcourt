@@ -31,7 +31,7 @@ parameters:
   - name: sites_2
     type: object
     default:
-      - sierra|1|101
+      - sierra|1|106
   - name: sites_3
     type: object
     default:
@@ -48,7 +48,6 @@ parameters:
     type: object
     default:
       - colusa|1|105
-      - sierra|1|106
 
 variables:
   imageRepository: 'build/trialcourt/$(Build.SourceBranchName)'
