@@ -61,7 +61,7 @@ variables:
   gitRepo: 'https://github.com/judicialcouncilcalifornia/trialcourt.git'
   phpVersion: 8.1
   sshPort: 9837
-  uniqueMod: '1'
+  uniqueMod: ''
 
   site1: ''
   siteId1: ''
