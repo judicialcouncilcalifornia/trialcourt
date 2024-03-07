@@ -135,7 +135,7 @@ resource appService 'Microsoft.Web/sites@2020-12-01' = {
         }
         {
           name: 'WEBSITES_CONTAINER_START_TIME_LIMIT'
-          value: '300'
+          value: '30'
         }
         {
           name: 'WEBSITES_ENABLE_APP_SERVICE_STORAGE'

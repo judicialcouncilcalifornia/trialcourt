@@ -48,6 +48,7 @@ parameters:
     type: object
     default:
       - colusa|1|105
+      - sierra|1|106
 
 variables:
   imageRepository: 'build/trialcourt/$(Build.SourceBranchName)'
